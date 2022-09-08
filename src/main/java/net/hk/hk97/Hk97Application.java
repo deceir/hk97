@@ -6,6 +6,7 @@ import net.hk.hk97.SlashCommands.SlashCommandHandler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.permission.PermissionType;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.interaction.SlashCommandBuilder;
 import org.javacord.api.interaction.SlashCommandOption;
@@ -17,6 +18,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 
 @SpringBootApplication
@@ -41,7 +43,7 @@ public class Hk97Application {
 
      @Bean
     @ConfigurationProperties(value = "discord-api")
-    public DiscordApi discordApi() {
+    public DiscordApi discordApi() throws ExecutionException, InterruptedException {
          String token = Config.discordToken;
          DiscordApi api = new DiscordApiBuilder().setToken(token)
                  .setAllNonPrivilegedIntents()
@@ -53,10 +55,12 @@ public class Hk97Application {
 
          SlashCommand appraise =
                  SlashCommand.with("appraise", "Utilize the appraisal function.")
-                                 .addOption(SlashCommandOption.create(SlashCommandOptionType.INTEGER, "id", "Nation id.", true))
+                                 .addOption(SlashCommandOption.create(SlashCommandOptionType.INTEGER, "id", "Nation id.", false))
 
                          .createForServer(api.getServerById("1016240494948397066").get())
                                                  .join();
+
+         // server id test: 829738477419495495
 
 
          SlashCommand apply =
@@ -71,12 +75,19 @@ public class Hk97Application {
 //                                 SlashCommandOption.createWithOptions()
 //                         ))
 
+//
+//         Server server = api.getServerById("1016240494948397066").get();
+//         long id = Long.parseLong("1016757111268577290");
+//
+//         api.getServerSlashCommandById(server, id).get().deleteForServer(server);
 
-apply.deleteGlobal();
-appraise.deleteGlobal();
 
 
-         api.addMessageCreateListener(applicationListener);
+
+
+
+
+//         api.addMessageCreateListener(applicationListener);
          api.addMessageCreateListener(interviewFileLogListener);
          api.addSlashCommandCreateListener(slashCommandHandler);
 

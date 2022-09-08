@@ -20,7 +20,7 @@ public class User {
 
     @Id
     @Getter @Setter
-    private String discord_id;
+    private String discordid;
 
     @Column
     @Getter @Setter
@@ -40,13 +40,9 @@ public class User {
 
     @Column(updatable = false)
     @Getter @Setter
-    private String verification = RandomString.getSaltString();
+    private int verification = (int)(Math.random() * 50 + 1);
 
 
-
-    @Column
-    @Getter @Setter
-    private long socialcreditscore = 1500;
 //
 //    @OneToOne
 //    @Getter @Setter

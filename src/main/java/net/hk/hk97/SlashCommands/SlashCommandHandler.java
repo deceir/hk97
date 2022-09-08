@@ -4,11 +4,15 @@ import io.github.adorableskullmaster.pw4j.PoliticsAndWar;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWarBuilder;
 import io.github.adorableskullmaster.pw4j.domains.Nation;
 import net.hk.hk97.Config;
+import net.hk.hk97.Hk97Application;
 import net.hk.hk97.Interview;
+import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.calc.AppraiseCalc;
 import net.hk.hk97.Models.calc.graphql.models.charts.MakeChart;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
+import net.hk.hk97.Models.message.Messenger;
 import net.hk.hk97.Repositories.InterviewRepository;
+import net.hk.hk97.Repositories.UserRepository;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.*;
@@ -24,12 +28,14 @@ import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.listener.interaction.SlashCommandCreateListener;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -41,8 +47,15 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     @Autowired
     InterviewRepository interviewRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+
+
+
     @Override
     public void onSlashCommandCreate(SlashCommandCreateEvent slashCommandCreateEvent) {
+
 
 
         SlashCommandInteraction interaction = slashCommandCreateEvent.getSlashCommandInteraction();
@@ -50,34 +63,32 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
         Optional<TextChannel> channel = interaction.getChannel();
 
 
-
         switch (interaction.getCommandName()) {
 
             case "appraise":
 
-                System.out.println(interaction.getFirstOptionIntValue());
-
-//                if (!channel.get().getIdAsString().equals("1004918961097424976") || !channel.get().getIdAsString().equals("1016460920970543235")) {
-//                    interaction.createImmediateResponder().setContent("You are not allowed to use this command in this channel.").setFlags(MessageFlag.EPHEMERAL).respond();
-//                    return;
-//                }
+                interaction.respondLater();
 
 
                 if (channel.get().getIdAsString().equalsIgnoreCase("1016449238567223406")) {
                     interaction.createImmediateResponder().setContent("You are not authorized to use this command here.").setFlags(MessageFlag.EPHEMERAL).respond();
                 } else {
 
-                    interaction.respondLater();
 
                     AppraiseCalc appraiseCalc = new AppraiseCalc();
 
                     try {
+                        if (interaction.getFirstOptionIntValue().isPresent()) {
+                            try {
+                                appraiseCalc.generateAllValues(interaction.getFirstOptionIntValue().get(), resourceDao);
+                            } catch (JSONException | IOException e) {
+                                throw new RuntimeException(e);
+                            }
 
-                        try {
-                            appraiseCalc.generateAllValues(interaction.getFirstOptionIntValue().get(), resourceDao);
-                        } catch (JSONException | IOException e) {
-                            throw new RuntimeException(e);
+                        } else if (userRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {
+                            appraiseCalc.generateAllValues(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid(), resourceDao);
                         }
+
                         DecimalFormat format = new DecimalFormat("##,##,##,##,##,##,##0");
 
                         interaction.createFollowupMessageBuilder().setContent("Estimated total value: $" + format.format(appraiseCalc.totalvalue))
@@ -90,6 +101,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                     }
                     break;
                 }
+
 
             case "apply":
 
@@ -107,13 +119,20 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                         interaction.respondLater();
 
                         int nationId = interaction.getFirstOptionIntValue().get();
-//                        System.out.println(nationId + " is the nation id.");
 
-                    DiscordApi api = new DiscordApiBuilder().setToken(Config.discordToken)
-                            .setAllNonPrivilegedIntents()
-                            .login()
-                            .join();
-                    ChannelCategory interviewCategory = api.getChannelCategoryById(Config.applicationsChannelId).get();
+//                        DiscordApi api = null;
+//                        try {
+//                            api = Hk97Application.discordApi();
+//                        } catch (ExecutionException | InterruptedException e) {
+//                            throw new RuntimeException(e);
+//                        }
+
+                        DiscordApi api = new DiscordApiBuilder().setToken(Config.discordToken)
+                                .setAllNonPrivilegedIntents()
+                                .login()
+                                .join();
+
+                        ChannelCategory interviewCategory = api.getChannelCategoryById(Config.applicationsChannelId).get();
 
 
                         Optional<Server> server = api.getServerById(Config.mainServerId);
@@ -122,27 +141,12 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
 
                         Nation nation = null;
+
                         try {
                             nation = pnw.getNation(nationId);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-
-//                        System.out.println("Nation name is " + nation.getName());
-
-
-                        List<ServerTextChannel> listOfChannels = server.get().getTextChannelsByName(nation.getNationid() + "-" + nation.getName());
-
-                        boolean channelExists = false;
-
-                        for (ServerTextChannel channel1 : listOfChannels) {
-                            if (channel1.getName().equals(nation.getNationid() + "-" + nation.getName())) {
-                                channelExists = true;
-                            }
-                        }
-
-
-                        Permissions permissions = new PermissionsBuilder().setState(PermissionType.READ_MESSAGES, PermissionState.ALLOWED).build();
 
 
                         Channel interview = new ServerTextChannelBuilder(server.get())
@@ -190,6 +194,28 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+            case "verify":
+
+                interaction.respondLater();
+
+                userRepository.findById(interaction.getUser().getIdAsString());
+                if (!userRepository.findById(interaction.getUser().getIdAsString()).get().isRegistered()) {
+
+                    User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
+
+                    if ((interaction.getFirstOptionIntValue().get() == user.getVerification())) {
+                        user.setRegistered(true);
+                        userRepository.save(user);
+                        interaction.createFollowupMessageBuilder().setContent("Your account has been registered.").send();
+
+                    } else {
+                        interaction.createFollowupMessageBuilder().setContent("You have entered the incorrect verification code.").send();
+                    }
+
+                }
+
+                // new case goes here
         }
     }
 }
