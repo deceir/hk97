@@ -6,17 +6,26 @@ import io.github.adorableskullmaster.pw4j.domains.Nation;
 import net.hk.hk97.Config;
 import net.hk.hk97.Hk97Application;
 import net.hk.hk97.Interview;
+import net.hk.hk97.Models.ActivityAudit;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.calc.AppraiseCalc;
+import net.hk.hk97.Models.calc.CityCalc;
+import net.hk.hk97.Models.calc.InfraCalc;
+import net.hk.hk97.Models.calc.LandCalc;
 import net.hk.hk97.Models.calc.graphql.models.charts.MakeChart;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
 import net.hk.hk97.Models.message.Messenger;
 import net.hk.hk97.Repositories.InterviewRepository;
 import net.hk.hk97.Repositories.UserRepository;
+import net.hk.hk97.Services.Util.AuditUtil;
+import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.*;
+import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageFlag;
+import org.javacord.api.entity.message.MessageSet;
+import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.PermissionState;
 import org.javacord.api.entity.permission.PermissionType;
@@ -25,12 +34,14 @@ import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
 import org.javacord.api.interaction.SlashCommandInteraction;
+import org.javacord.api.interaction.SlashCommandInteractionOption;
 import org.javacord.api.listener.interaction.SlashCommandCreateListener;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -68,17 +79,23 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "appraise":
 
                 interaction.respondLater();
+                String nation_name = "";
 
 
                 if (channel.get().getIdAsString().equalsIgnoreCase("1016449238567223406")) {
                     interaction.createImmediateResponder().setContent("You are not authorized to use this command here.").setFlags(MessageFlag.EPHEMERAL).respond();
-                } else {
 
+                } else {
 
                     AppraiseCalc appraiseCalc = new AppraiseCalc();
 
+
+
                     try {
                         if (interaction.getFirstOptionIntValue().isPresent()) {
+
+                            nation_name = MilUtil.getNationName(interaction.getFirstOptionIntValue().get());
+
                             try {
                                 appraiseCalc.generateAllValues(interaction.getFirstOptionIntValue().get(), resourceDao);
                             } catch (JSONException | IOException e) {
@@ -87,6 +104,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                         } else if (userRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {
                             appraiseCalc.generateAllValues(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid(), resourceDao);
+                            nation_name = MilUtil.getNationName(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid());
                         }
 
                         DecimalFormat format = new DecimalFormat("##,##,##,##,##,##,##0");
@@ -94,7 +112,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                         interaction.createFollowupMessageBuilder().setContent("Estimated total value: $" + format.format(appraiseCalc.totalvalue))
                                 .send();
 
-                        interaction.createFollowupMessageBuilder().addAttachment(MakeChart.generatePieChart(interaction.getUser().getDiscriminatedName() + " est. value $" + format.format(appraiseCalc.totalvalue), appraiseCalc.getInfravalue(), appraiseCalc.getLandvalue(), appraiseCalc.getCitiesvalue(), appraiseCalc.getProjectsvalue()))
+                        interaction.createFollowupMessageBuilder().addAttachment(MakeChart.generatePieChart(nation_name + " est. value $" + format.format(appraiseCalc.totalvalue), appraiseCalc.getInfravalue(), appraiseCalc.getLandvalue(), appraiseCalc.getCitiesvalue(), appraiseCalc.getProjectsvalue()))
                                 .send();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -120,17 +138,8 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                         int nationId = interaction.getFirstOptionIntValue().get();
 
-//                        DiscordApi api = null;
-//                        try {
-//                            api = Hk97Application.discordApi();
-//                        } catch (ExecutionException | InterruptedException e) {
-//                            throw new RuntimeException(e);
-//                        }
 
-                        DiscordApi api = new DiscordApiBuilder().setToken(Config.discordToken)
-                                .setAllNonPrivilegedIntents()
-                                .login()
-                                .join();
+                        DiscordApi api = slashCommandCreateEvent.getApi();
 
                         ChannelCategory interviewCategory = api.getChannelCategoryById(Config.applicationsChannelId).get();
 
@@ -168,9 +177,11 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                                 .setFooter("HK-97 Internal Command");
 
-                        interview.asTextChannel().get().sendMessage(eb);
+                        interview.asTextChannel().get().sendMessage(eb).get().pin();
+                        MessageSet list = interview.asServerTextChannel().get().getMessages(0).get();
+                        list.getOldestMessage().get().pin();
 
-                        interaction.createFollowupMessageBuilder().setContent("Your application room has been created, <@" + interaction.getUser().getIdAsString() + ">.").send();
+                        interaction.createFollowupMessageBuilder().setContent("Your application room has been created, <@" + interaction.getUser().getIdAsString() + ">. <#" + interview.getIdAsString() + ">").setFlags(MessageFlag.EPHEMERAL).send();
 
                         try {
                             TimeUnit.SECONDS.sleep(2);
@@ -179,7 +190,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                         }
 
 
-                        interview.asTextChannel().get().sendMessage("Thank you for applying, <@" + interaction.getUser().getId() + ">! Please refrain from declaring any offensive wars at this time! Let us know when you are ready to begin!");
+                        interview.asTextChannel().get().sendMessage("Hello and thank you for applying, <@" + interaction.getUser().getId() + ">! Please refrain from declaring any offensive wars at this time. Let us know when you are ready to begin the interview.");
 
                         Interview interview1 = new Interview();
                         interview1.setId(interaction.getUser().getId());
@@ -215,7 +226,227 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 }
 
+            case "calc":
+
+                interaction.respondLater();
+
+
+                EmbedBuilder eb = new EmbedBuilder();
+
+                if (interaction.getOptionByName("infra").isPresent()) {
+                    InfraCalc calc = new InfraCalc();
+
+
+                    if (interaction.getOptionByName("infra").get().getOptionByName("cities").isPresent()) {
+
+                        System.out.println("cities is present");
+
+
+                        int starting_infra = interaction.getOptionByName("infra").get().getOptionByName("start").get().getIntValue().get();
+                        System.out.println(starting_infra + " starting infra");
+                        int stopping_infra = interaction.getOptionByName("infra").get().getOptionByName("end").get().getIntValue().get();
+                        int cities = interaction.getOptionByName("infra").get().getOptionByName("cities").get().getIntValue().get();
+                        System.out.println("cities " + cities);
+                        calc.calculateInfra(starting_infra, stopping_infra, cities);
+                        calc.formatCost();
+
+
+                        eb.setAuthor(interaction.getUser())
+                                .setTitle("Infra cost for " + starting_infra + " to " + stopping_infra + " in " + cities + " cities")
+                                .setAuthor(interaction.getUser())
+                                .addField("Base Cost", calc.getBase_cost_f(), true)
+                                .addInlineField("1 Cost", calc.getOne_cost_f() + "\n saving: " + calc.getOne_cost_saved_f())
+                                .addInlineField("2 Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
+                                .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
+                                .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
+                                .setColor(Color.orange);
+
+                        interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+
+
+                    } else {
+                        int starting_infra = interaction.getOptionByName("infra").get().getOptionByName("start").get().getIntValue().get();
+                        System.out.println(starting_infra + " starting infra");
+                        int stopping_infra = interaction.getOptionByName("infra").get().getOptionByName("end").get().getIntValue().get();
+                        System.out.println(stopping_infra + " ending infra");
+
+                        calc.calculateInfra(starting_infra, stopping_infra);
+                        calc.formatCost();
+
+
+
+                        interaction.createFollowupMessageBuilder().addEmbed(new EmbedBuilder()
+                                .setTitle("Infra cost for " + starting_infra + " to " + stopping_infra)
+                                .addField("Base Cost", calc.getBase_cost_f(), true)
+                                .setAuthor(interaction.getUser())
+                                .addInlineField("1 Cost", calc.getOne_cost_f() + "\n saving: " + calc.getOne_cost_saved_f())
+                                .addInlineField("2 Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
+                                .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
+                                .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
+                                .setColor(Color.orange)
+                        ).send();
+                        System.out.println("Embed sent.");
+
+
+                    }
+
+                } else if (interaction.getOptionByName("land").isPresent()) {
+
+                    LandCalc calc = new LandCalc();
+
+                    if (interaction.getOptionByName("land").get().getOptionByName("cities").isPresent()) {
+
+
+
+
+                        int starting_infra = interaction.getOptionByName("land").get().getOptionByName("start").get().getIntValue().get();
+                        int stopping_infra = interaction.getOptionByName("land").get().getOptionByName("end").get().getIntValue().get();
+                        int cities = interaction.getOptionByName("land").get().getOptionByName("cities").get().getIntValue().get();
+                        System.out.println("cities " + cities);
+                        calc.calculateLand(starting_infra, stopping_infra, cities);
+                        calc.formatCost();
+
+
+                        eb.setAuthor(interaction.getUser())
+                                .setTitle("Land cost for " + starting_infra + " to " + stopping_infra + " in " + cities + " cities")
+                                .setAuthor(interaction.getUser())
+                                .addField("Base Cost", calc.getBase_cost_f(), true)
+                                .addInlineField("RE/ALA Cost", calc.getOne_cost_f() + "\n saving: " + calc.getOne_cost_saved_f())
+                                .addInlineField("RE+ALA Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
+                                .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
+                                .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
+                                .setColor(Color.orange);
+
+                        interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+
+
+                    } else {
+                        int starting_infra = interaction.getOptionByName("land").get().getOptionByName("start").get().getIntValue().get();
+                        int stopping_infra = interaction.getOptionByName("land").get().getOptionByName("end").get().getIntValue().get();
+
+                        calc.calculateLand(starting_infra, stopping_infra);
+                        calc.formatCost();
+
+
+                        interaction.createFollowupMessageBuilder().addEmbed(new EmbedBuilder()
+                                .setTitle("Land cost for " + starting_infra + " to " + stopping_infra)
+                                .addField("Base Cost", calc.getBase_cost_f(), true)
+                                .setAuthor(interaction.getUser())
+                                .addField("Base Cost", calc.getBase_cost_f(), true)
+                                .addInlineField("RE/ALA Cost", calc.getOne_cost_f() + "\n saving: " + calc.getOne_cost_saved_f())
+                                .addInlineField("RE+ALA Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
+                                .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
+                                .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
+                                .setColor(Color.orange)
+                        ).send();
+                        System.out.println("Embed sent.");
+                    }
+
+                } else if (interaction.getOptionByName("cities").isPresent()) {
+                    System.out.println("Cities calc invoked.");
+
+                    CityCalc calc = new CityCalc();
+                    if (interaction.getOptionByName("cities").get().getOptionByName("end").isPresent()) {
+
+
+                        int start = interaction.getOptionByName("cities").get().getOptionByName("start").get().getIntValue().get();
+                        int end = interaction.getOptionByName("cities").get().getOptionByName("end").get().getIntValue().get();
+
+                        if (start > end) {
+                            interaction.createFollowupMessageBuilder().setContent("You have formatted the command improperly. Your start city should be your current city, your end city should be the city you are buying up to.").send();
+                        } else {
+                            calc.calculateCity(start, end);
+                            calc.formatCost();
+
+                            eb
+                                    .setTitle("The cost to get city " + start + " to city " + end)
+                                    .setColor(Color.ORANGE)
+                                    .setAuthor(interaction.getUser())
+                                    .addField("Base Cost", calc.getBase_cost_formatted())
+                                    .addInlineField("MD Cost", calc.getMd_cost_formatted() + "\n saving: " + calc.getMd_cost_saved_f())
+                                    .addInlineField("UP + MD Cost", calc.getUp_cost_f() + "\n saving: " + calc.getUp_md_saved_f())
+                                    .addInlineField("AUP + UP + MD Cost", calc.getAup_md_cost_f() + "\n saving: " + calc.getAup_md_saved_f())
+                                    .addInlineField("GSA MD Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_saved_f())
+                                    .addInlineField("GSA UP + MD Cost", calc.getGsa_up_cost_f() + "\n saving: " + calc.getGsa_up_saved_f())
+                                    .addInlineField("GSA AUP + UP + MD Cost", calc.getGsa_aup_cost_f() + "\n saving: " + calc.getGsa_aup_saved_f())
+                                    .addField("Min. Cost (MP + all other reductions)", calc.getMin_cost_f() + "\n saving: " + calc.getMin_cost_saved_f());
+
+                            interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+
+                        }
+                    } else {
+                        // single city cost
+                        int start = interaction.getOptionByName("cities").get().getOptionByName("start").get().getIntValue().get();
+
+                        calc.calculateCity(start);
+                        calc.formatCost();
+
+                        eb
+                                .setTitle("The cost to get city " + start + " has been calculated.")
+                                .setAuthor(interaction.getUser())
+                                .setColor(Color.orange)
+                                .addField("Base Cost", calc.getBase_cost_formatted())
+                                .addInlineField("MD Cost", calc.getMd_cost_formatted() + "\n saving: " + calc.getMd_cost_saved_f())
+                                .addInlineField("UP + MD Cost", calc.getUp_cost_f() + "\n saving: " + calc.getUp_md_saved_f())
+                                .addInlineField("AUP + UP + MD Cost", calc.getAup_md_cost_f() + "\n saving: " + calc.getAup_md_saved_f())
+                                .addInlineField("GSA MD Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_saved_f())
+                                .addInlineField("GSA UP + MD Cost", calc.getGsa_up_cost_f() + "\n saving: " + calc.getGsa_up_saved_f())
+                                .addInlineField("GSA AUP + UP + MD Cost", calc.getGsa_aup_cost_f() + "\n saving: " + calc.getGsa_aup_saved_f())
+                                .addField("Min. Cost (MP + all other reductions)", calc.getMin_cost_f() + "\n saving: " + calc.getMin_cost_saved_f());
+
+                        interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+
+                    }
+
+                }
+
+
+            case "audit" :
+
+                interaction.respondLater();
+
+                if (interaction.getOptionByName("activity").isPresent()) {
+
+                    try {
+                        List<ActivityAudit> audits = AuditUtil.getActivityAudit();
+
+                        EmbedBuilder activityEmbed = new EmbedBuilder()
+                                .setAuthor(interaction.getUser())
+                                .setColor(Color.ORANGE);
+
+                        String inactiveUsers = "";
+
+                        for (ActivityAudit audit : audits) {
+                            User user = userRepository.findUserByNationid(audit.getId());
+
+                            inactiveUsers += "<@" + user.getDiscordid() + "> last active " + audit.getLastActive() + "hrs ago";
+                            inactiveUsers += "\n";
+
+                        }
+
+                        if (inactiveUsers.length() == 0) {
+                            inactiveUsers = "No inactive users.";
+                        }
+
+                        activityEmbed.addField("Inactive Nations:", inactiveUsers);
+
+                        interaction.createFollowupMessageBuilder().addEmbed(activityEmbed).send();
+
+
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                } else if (interaction.getOptionByName("spies").isPresent()) {
+
+
+
+                    interaction.createFollowupMessageBuilder().setContent("This feature has not been released! Please check back later!").setFlags(MessageFlag.EPHEMERAL).send();
+
+                }
+
                 // new case goes here
+
         }
     }
 }

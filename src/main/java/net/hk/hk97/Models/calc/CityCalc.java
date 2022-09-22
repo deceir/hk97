@@ -91,6 +91,25 @@ public class CityCalc {
     @Getter @Setter
     public String gsa_aup_cost_f;
 
+    @Getter @Setter
+    private long min_cost = 0;
+
+    @Getter @Setter
+    public String min_cost_f;
+
+
+    @Getter @Setter
+    public String min_aup_cost_f;
+
+    @Getter @Setter
+    public int twentyonecities = 0;
+
+    @Getter @Setter
+    public long min_cost_saved;
+
+
+    @Getter @Setter
+    public String min_cost_saved_f;
 
 
 
@@ -102,6 +121,9 @@ public class CityCalc {
         }
         if (city >= 16) {
             sixteencities++;
+        }
+        if (city >= 21) {
+            twentyonecities++;
         }
 
         this.base_cost += (long) ((long) 50000 * Math.pow((currentCity - 1),3) + (150000 * currentCity) + 75000);
@@ -122,11 +144,13 @@ public class CityCalc {
 
         this.aup_md_cost = (long) ((this.base_cost - (50000000 * this.cities) - (100000000 * this.sixteencities)) * .95);
         this.gsa_aup = (long) ((this.base_cost - (50000000 * this.cities) - (100000000 * this.sixteencities)) * .925);
+        this.min_cost = (long) ((((this.base_cost - (50000000 * this.cities) - (100000000 * this.sixteencities))) - (150000000 * this.twentyonecities)) * .925);
         if(aup_md_cost < 0) {
             this.aup_md_cost = 1;
         }
         this.aup_md_saved = base_cost - aup_md_cost;
         this.gsa_aup_saved = base_cost - gsa_aup;
+        this.min_cost_saved = base_cost - min_cost;
 
 
         this.formatCost();
@@ -166,6 +190,8 @@ public class CityCalc {
         this.gsa_cost_f = "$" + format.format(this.gsa_md);
         this.gsa_up_cost_f = "$" + format.format(this.gsa_up);
         this.gsa_aup_cost_f = "$" + format.format(this.gsa_aup);
+        this.min_cost_f = "$" + format.format(this.min_cost);
+        this.min_cost_saved_f = "$" + format.format(this.min_cost_saved);
     }
 
 

@@ -13,7 +13,6 @@ import javax.transaction.Transactional;
 
 @Entity
 @Table(name = "users")
-@Transactional
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -25,6 +24,10 @@ public class User {
     @Column
     @Getter @Setter
     private String name;
+
+    @Column
+    @Getter @Setter
+    private String leadername;
 
     @Column(unique = true)
     @Getter @Setter

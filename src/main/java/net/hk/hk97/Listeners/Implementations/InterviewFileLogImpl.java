@@ -34,36 +34,37 @@ public class InterviewFileLogImpl implements InterviewFileLogListener {
 //    @Value("discord-api")
 //    DiscordApi api;
 
-    DiscordApi api = new DiscordApiBuilder().setToken(token)
-            .setAllNonPrivilegedIntents()
-            .login()
-            .join();
+
 
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
 
 
+        DiscordApi api = messageCreateEvent.getApi();
 
-        Optional<ChannelCategory> interviewCategory = api.getChannelCategoryById("1016487611780571156");
+//        Optional<ChannelCategory> interviewCategory = api.getChannelCategoryById("1016487611780571156");
 
 
-        if (messageCreateEvent.getServerTextChannel().get().getCategory() == interviewCategory) {
+        if (messageCreateEvent.getServerTextChannel().get().getCategory().get().getName().equalsIgnoreCase("interviews")) {
 
-            Optional<Server> server = api.getServerById("1016240494948397066");
+            Optional<Server> server = api.getServerById(Config.mainServerId);
             Optional<Channel> loggingChannel = api.getChannelById("1016487721646166106");
-            Role ia = api.getRoleById("1016479793648250940").get();
+            Role ia = api.getRoleById("1016528192447717407").get();
+
 
             try {
                 long channelId = messageCreateEvent.getChannel().getId();
                 boolean needsLogging = false;
 
-                for (ServerChannel channel : interviewCategory.get().getChannels()) {
-                    if (channel.getId() == channelId) {
-                        needsLogging = true;
-                    }
-                }
+//                for (ServerChannel channel : interviewCategory.get().getChannels()) {
+//                    if (channel.getId() == channelId) {
+//                        needsLogging = true;
+//                    }
+//                }
 
-                File file = new File((channelId) + ".txt");
+
+//                File file = new File((channelId) + ".txt");
+                File file = new File(messageCreateEvent.getServerTextChannel().get().getName() + ".txt");
 
                 if (needsLogging) {
 
@@ -99,24 +100,26 @@ public class InterviewFileLogImpl implements InterviewFileLogListener {
 
                     messageCreateEvent.getChannel().sendMessage("Deleting channel soon.");
                     Channel channel = api.getChannelById(messageCreateEvent.getChannel().getId()).get();
-                    ServerChannel serverChannel = api.getServerChannelById(messageCreateEvent.getChannel().getId()).get();
 
-                    List<Message> list = channel.asServerTextChannel().get().getMessagesAsStream().collect(Collectors.toList());
 
-                    File logfile = new File(messageCreateEvent.getChannel().getIdAsString() + ".txt");
+                    List<Message> list = messageCreateEvent.getServerTextChannel().get().getMessagesAsStream().collect(Collectors.toList());
 
-                    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                    File logfile = new File(messageCreateEvent.getServerTextChannel().get().getName() + ".txt");
+
+                    FileWriter fw = new FileWriter(logfile.getAbsoluteFile(), true);
                     BufferedWriter bw = new BufferedWriter(fw);
+
+
+
                     for (int i = list.size() - 1; i >= 0; i--) {
 
                         Message message = list.get(i);
 
-                        String content = message.getCreationTimestamp() + " " + message.getAuthor().getDisplayName() + ": " + message.getContent() + "\n";
+                        String content = message.getAuthor().getDisplayName() + ": " + message.getContent() + "\n";
 
-                        bw.write(content);
-
-
+                        bw.append(content);
                     }
+
                     bw.close(); // Be sure to close BufferedWriter
 
                     loggingChannel.get().asServerTextChannel().get().sendMessage("<@" + interviewRepository.findInterviewByChannelId(channelId).getId() + "> interview: ");
