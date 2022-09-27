@@ -32,8 +32,8 @@ public class Hk97Application {
     @Autowired
     private CommandAdd commandAdd;
 
-    @Autowired
-    private MilComListener milComListener;
+//    @Autowired
+//    private MilComListener milComListener;
 
     public static void main(String[] args) {
         SpringApplication.run(Hk97Application.class, args);
@@ -51,7 +51,7 @@ public class Hk97Application {
                 .addSlashCommandCreateListener(slashCommandHandler)
                 .addMessageCreateListener(interviewFileLogListener)
                 .addMessageCreateListener(commandAdd)
-                .addMessageCreateListener(milComListener)
+//                .addMessageCreateListener(milComListener)
                 .addMessageCreateListener(applicationListener)
                 .login()
                 .join();

@@ -3,6 +3,11 @@ package net.hk.hk97.CommandLoader;
 
 import net.hk.hk97.Config;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.interaction.SlashCommandOption;
@@ -10,6 +15,7 @@ import org.javacord.api.interaction.SlashCommandOptionType;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.springframework.stereotype.Component;
 
+import java.nio.channels.Channel;
 import java.time.LocalTime;
 import java.util.Arrays;
 
@@ -24,7 +30,7 @@ public class CommandAdd implements MessageCreateListener {
 
                 SlashCommand appraise =
                         SlashCommand.with("appraise", "Utilize the appraisal function.")
-                                .addOption(SlashCommandOption.create(SlashCommandOptionType.INTEGER, "id", "Nation id.", false))
+                                .addOption(SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id.", false))
 
                                 .createForServer(api.getServerById("1016240494948397066").get())
                                 .join();
@@ -32,7 +38,7 @@ public class CommandAdd implements MessageCreateListener {
 
                 SlashCommand apply =
                         SlashCommand.with("apply", "Apply for an interview room.")
-                                .addOption(SlashCommandOption.create(SlashCommandOptionType.INTEGER, "id", "Enter your nation id here.", true))
+                                .addOption(SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Enter your nation id here.", true))
                                 .createForServer(api.getServerById("1016240494948397066").get())
                                 .join();
 
@@ -50,22 +56,22 @@ public class CommandAdd implements MessageCreateListener {
                                                 SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "infra", "Calculates cost of infrastructure.",
                                                         Arrays.asList(
 
-                                                                                SlashCommandOption.create(SlashCommandOptionType.INTEGER, "start", "Starting infrastructure level", true),
-                                                                                SlashCommandOption.create(SlashCommandOptionType.INTEGER, "end", "Ending infrastructure level", true),
-                                                                                SlashCommandOption.createWithChoices(SlashCommandOptionType.INTEGER, "cities", "The number of cities to calculate for", false)
+                                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "start", "Starting infrastructure level", true),
+                                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "end", "Ending infrastructure level", true),
+                                                                                SlashCommandOption.createWithChoices(SlashCommandOptionType.LONG, "cities", "The number of cities to calculate for", false)
                                                                         )),
                                                 SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "land", "Calculates cost of land.",
                                                         Arrays.asList(
 
-                                                                SlashCommandOption.create(SlashCommandOptionType.INTEGER, "start", "Starting land level", true),
-                                                                SlashCommandOption.create(SlashCommandOptionType.INTEGER, "end", "Ending land level", true),
-                                                                SlashCommandOption.createWithChoices(SlashCommandOptionType.INTEGER, "cities", "The number of cities to calculate for", false)
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "start", "Starting land level", true),
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "end", "Ending land level", true),
+                                                                SlashCommandOption.createWithChoices(SlashCommandOptionType.LONG, "cities", "The number of cities to calculate for", false)
                                                         )),
                                                 SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "cities", "Calculates cost of cities.",
                                                         Arrays.asList(
 
-                                                                SlashCommandOption.create(SlashCommandOptionType.INTEGER, "start", "City count to purchase OR starting city if calculating multiple", true),
-                                                                SlashCommandOption.create(SlashCommandOptionType.INTEGER, "end", "Ending cities number", false)
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "start", "City count to purchase OR starting city if calculating multiple", true),
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "end", "Ending cities number", false)
 
                                                         ))
                                                 ))
@@ -81,11 +87,42 @@ public class CommandAdd implements MessageCreateListener {
                                 .createForServer(api.getServerById(Config.mainServerId).get())
                                 .join();
 
+                SlashCommand account = SlashCommand.with("account", "Account registration and verification.",
+                                Arrays.asList(
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "register", "Calculates cost of infrastructure.",
+                                                Arrays.asList(
 
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id. This can be found on your nation page.", true)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "verify", "Verify with the token sent to your nation in-game.",
+                                                Arrays.asList(
+
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "token", "The token as it was sent to you in-game via message.", true)
+                                                ))
+                                ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
+//                SlashCommand command = api.getGlobalSlashCommandById()
+//                        .get().deleteGlobal();
 
             } catch (Exception e) {
                 messageCreateEvent.getChannel().sendMessage("There was an error deploying some or all commands.\n " + e.getMessage());
             }
+        } else if (messageCreateEvent.getMessageAuthor().isBotOwner() && messageCreateEvent.getMessageContent().equalsIgnoreCase("+bankstart")) {
+
+            DiscordApi api = messageCreateEvent.getApi();
+            ServerTextChannel channel = api.getServerTextChannelById("1024026875007340576").get();
+
+            new MessageBuilder()
+                    .setContent("__**Requiem Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*")
+                    .addComponents(
+                            ActionRow.of(
+                                    Button.success("deposit", "Deposit"),
+                                    Button.secondary("withdraw", "Withdrawal"),
+                                    Button.danger("info", "Info")
+                            )).send(channel);
+
         }
     }
 }

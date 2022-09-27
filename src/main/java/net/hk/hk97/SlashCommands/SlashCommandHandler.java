@@ -3,6 +3,9 @@ package net.hk.hk97.SlashCommands;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWar;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWarBuilder;
 import io.github.adorableskullmaster.pw4j.domains.Nation;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.hk.hk97.Config;
 import net.hk.hk97.Hk97Application;
 import net.hk.hk97.Interview;
@@ -92,12 +95,12 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
 
                     try {
-                        if (interaction.getFirstOptionIntValue().isPresent()) {
+                        if (interaction.getOptionByName("id").isPresent()) {
 
-                            nation_name = MilUtil.getNationName(interaction.getFirstOptionIntValue().get());
+                            nation_name = MilUtil.getNationName(interaction.getOptionLongValueByName("id").get());
 
                             try {
-                                appraiseCalc.generateAllValues(interaction.getFirstOptionIntValue().get(), resourceDao);
+                                appraiseCalc.generateAllValues(interaction.getOptionLongValueByName("id").get(), resourceDao);
                             } catch (JSONException | IOException e) {
                                 throw new RuntimeException(e);
                             }
@@ -123,7 +126,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
             case "apply":
 
-                System.out.println(interaction.getFirstOptionIntValue());
+                System.out.println(interaction.getOptionLongValueByName("id").get());
 
                 try {
 
@@ -136,7 +139,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                         interaction.respondLater();
 
-                        int nationId = interaction.getFirstOptionIntValue().get();
+                        int nationId = Integer.parseInt(interaction.getOptionLongValueByName("id").get() +"");
 
 
                         DiscordApi api = slashCommandCreateEvent.getApi();
@@ -160,10 +163,10 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                         Channel interview = new ServerTextChannelBuilder(server.get())
                                 .setName(nation.getNationid() + "-" + nation.getName())
-                                .addPermissionOverwrite(server.get().getEveryoneRole(), new PermissionsBuilder().setDenied(PermissionType.READ_MESSAGES).build())
-                                .addPermissionOverwrite(interaction.getUser(), new PermissionsBuilder().setAllowed(PermissionType.READ_MESSAGES).build())
-                                .addPermissionOverwrite(server.get().getRoleById("1016528192447717407").get(), new PermissionsBuilder().setAllowed(PermissionType.READ_MESSAGES).build())
-                                .addPermissionOverwrite(server.get().getRoleById("1016448673825161327").get(), new PermissionsBuilder().setAllowed(PermissionType.READ_MESSAGES).build())
+                                .addPermissionOverwrite(server.get().getEveryoneRole(), new PermissionsBuilder().setDenied(PermissionType.VIEW_CHANNEL).build())
+                                .addPermissionOverwrite(interaction.getUser(), new PermissionsBuilder().setAllowed(PermissionType.VIEW_CHANNEL).build())
+                                .addPermissionOverwrite(server.get().getRoleById("1016528192447717407").get(), new PermissionsBuilder().setAllowed(PermissionType.VIEW_CHANNEL).build())
+                                .addPermissionOverwrite(server.get().getRoleById("1016448673825161327").get(), new PermissionsBuilder().setAllowed(PermissionType.VIEW_CHANNEL).build())
                                 .setCategory(interviewCategory).create().join();
 
                         EmbedBuilder eb = new EmbedBuilder()
@@ -205,6 +208,8 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                break;
+
 
             case "verify":
 
@@ -215,7 +220,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                     User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
 
-                    if ((interaction.getFirstOptionIntValue().get() == user.getVerification())) {
+                    if ((interaction.getOptionByName("").get().equals(user.getVerification()))) {
                         user.setRegistered(true);
                         userRepository.save(user);
                         interaction.createFollowupMessageBuilder().setContent("Your account has been registered.").send();
@@ -225,6 +230,8 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                     }
 
                 }
+                break;
+
 
             case "calc":
 
@@ -242,12 +249,12 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                         System.out.println("cities is present");
 
 
-                        int starting_infra = interaction.getOptionByName("infra").get().getOptionByName("start").get().getIntValue().get();
+                        long starting_infra = interaction.getOptionByName("infra").get().getOptionByName("start").get().getLongValue().get();
                         System.out.println(starting_infra + " starting infra");
-                        int stopping_infra = interaction.getOptionByName("infra").get().getOptionByName("end").get().getIntValue().get();
-                        int cities = interaction.getOptionByName("infra").get().getOptionByName("cities").get().getIntValue().get();
+                        long stopping_infra = interaction.getOptionByName("infra").get().getOptionByName("end").get().getLongValue().get();
+                        long cities = interaction.getOptionByName("infra").get().getOptionByName("cities").get().getLongValue().get();
                         System.out.println("cities " + cities);
-                        calc.calculateInfra(starting_infra, stopping_infra, cities);
+                        calc.calculateInfra((int) starting_infra, (int) stopping_infra, (int) cities);
                         calc.formatCost();
 
 
@@ -265,9 +272,9 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
 
                     } else {
-                        int starting_infra = interaction.getOptionByName("infra").get().getOptionByName("start").get().getIntValue().get();
+                        long starting_infra = interaction.getOptionByName("infra").get().getOptionByName("start").get().getLongValue().get();
                         System.out.println(starting_infra + " starting infra");
-                        int stopping_infra = interaction.getOptionByName("infra").get().getOptionByName("end").get().getIntValue().get();
+                        long stopping_infra = interaction.getOptionByName("infra").get().getOptionByName("end").get().getLongValue().get();
                         System.out.println(stopping_infra + " ending infra");
 
                         calc.calculateInfra(starting_infra, stopping_infra);
@@ -299,11 +306,11 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
 
 
-                        int starting_infra = interaction.getOptionByName("land").get().getOptionByName("start").get().getIntValue().get();
-                        int stopping_infra = interaction.getOptionByName("land").get().getOptionByName("end").get().getIntValue().get();
-                        int cities = interaction.getOptionByName("land").get().getOptionByName("cities").get().getIntValue().get();
+                        long starting_infra = interaction.getOptionByName("land").get().getOptionByName("start").get().getLongValue().get();
+                        long stopping_infra = interaction.getOptionByName("land").get().getOptionByName("end").get().getLongValue().get();
+                        long cities = interaction.getOptionByName("land").get().getOptionByName("cities").get().getLongValue().get();
                         System.out.println("cities " + cities);
-                        calc.calculateLand(starting_infra, stopping_infra, cities);
+                        calc.calculateLand((int) starting_infra, (int) stopping_infra, (int) cities);
                         calc.formatCost();
 
 
@@ -321,10 +328,10 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
 
                     } else {
-                        int starting_infra = interaction.getOptionByName("land").get().getOptionByName("start").get().getIntValue().get();
-                        int stopping_infra = interaction.getOptionByName("land").get().getOptionByName("end").get().getIntValue().get();
+                        long starting_infra = interaction.getOptionByName("land").get().getOptionByName("start").get().getLongValue().get();
+                        long stopping_infra = interaction.getOptionByName("land").get().getOptionByName("end").get().getLongValue().get();
 
-                        calc.calculateLand(starting_infra, stopping_infra);
+                        calc.calculateLand((int) starting_infra, (int) stopping_infra);
                         calc.formatCost();
 
 
@@ -349,13 +356,13 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                     if (interaction.getOptionByName("cities").get().getOptionByName("end").isPresent()) {
 
 
-                        int start = interaction.getOptionByName("cities").get().getOptionByName("start").get().getIntValue().get();
-                        int end = interaction.getOptionByName("cities").get().getOptionByName("end").get().getIntValue().get();
+                        long start = interaction.getOptionByName("cities").get().getOptionByName("start").get().getLongValue().get();
+                        long end = interaction.getOptionByName("cities").get().getOptionByName("end").get().getLongValue().get();
 
                         if (start > end) {
                             interaction.createFollowupMessageBuilder().setContent("You have formatted the command improperly. Your start city should be your current city, your end city should be the city you are buying up to.").send();
                         } else {
-                            calc.calculateCity(start, end);
+                            calc.calculateCity((int) start, (int) end);
                             calc.formatCost();
 
                             eb
@@ -376,9 +383,9 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                         }
                     } else {
                         // single city cost
-                        int start = interaction.getOptionByName("cities").get().getOptionByName("start").get().getIntValue().get();
+                        long start = interaction.getOptionByName("cities").get().getOptionByName("start").get().getLongValue().get();
 
-                        calc.calculateCity(start);
+                        calc.calculateCity((int)start);
                         calc.formatCost();
 
                         eb
@@ -400,10 +407,11 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 }
 
+                break;
 
             case "audit" :
 
-                interaction.respondLater();
+                interaction.createImmediateResponder().setFlags(MessageFlag.EPHEMERAL).respond();
 
                 if (interaction.getOptionByName("activity").isPresent()) {
 
@@ -445,7 +453,49 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 }
 
-                // new case goes here
+                break;
+
+            case "account":
+                interaction.respondLater();
+                if (interaction.getOptionByName("register").isPresent()) {
+                    //initial registration
+
+                    SlashCommandInteractionOption option = interaction.getOptionByName("register").get();
+
+                    if (userRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {
+                        interaction.createFollowupMessageBuilder().setContent("An account with your discord id already exists. Verify using `/account verify` if you have not already, otherwise your account is completed!").send();
+                    } else {
+
+                        try {
+                            String leaderName = MilUtil.getLeaderName(option.getOptionLongValueByName("id").get());
+                            User user = new User();
+                            user.setName(interaction.getUser().getName());
+                            user.setDiscordid(interaction.getUser().getIdAsString());
+                            user.setNationid(option.getOptionLongValueByName("id").get());
+                            userRepository.save(user);
+
+                            Messenger.sendMessage(option.getOptionLongValueByName("id").get(), "HK-97 Meatbag Verification Protocol", ("Your HK-97 verification code is: " + user.getVerification()));
+
+                            interaction.createFollowupMessageBuilder().setContent("Your account has been created. \nA DM with your verification code has been sent in-game. Use that token with `/account verify` to complete your registration.").send();
+                        } catch (Exception e) {
+                            interaction.createFollowupMessageBuilder().setContent("The id you have entered has returned invalid. Please try again with the correct id.").send();
+                        }
+                    }
+                } else if (interaction.getOptionByName("verify").isPresent()) {
+                    //using token
+                    SlashCommandInteractionOption option = interaction.getOptionByName("verify").get();
+                    User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
+                    if (option.getOptionLongValueByName("token").get() == user.getVerification()) {
+                        user.setRegistered(true);
+                        userRepository.save(user);
+                        interaction.createFollowupMessageBuilder().setContent("You have successfully verified your account.").send();
+                    } else {
+                        interaction.createFollowupMessageBuilder().setContent("Your token is incorrect.").send();
+                    }
+
+                }
+
+            // new case goes here
 
         }
     }

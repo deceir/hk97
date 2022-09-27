@@ -43,7 +43,7 @@ public class User {
 
     @Column(updatable = false)
     @Getter @Setter
-    private int verification = (int)(Math.random() * 50 + 1);
+    private long verification = (int)(Math.random() * 500 + 1);
 
 
 //
