@@ -11,10 +11,12 @@ import org.javacord.api.event.interaction.ButtonClickEvent;
 import org.javacord.api.interaction.ButtonInteraction;
 import org.javacord.api.interaction.Interaction;
 import org.javacord.api.listener.interaction.ButtonClickListener;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Text;
 
 import java.nio.channels.Channel;
 
+@Component
 public class BankButtonListener implements ButtonClickListener {
 
     @Override
@@ -30,18 +32,11 @@ public class BankButtonListener implements ButtonClickListener {
             DiscordApi api = event.getApi();
 
             event.getInteraction().createFollowupMessageBuilder().setContent("Your deposit has been registered!").setFlags(MessageFlag.EPHEMERAL).send();
+
         } else if (event.getButtonInteraction().getCustomId().equals("withdraw")) {
             DiscordApi api = event.getApi();
 
-//            api.addMessageComponentCreateListener(event1 -> {
-//                event1.getInteraction().respondWithModal("withdrawmodal", "Bank Withdrawal Form",
-//                        ActionRow.of(TextInput.create("cash", "Cash from deposits", TextInputStyle.SHORT)));
-//            });
 
-//            ButtonInteraction buttonInteraction = event.getButtonInteraction();
-//            buttonInteraction.respondWithModal("bankmodal", "Support Key",
-//                    ActionRow.of(TextInput.create("Your Support Key", "TEXT_FIELD_SUPPORT_KEY", TextInputStyle.SHORT))
-//            );
         }
 
     }

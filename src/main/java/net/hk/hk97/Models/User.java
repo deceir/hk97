@@ -46,6 +46,8 @@ public class User {
     private long verification = (int)(Math.random() * 500 + 1);
 
 
+
+
 //
 //    @OneToOne
 //    @Getter @Setter

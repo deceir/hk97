@@ -6,16 +6,19 @@ import net.hk.hk97.Listeners.ApplicationListener;
 import net.hk.hk97.Listeners.InterviewFileLogListener;
 import net.hk.hk97.Listeners.MilComListener;
 import net.hk.hk97.SlashCommands.SlashCommandHandler;
+import net.hk.hk97.bank.BankButtonListener;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
+import org.javacord.api.entity.channel.ServerTextChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-
+@EnableJpaRepositories
 @SpringBootApplication
 public class Hk97Application {
 
@@ -31,6 +34,8 @@ public class Hk97Application {
 
     @Autowired
     private CommandAdd commandAdd;
+
+
 
 //    @Autowired
 //    private MilComListener milComListener;
@@ -55,6 +60,9 @@ public class Hk97Application {
                 .addMessageCreateListener(applicationListener)
                 .login()
                 .join();
+
+//        ServerTextChannel channel = api.getServerTextChannelById("1024026875007340576").get();
+//        channel.addButtonClickListener(bankButtonListener);
 
 
 

@@ -56,10 +56,10 @@ public class CommandAdd implements MessageCreateListener {
                                                 SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "infra", "Calculates cost of infrastructure.",
                                                         Arrays.asList(
 
-                                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "start", "Starting infrastructure level", true),
-                                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "end", "Ending infrastructure level", true),
-                                                                                SlashCommandOption.createWithChoices(SlashCommandOptionType.LONG, "cities", "The number of cities to calculate for", false)
-                                                                        )),
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "start", "Starting infrastructure level", true),
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "end", "Ending infrastructure level", true),
+                                                                SlashCommandOption.createWithChoices(SlashCommandOptionType.LONG, "cities", "The number of cities to calculate for", false)
+                                                        )),
                                                 SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "land", "Calculates cost of land.",
                                                         Arrays.asList(
 
@@ -74,7 +74,7 @@ public class CommandAdd implements MessageCreateListener {
                                                                 SlashCommandOption.create(SlashCommandOptionType.LONG, "end", "Ending cities number", false)
 
                                                         ))
-                                                ))
+                                        ))
                                 .createGlobal(api)
                                 .join();
 
@@ -103,24 +103,101 @@ public class CommandAdd implements MessageCreateListener {
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();
 
+                SlashCommand bank = SlashCommand.with("bank", "Requiem banking services.",
+                                Arrays.asList(
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "create", "Create a bank account. (max of three separate accounts)"),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "info", "View the amounts currently in your account."),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "deposit", "Update your latest deposit"),
+//                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "transfer", "Transfer funds to another member's account. *This is irreversible, make sure you know what you're doing.*",
+//                                                Arrays.asList(
+//
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "cash", "Cash to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "food", "Food to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "uranium", "Uranium to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "coal", "Coal to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "iron", "Iron to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "bauxite", "Bauxite to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "oil", "Oil to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "steel", "Steel to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "munitions", "Munitions to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "gasoline", "Gasoline to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "aluminum", "Aluminum to withdraw.", false),
+//                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "user", "The user you want to send contents of your bank to.", true)
+//                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "withdraw", "Make a withdrawal.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "cash", "Cash to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "food", "Food to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "uranium", "Uranium to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "coal", "Coal to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "iron", "Iron to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "bauxite", "Bauxite to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "oil", "Oil to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "steel", "Steel to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "munitions", "Munitions to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "gasoline", "Gasoline to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "lead", "Lead to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "aluminum", "Aluminum to withdraw.", false)
+                                                        ))
+                                ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
+
+                SlashCommand badmin = SlashCommand.with("badmin", "Banking admin services.",
+                                Arrays.asList(
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "pending", "View pending withdrawals."),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "update", "Update specific withdrawal.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.STRING, "code", "Withdrawal code.", true)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "remove", "Remove specific withdrawal.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.STRING, "code", "Withdrawal code.", true)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "modify", "Modify a user's account.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member nation to modify.", true),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "cash", "Cash to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "food", "Food to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "uranium", "Uranium to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "coal", "Coal to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "iron", "Iron to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "bauxite", "Bauxite to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "oil", "Oil to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "steel", "Steel to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "munitions", "Munitions to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "gasoline", "Gasoline to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "lead", "Lead to withdraw.", false),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "aluminum", "Aluminum to withdraw.", false)
+                                                ))
+
+                                ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
+
 //                SlashCommand command = api.getGlobalSlashCommandById()
 //                        .get().deleteGlobal();
 
             } catch (Exception e) {
                 messageCreateEvent.getChannel().sendMessage("There was an error deploying some or all commands.\n " + e.getMessage());
+                e.printStackTrace();
             }
         } else if (messageCreateEvent.getMessageAuthor().isBotOwner() && messageCreateEvent.getMessageContent().equalsIgnoreCase("+bankstart")) {
 
             DiscordApi api = messageCreateEvent.getApi();
             ServerTextChannel channel = api.getServerTextChannelById("1024026875007340576").get();
+            messageCreateEvent.getMessage().delete();
 
             new MessageBuilder()
-                    .setContent("__**Requiem Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*")
+                    .setContent("__**Requiem Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*\nSelecting info will show ")
                     .addComponents(
                             ActionRow.of(
+                                    Button.danger("info", "Info"),
                                     Button.success("deposit", "Deposit"),
-                                    Button.secondary("withdraw", "Withdrawal"),
-                                    Button.danger("info", "Info")
+                                    Button.secondary("withdraw", "Withdrawal")
+
                             )).send(channel);
 
         }

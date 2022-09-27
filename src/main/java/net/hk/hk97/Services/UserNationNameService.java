@@ -20,7 +20,7 @@ public class UserNationNameService {
     @Autowired
     public UserRepository userDao;
 
-    @Scheduled(cron = "0 * */5 * * *")
+    @Scheduled(cron = "0 0 12 * * *")
     public void updateLeaderNames() throws JSONException {
 
         List<User> list = userDao.findAll();
