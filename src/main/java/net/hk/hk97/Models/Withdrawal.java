@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.hk.hk97.Models.Enums.WithdrawalTypes;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -91,5 +92,9 @@ public class Withdrawal {
     @Getter
     @Setter
     private String depositcode = RandomString.getSaltString();
+
+    @Column
+    @Getter @Setter
+    private WithdrawalTypes withdrawalType;
 
 }

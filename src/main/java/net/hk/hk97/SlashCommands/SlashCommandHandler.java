@@ -3,16 +3,11 @@ package net.hk.hk97.SlashCommands;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWar;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWarBuilder;
 import io.github.adorableskullmaster.pw4j.domains.Nation;
-import lombok.Getter;
-import lombok.Setter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.text.TextInput;
-import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import net.hk.hk97.Config;
-import net.hk.hk97.Hk97Application;
 import net.hk.hk97.Interview;
 import net.hk.hk97.Models.ActivityAudit;
 import net.hk.hk97.Models.Bank;
+import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.Withdrawal;
 import net.hk.hk97.Models.calc.AppraiseCalc;
@@ -30,23 +25,25 @@ import net.hk.hk97.Services.Util.AuditUtil;
 import net.hk.hk97.Services.Util.BankUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.*;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.entity.message.MessageSet;
-import org.javacord.api.entity.message.embed.Embed;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.TextInput;
+import org.javacord.api.entity.message.component.TextInputStyle;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.*;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
+import org.javacord.api.interaction.ModalInteraction;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandInteractionOption;
-import org.javacord.api.interaction.SlashCommandOption;
 import org.javacord.api.listener.interaction.SlashCommandCreateListener;
+import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.util.event.ListenerManager;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -57,8 +54,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class SlashCommandHandler implements SlashCommandCreateListener {
@@ -516,6 +513,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                             Bank newAccount = new Bank();
                             newAccount.setDiscordid(interaction.getUser().getIdAsString());
+                            newAccount.setName(interaction.getUser().getName());
                             bankDao.save(newAccount);
                             interaction.createFollowupMessageBuilder().setContent("Account created.").send();
 
@@ -545,9 +543,10 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                                     );
 
 
+                            interaction.getChannel().get().sendMessage("Deposit code:");
+                            interaction.getChannel().get().sendMessage(b.getDepositcode());
                             interaction.createFollowupMessageBuilder().addEmbed(emb).send();
-                            interaction.createFollowupMessageBuilder().setContent("Deposit code:").send();
-                            interaction.createFollowupMessageBuilder().setContent(b.getDepositcode()).send();
+
 
                         } catch (Exception e) {
                             interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
@@ -566,6 +565,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                                 bank.setFood(bank.getFood() + deposits.getFood());
                                 bank.setIron(bank.getIron() + deposits.getIron());
                                 bank.setOil(bank.getOil() + deposits.getOil());
+                                bank.setCoal(bank.getCoal() + deposits.getCoal());
                                 bank.setUranium(bank.getUranium() + deposits.getUranium());
                                 bank.setLeadRss(bank.getLeadRss() + deposits.getLeadRss());
                                 bank.setBauxite(bank.getBauxite() + deposits.getBauxite());
@@ -712,7 +712,23 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                                     errorLog += "Withdrawal amount cannot be zero or negative. \n";
                                 }
 
-                                if (errorLog.length() > 0) {
+                                long total = 0;
+                                total += cash;
+                                total += food;
+                                total += oil;
+                                total += uranium;
+                                total += lead;
+                                total += iron;
+                                total += bauxite;
+                                total += gasoline;
+                                total += munitions;
+                                total += steel;
+                                total += aluminum;
+                                total += coal;
+
+                                if (total <= 0) {
+                                    interaction.createFollowupMessageBuilder().setContent("Withdrawal amount cannot be zero or negative.").send();
+                                } else if (errorLog.length() > 0) {
                                     interaction.createFollowupMessageBuilder().setContent(errorLog).send();
                                 } else {
 
@@ -725,11 +741,13 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                                     b.setCoal(coal);
                                     b.setOil(oil);
                                     b.setGasoline(gasoline);
+                                    b.setMunitions(munitions);
                                     b.setSteel(steel);
                                     b.setUranium(uranium);
                                     b.setLeadRss(lead);
 
                                     b.setDiscordid(interaction.getUser().getIdAsString());
+                                    b.setWithdrawalType(WithdrawalTypes.WITHDRAWAL);
 
                                     withdrawalRepository.save(b);
 
@@ -738,8 +756,10 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                                     DecimalFormat d = new DecimalFormat("#,###");
 
                                     String nationName = MilUtil.getNationName(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid());
+                                    String fnation = nationName.replaceAll(" ", "+");
 
-                                    String withString = "[Requiem Bank](https://politicsandwar.com/alliance/id=10470&display=bank&w_money=" + cash + "&w_food=" + food + "&w_coal=" + coal + "&w_oil=" + oil + "&w_uranium=" + uranium + "&w_lead=" + lead + "&w_iron=" + iron + "&w_bauxite=" + bauxite + "&w_gasoline=" + gasoline + "&w_munitions=" + munitions + "&w_steel=" + steel + "&w_aluminum=" + aluminum + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + nationName + ")";
+
+                                    String withString = "[Requiem Bank](https://politicsandwar.com/alliance/id=10470&display=bank&w_money=" + cash + "&w_food=" + food + "&w_coal=" + coal + "&w_oil=" + oil + "&w_uranium=" + uranium + "&w_lead=" + lead + "&w_iron=" + iron + "&w_bauxite=" + bauxite + "&w_gasoline=" + gasoline + "&w_munitions=" + munitions + "&w_steel=" + steel + "&w_aluminum=" + aluminum + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";
 
                                     EmbedBuilder emb = new EmbedBuilder()
                                             .setTitle("Requiem Strongbox Services")
@@ -812,8 +832,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                             String id = b.getDiscordid();
 
 
-
-                            embedBuilder.addField(  b.getDepositcode() + " Withdrawal:",
+                            embedBuilder.addField(b.getDepositcode() + " " + b.getWithdrawalType() + " :",
                                     "<@" + id + ">" + "\n" + n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
                             );
 
@@ -828,27 +847,52 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                             Withdrawal withdrawal = withdrawalRepository.findWithdrawalByDepositcode(code);
                             Bank userBank = bankDao.findByDiscordid(withdrawal.getDiscordid());
                             User bankingUser = userRepository.findById(userBank.getDiscordid()).get();
-                            Bank updateAmount = BankUtil.getReceivedTransactions(bankingUser.getNationid(), code);
 
-                            if (updateAmount.getTotals() == 0) {
-                                interaction.createFollowupMessageBuilder().setContent("No withdrawal found.").send();
-                            } else {
+                            if (withdrawal.getWithdrawalType().equals(WithdrawalTypes.WITHDRAWAL)) {
 
-                                userBank.setCash(userBank.getCash() - updateAmount.getCash());
-                                userBank.setFood(userBank.getFood() - updateAmount.getFood());
-                                userBank.setIron(userBank.getIron() - updateAmount.getIron());
-                                userBank.setOil(userBank.getOil() - updateAmount.getOil());
-                                userBank.setUranium(userBank.getUranium() - updateAmount.getUranium());
-                                userBank.setLeadRss(userBank.getLeadRss() - updateAmount.getLeadRss());
-                                userBank.setBauxite(userBank.getBauxite() - updateAmount.getBauxite());
-                                userBank.setGasoline(userBank.getGasoline() - updateAmount.getGasoline());
-                                userBank.setMunitions(userBank.getMunitions() - updateAmount.getMunitions());
-                                userBank.setSteel(userBank.getSteel() - updateAmount.getSteel());
-                                userBank.setAluminum(userBank.getAluminum() - updateAmount.getAluminum());
+                                Bank updateAmount = BankUtil.getReceivedTransactions(bankingUser.getNationid(), code);
+
+                                if (updateAmount.getTotals() == 0) {
+                                    interaction.createFollowupMessageBuilder().setContent("No withdrawal found.").send();
+                                } else {
+
+                                    userBank.setCash(userBank.getCash() - updateAmount.getCash());
+                                    userBank.setFood(userBank.getFood() - updateAmount.getFood());
+                                    userBank.setCoal(userBank.getCoal() - updateAmount.getCoal());
+                                    userBank.setIron(userBank.getIron() - updateAmount.getIron());
+                                    userBank.setOil(userBank.getOil() - updateAmount.getOil());
+                                    userBank.setUranium(userBank.getUranium() - updateAmount.getUranium());
+                                    userBank.setLeadRss(userBank.getLeadRss() - updateAmount.getLeadRss());
+                                    userBank.setBauxite(userBank.getBauxite() - updateAmount.getBauxite());
+                                    userBank.setGasoline(userBank.getGasoline() - updateAmount.getGasoline());
+                                    userBank.setMunitions(userBank.getMunitions() - updateAmount.getMunitions());
+                                    userBank.setSteel(userBank.getSteel() - updateAmount.getSteel());
+                                    userBank.setAluminum(userBank.getAluminum() - updateAmount.getAluminum());
+                                    userBank.updateDepositCode();
+                                    bankDao.save(userBank);
+                                    withdrawalRepository.delete(withdrawal);
+                                    interaction.createFollowupMessageBuilder().setContent("Withdrawal recorded successfully.").send();
+
+                                }
+                            } else if (withdrawal.getWithdrawalType().equals(WithdrawalTypes.MODIFICATION)) {
+
+
+                                userBank.setCash(userBank.getCash() + withdrawal.getCash());
+                                userBank.setFood(userBank.getFood() + withdrawal.getFood());
+                                userBank.setCoal(userBank.getCoal() + withdrawal.getCoal());
+                                userBank.setIron(userBank.getIron() + withdrawal.getIron());
+                                userBank.setOil(userBank.getOil() + withdrawal.getOil());
+                                userBank.setUranium(userBank.getUranium() + withdrawal.getUranium());
+                                userBank.setLeadRss(userBank.getLeadRss() + withdrawal.getLeadRss());
+                                userBank.setBauxite(userBank.getBauxite() + withdrawal.getBauxite());
+                                userBank.setGasoline(userBank.getGasoline() + withdrawal.getGasoline());
+                                userBank.setMunitions(userBank.getMunitions() + withdrawal.getMunitions());
+                                userBank.setSteel(userBank.getSteel() + withdrawal.getSteel());
+                                userBank.setAluminum(userBank.getAluminum() + withdrawal.getAluminum());
                                 userBank.updateDepositCode();
                                 bankDao.save(userBank);
                                 withdrawalRepository.delete(withdrawal);
-                                interaction.createFollowupMessageBuilder().setContent("Withdrawal recorded successfully.").send();
+                                interaction.createFollowupMessageBuilder().setContent("Modification recorded successfully.").send();
 
                             }
 
@@ -857,8 +901,139 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                             e.printStackTrace();
                         }
 
-                    }
+                    } else if (interaction.getOptionByName("modify").isPresent()) {
 
+                        SlashCommandInteractionOption option = interaction.getOptionByName("modify").get();
+                        org.javacord.api.entity.user.User moddedUser = option.getOptionUserValueByName("member").get();
+
+                        if (bankDao.findByDiscordid(moddedUser.getIdAsString()) == null) {
+
+                            interaction.createFollowupMessageBuilder().setContent("That user does not have a bank account created.").send();
+
+                        } else {
+
+                            long cash = 0;
+                            long food = 0;
+                            long oil = 0;
+                            long uranium = 0;
+                            long lead = 0;
+                            long iron = 0;
+                            long bauxite = 0;
+                            long gasoline = 0;
+                            long munitions = 0;
+                            long steel = 0;
+                            long aluminum = 0;
+                            long coal = 0;
+
+                            if (option.getOptionLongValueByName("cash").isPresent()) {
+                                cash = option.getOptionLongValueByName("cash").get();
+                            }
+                            if (option.getOptionLongValueByName("food").isPresent()) {
+                                food = option.getOptionLongValueByName("food").get();
+                            }
+                            if (option.getOptionLongValueByName("oil").isPresent()) {
+                                oil = option.getOptionLongValueByName("oil").get();
+                            }
+                            if (option.getOptionLongValueByName("uranium").isPresent()) {
+                                uranium = option.getOptionLongValueByName("uranium").get();
+                            }
+                            if (option.getOptionLongValueByName("lead").isPresent()) {
+                                lead = option.getOptionLongValueByName("lead").get();
+                            }
+                            if (option.getOptionLongValueByName("iron").isPresent()) {
+                                iron = option.getOptionLongValueByName("iron").get();
+                            }
+                            if (option.getOptionLongValueByName("bauxite").isPresent()) {
+                                bauxite = option.getOptionLongValueByName("bauxite").get();
+                            }
+                            if (option.getOptionLongValueByName("gasoline").isPresent()) {
+                                gasoline = option.getOptionLongValueByName("gasoline").get();
+                            }
+                            if (option.getOptionLongValueByName("munitions").isPresent()) {
+                                munitions = option.getOptionLongValueByName("munitions").get();
+                            }
+                            if (option.getOptionLongValueByName("steel").isPresent()) {
+                                steel = option.getOptionLongValueByName("steel").get();
+                            }
+                            if (option.getOptionLongValueByName("aluminum").isPresent()) {
+                                aluminum = option.getOptionLongValueByName("aluminum").get();
+                            }
+                            if (option.getOptionLongValueByName("coal").isPresent()) {
+                                coal = option.getOptionLongValueByName("coal").get();
+                            }
+
+
+                            EmbedBuilder modEmbed = new EmbedBuilder()
+                                    .setAuthor(interaction.getUser())
+                                    .setTitle("Bank Modification")
+                                    .addField("This process is not reversible. Please carefully confirm the modification amounts before continuing.", interaction.getUser().getMentionTag() + " is attempting to modify the bank account of " + moddedUser.getMentionTag());
+
+                            NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+                            DecimalFormat d = new DecimalFormat("#,###");
+
+                            String modString = n.format(cash) + "\n<:food:915071870636789792> " + d.format(food) + " <:uranium:1024144769871523870> " + d.format(uranium) + " <:coal:1024144767858266222> " + d.format(coal) + " <:oil:1024144768487391303> " + d.format(oil) + " <:lead:1024144770857177119> " + d.format(lead) + " <:iron:1024144771884793918> " + d.format(iron) + " <:bauxite:1024144773075976243> " + d.format(bauxite) + " <:gasoline:1024144774602702868> " + d.format(gasoline) + " <:munitions:1024144775668051968> " + d.format(munitions) + " <:steel:1024144776548847656> " + d.format(steel) + " <:aluminum:1024144777509347348> " + d.format(aluminum);
+
+                            modEmbed.addField("Modification Amounts", modString)
+                                    .setFooter("HK-97 BADMIN ACCOUNT MODIFICATION", interaction.getApi().getYourself().getAvatar());
+
+
+                            Withdrawal b = new Withdrawal();
+                            b.setCash(cash);
+                            b.setFood(food);
+                            b.setAluminum(aluminum);
+                            b.setBauxite(bauxite);
+                            b.setIron(iron);
+                            b.setCoal(coal);
+                            b.setOil(oil);
+                            b.setMunitions(munitions);
+                            b.setGasoline(gasoline);
+                            b.setSteel(steel);
+                            b.setUranium(uranium);
+                            b.setLeadRss(lead);
+
+                            b.setDiscordid(option.getOptionUserValueByName("member").get().getIdAsString());
+                            b.setWithdrawalType(WithdrawalTypes.MODIFICATION);
+                            withdrawalRepository.save(b);
+
+                            interaction.createFollowupMessageBuilder().addEmbed(modEmbed).send();
+                            interaction.getChannel().get().sendMessage("Update code:");
+                            interaction.getChannel().get().sendMessage(b.getDepositcode());
+
+
+
+                        }
+
+                    } else if (interaction.getOptionByName("view").isPresent()) {
+
+                        org.javacord.api.entity.user.User viewUser = interaction.getOptionByName("view").get().getOptionUserValueByName("member").get();
+//                        User member = userRepository.findById(interaction.getUser().getIdAsString()).get();
+
+
+                        NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+                        DecimalFormat d = new DecimalFormat("#,###");
+
+                        Bank b = bankDao.findByDiscordid(viewUser.getIdAsString());
+
+                        EmbedBuilder emb = new EmbedBuilder()
+                                .setTitle("Requiem Strongbox Services")
+                                .setColor(Color.black)
+                                .setAuthor(viewUser)
+                                .addField("Deposit Code: ", "`" + b.getDepositcode() + "`")
+                                .addField("Totals:",
+                                        n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
+                                );
+
+                        interaction.createFollowupMessageBuilder().addEmbed(emb).send();
+
+
+                    } else if (interaction.getOptionByName("remove").isPresent()) {
+
+                        String code = interaction.getOptionByName("remove").get().getOptionStringValueByName("code").get();
+
+                        withdrawalRepository.delete(withdrawalRepository.findWithdrawalByDepositcode(code));
+                        interaction.createFollowupMessageBuilder().setContent("Successfully removed code.").send();
+
+                    }
 
                 }
 

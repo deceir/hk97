@@ -1,5 +1,6 @@
 package net.hk.hk97.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,10 @@ public class Bank {
     @Id
     @Getter @Setter
     private String discordid;
+
+    @Column
+    @Getter @Setter
+    private String name;
 
     @Column
     @Getter @Setter
@@ -69,6 +74,7 @@ public class Bank {
     private long aluminum =0;
 
     @Column
+    @JsonIgnore
     @Getter @Setter
     private String depositcode = RandomString.getSaltString();
 

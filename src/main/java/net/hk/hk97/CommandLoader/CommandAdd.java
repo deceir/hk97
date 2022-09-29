@@ -89,7 +89,7 @@ public class CommandAdd implements MessageCreateListener {
 
                 SlashCommand account = SlashCommand.with("account", "Account registration and verification.",
                                 Arrays.asList(
-                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "register", "Calculates cost of infrastructure.",
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "register", "Initial registration step.",
                                                 Arrays.asList(
 
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id. This can be found on your nation page.", true)
@@ -170,6 +170,10 @@ public class CommandAdd implements MessageCreateListener {
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "gasoline", "Gasoline to withdraw.", false),
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "lead", "Lead to withdraw.", false),
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "aluminum", "Aluminum to withdraw.", false)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "view", "View selected user's account.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member account to view.", true)
                                                 ))
 
                                 ))
