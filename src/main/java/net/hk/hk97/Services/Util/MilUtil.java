@@ -228,6 +228,69 @@ public class MilUtil {
     }
 
 
+    public static long getCities(long id) throws JSONException {
+        CloseableHttpClient client = null;
+        CloseableHttpResponse response = null;
+
+        client = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
+
+        httpPost.addHeader("Content-Type", "application/json");
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { num_cities } } }");
+
+        long cities = 0;
+
+
+        try {
+            StringEntity entity = new StringEntity(jsonObj.toString());
+
+            httpPost.setEntity(entity);
+            response = client.execute(httpPost);
+
+            System.out.println(response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            String line = null;
+            StringBuilder builder = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+
+                builder.append(line);
+
+                JSONObject myObject = new JSONObject(builder.toString());
+
+                JSONObject data = myObject.getJSONObject("data");
+
+                JSONObject nations = data.getJSONObject("nations");
+
+
+                try {
+
+                    JSONArray array = nations.getJSONArray("data");
+
+                    JSONObject object = array.getJSONObject(0);
+                    cities = object.optLong("num_cities");
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return cities;
+    }
 
 }
 

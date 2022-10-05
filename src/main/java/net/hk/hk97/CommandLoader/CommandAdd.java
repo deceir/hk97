@@ -103,9 +103,23 @@ public class CommandAdd implements MessageCreateListener {
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();
 
+                SlashCommand wc = SlashCommand.with("wc", "Warchest functions",
+                                Arrays.asList(
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "reqs", "Get your warchest requirements.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "cities", "Number of cities to calculate for.", false)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "calc", "Retrieve estimated value for your missing warchest.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "cities", "Number of cities to calculate for.", false)
+                                                ))
+                                ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
                 SlashCommand bank = SlashCommand.with("bank", "Requiem banking services.",
                                 Arrays.asList(
-                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "create", "Create a bank account. (max of three separate accounts)"),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "create", "Create a bank account."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "info", "View the amounts currently in your account."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "deposit", "Update your latest deposit"),
 //                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "transfer", "Transfer funds to another member's account. *This is irreversible, make sure you know what you're doing.*",
@@ -138,7 +152,7 @@ public class CommandAdd implements MessageCreateListener {
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "gasoline", "Gasoline to withdraw.", false),
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "lead", "Lead to withdraw.", false),
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "aluminum", "Aluminum to withdraw.", false)
-                                                        ))
+                                                ))
                                 ))
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();
@@ -174,7 +188,12 @@ public class CommandAdd implements MessageCreateListener {
                                         SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "view", "View selected user's account.",
                                                 Arrays.asList(
                                                         SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member account to view.", true)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "generate", "Generate member's withdrawal.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member account to view.", false)
                                                 ))
+
 
                                 ))
                         .createForServer(api.getServerById(Config.mainServerId).get())
@@ -184,6 +203,8 @@ public class CommandAdd implements MessageCreateListener {
 //                SlashCommand command = api.getGlobalSlashCommandById()
 //                        .get().deleteGlobal();
 
+
+                return;
             } catch (Exception e) {
                 messageCreateEvent.getChannel().sendMessage("There was an error deploying some or all commands.\n " + e.getMessage());
                 e.printStackTrace();

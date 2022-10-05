@@ -15,67 +15,54 @@ import javax.persistence.Table;
 @Table
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter @Setter
+
 public class Bank {
 
     @Id
-    @Getter @Setter
     private String discordid;
 
     @Column
-    @Getter @Setter
     private String name;
 
     @Column
-    @Getter @Setter
     private long cash = 0;
 
     @Column
-    @Getter @Setter
     private long food =0;
 
     @Column
-    @Getter @Setter
     private long uranium =0;
 
     @Column
-    @Getter @Setter
     private long coal =0;
 
     @Column
-    @Getter @Setter
     private long oil =0;
 
     @Column
-    @Getter @Setter
     private long leadRss =0;
 
     @Column
-    @Getter @Setter
     private long iron =0;
 
     @Column
-    @Getter @Setter
     private long bauxite =0;
 
     @Column
-    @Getter @Setter
     private long gasoline =0;
 
     @Column
-    @Getter @Setter
     private long munitions =0;
 
     @Column
-    @Getter @Setter
     private long steel =0;
 
     @Column
-    @Getter @Setter
     private long aluminum =0;
 
     @Column
     @JsonIgnore
-    @Getter @Setter
     private String depositcode = RandomString.getSaltString();
 
 

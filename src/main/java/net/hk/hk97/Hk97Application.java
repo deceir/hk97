@@ -11,6 +11,7 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.user.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -61,6 +62,7 @@ public class Hk97Application {
                 .login()
                 .join();
 
+        api.updateStatus(UserStatus.DO_NOT_DISTURB);
 //        ServerTextChannel channel = api.getServerTextChannelById("1024026875007340576").get();
 //        channel.addButtonClickListener(bankButtonListener);
 

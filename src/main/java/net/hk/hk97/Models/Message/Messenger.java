@@ -1,4 +1,4 @@
-package net.hk.hk97.Models.message;
+package net.hk.hk97.Models.Message;
 
 
 import com.goebl.david.Webb;
