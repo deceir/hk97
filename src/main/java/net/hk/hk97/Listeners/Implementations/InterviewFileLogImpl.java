@@ -1,20 +1,16 @@
 package net.hk.hk97.Listeners.Implementations;
 
 import net.hk.hk97.Config;
-import net.hk.hk97.Interview;
+import net.hk.hk97.Models.Interview;
 import net.hk.hk97.Listeners.InterviewFileLogListener;
 import net.hk.hk97.Repositories.InterviewRepository;
 import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.channel.Channel;
-import org.javacord.api.entity.channel.ChannelCategory;
-import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;

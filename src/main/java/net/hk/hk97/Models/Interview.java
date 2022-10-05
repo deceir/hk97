@@ -1,4 +1,4 @@
-package net.hk.hk97;
+package net.hk.hk97.Models;
 
 import lombok.Getter;
 import lombok.Setter;

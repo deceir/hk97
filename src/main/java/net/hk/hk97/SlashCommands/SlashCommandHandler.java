@@ -1,57 +1,20 @@
 package net.hk.hk97.SlashCommands;
 
-import io.github.adorableskullmaster.pw4j.PoliticsAndWar;
-import io.github.adorableskullmaster.pw4j.PoliticsAndWarBuilder;
-import io.github.adorableskullmaster.pw4j.domains.Nation;
-import net.hk.hk97.Config;
-import net.hk.hk97.Interview;
-import net.hk.hk97.Models.ActivityAudit;
-import net.hk.hk97.Models.Bank;
-import net.hk.hk97.Models.Enums.WithdrawalTypes;
-import net.hk.hk97.Models.User;
-import net.hk.hk97.Models.Withdrawal;
-import net.hk.hk97.Models.calc.AppraiseCalc;
-import net.hk.hk97.Models.calc.CityCalc;
-import net.hk.hk97.Models.calc.InfraCalc;
-import net.hk.hk97.Models.calc.LandCalc;
-import net.hk.hk97.Models.calc.graphql.models.charts.MakeChart;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
-import net.hk.hk97.Models.Message.Messenger;
 import net.hk.hk97.Repositories.BankRepository;
 import net.hk.hk97.Repositories.InterviewRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WithdrawalRepository;
-import net.hk.hk97.Services.Util.AuditUtil;
-import net.hk.hk97.Services.Util.BankUtil;
-import net.hk.hk97.Services.Util.MilUtil;
 import net.hk.hk97.SlashCommands.Commands.*;
-import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.*;
-import org.javacord.api.entity.message.MessageFlag;
-import org.javacord.api.entity.message.MessageSet;
-import org.javacord.api.entity.message.embed.Embed;
-import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.entity.permission.*;
-import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
 import org.javacord.api.interaction.SlashCommandInteraction;
-import org.javacord.api.interaction.SlashCommandInteractionOption;
 import org.javacord.api.listener.interaction.SlashCommandCreateListener;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class SlashCommandHandler implements SlashCommandCreateListener {

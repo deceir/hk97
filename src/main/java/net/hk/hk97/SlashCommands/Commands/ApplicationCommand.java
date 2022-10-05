@@ -4,7 +4,7 @@ import io.github.adorableskullmaster.pw4j.PoliticsAndWar;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWarBuilder;
 import io.github.adorableskullmaster.pw4j.domains.Nation;
 import net.hk.hk97.Config;
-import net.hk.hk97.Interview;
+import net.hk.hk97.Models.Interview;
 import net.hk.hk97.Repositories.InterviewRepository;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.Channel;
