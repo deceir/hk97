@@ -200,6 +200,19 @@ public class CommandAdd implements MessageCreateListener {
                         .join();
 
 
+                SlashCommand tr = SlashCommand.with("treasure", "Treasure-related functions.",
+                                Arrays.asList(
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "maxscore", "Get the top nation score."),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "hunt", "Get nations in-range of a specified color treasure (and optional continent.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.STRING, "color", "Color to hunt for.", true),
+                                                        SlashCommandOption.create(SlashCommandOptionType.STRING, "continent", "Continent to hunt for.", false)
+                                                )),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "list", "Get list of spawning treasures.")
+                                ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
 //                SlashCommand command = api.getGlobalSlashCommandById()
 //                        .get().deleteGlobal();
 

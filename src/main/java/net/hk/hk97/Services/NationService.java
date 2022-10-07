@@ -23,8 +23,7 @@ public class NationService {
     @Autowired
     private NationRepository nationsDao;
 
-//    @Scheduled(cron = "0 * */2 * * *")
-//    @Scheduled(cron = "0 * */2 * * *")
+    @Scheduled(cron = "0 * 12 * * *")
     public void updateNations() throws IOException {
 
         PoliticsAndWar pnw = new PoliticsAndWarBuilder().setApiKey(Config.itachiPnwKey).build();

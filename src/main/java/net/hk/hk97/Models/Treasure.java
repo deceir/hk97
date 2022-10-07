@@ -1,4 +1,4 @@
-package net.hk.hk97.Models.calc.graphql.models;
+package net.hk.hk97.Models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

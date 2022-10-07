@@ -30,7 +30,6 @@ public class BadminCommand {
     public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository) {
 
 
-
         org.javacord.api.entity.user.User user = interaction.getUser();
         List<Role> roles = user.getRoles(interaction.getApi().getServerById(Config.mainServerId).get());
         boolean isAdmin = false;
@@ -51,7 +50,7 @@ public class BadminCommand {
                 List<Withdrawal> pending = withdrawalRepository.findAll();
                 EmbedBuilder embedBuilder = new EmbedBuilder()
                         .setTitle("Pending Withdrawals")
-                        .setColor(Color.ORANGE)
+                        .setColor(Color.CYAN)
                         .setAuthor(interaction.getUser());
 
                 if (pending.size() == 0) {
@@ -101,7 +100,6 @@ public class BadminCommand {
                             userBank.setMunitions(userBank.getMunitions() - updateAmount.getMunitions());
                             userBank.setSteel(userBank.getSteel() - updateAmount.getSteel());
                             userBank.setAluminum(userBank.getAluminum() - updateAmount.getAluminum());
-                            userBank.updateDepositCode();
                             bankDao.save(userBank);
                             withdrawalRepository.delete(withdrawal);
                             interaction.createFollowupMessageBuilder().setContent("Withdrawal recorded successfully.").send();
@@ -116,7 +114,7 @@ public class BadminCommand {
                                     .setAuthor(interaction.getUser())
                                     .setTitle("Requiem Strongbox Services")
                                     .addField("Your withdrawal was successfully processed by " + interaction.getUser().getDiscriminatedName(), "Proccessed on: " + text)
-                                    .setColor(Color.ORANGE)
+                                    .setColor(Color.CYAN)
                                     .setFooter("Necron Banking Command", api.getYourself().getAvatar());
 
                             org.javacord.api.entity.user.User member = interaction.getApi().getUserById(bankingUser.getDiscordid()).get();

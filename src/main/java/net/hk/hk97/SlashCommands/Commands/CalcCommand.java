@@ -95,7 +95,7 @@ public class CalcCommand {
                         .addInlineField("RE+ALA Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
                         .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
                         .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
-                        .setColor(Color.orange);
+                        .setColor(Color.CYAN);
 
                 interaction.createFollowupMessageBuilder().addEmbed(eb).send();
 
@@ -117,7 +117,7 @@ public class CalcCommand {
                         .addInlineField("RE+ALA Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
                         .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
                         .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
-                        .setColor(Color.orange)
+                        .setColor(Color.CYAN)
                 ).send();
                 System.out.println("Embed sent.");
             }

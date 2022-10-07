@@ -19,6 +19,7 @@ import org.javacord.api.entity.permission.PermissionsBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.interaction.SlashCommandInteraction;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -76,7 +77,7 @@ public class ApplicationCommand {
                     .addInlineField("Alliance", nation.getAlliance())
                     .addField("Militarization", ":military_helmet: " + nation.getSoldiers() + " :bus: " + nation.getTanks() + " :airplane: " + nation.getAircraft() + " :ship: " + nation.getShips())
                     .addField("WMD's", ":rocket: " + nation.getMissiles() + " :radioactive: " + nation.getNukes())
-
+                    .setColor(Color.CYAN)
                     .setFooter("Necron Internal Command");
 
             interview.asTextChannel().get().sendMessage(eb).get().pin();
