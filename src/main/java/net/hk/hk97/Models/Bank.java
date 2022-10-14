@@ -10,6 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Table
@@ -24,6 +27,9 @@ public class Bank {
 
     @Column
     private String name;
+
+    @Column
+    private long nationid;
 
     @Column
     private long cash = 0;
@@ -85,4 +91,11 @@ public class Bank {
         total += this.gasoline;
         return total;
     }
+
+    public List<String> bankString() {
+        List<String> list = Arrays.asList(this.getName() + "", this.getNationid() + "", (this.getDiscordid()) + "", this.getCash() + "", this.getFood()+ "", this.getUranium() + "", this.getLeadRss()+ "", this.getCoal() + "", this.getIron() + "", this.getOil() + "", this.getBauxite() + "", this.getSteel() + "", this.getMunitions() + "", this.getGasoline() + "", this.getAluminum() + "");
+        return list;
+    }
+
+
 }

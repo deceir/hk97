@@ -39,6 +39,7 @@ public class BankCommand {
 
                     Bank newAccount = new Bank();
                     newAccount.setDiscordid(interaction.getUser().getIdAsString());
+                    newAccount.setNationid(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid());
                     newAccount.setName(interaction.getUser().getName());
                     bankDao.save(newAccount);
                     interaction.createFollowupMessageBuilder().setContent("Account created.").send();
@@ -51,7 +52,7 @@ public class BankCommand {
                 try {
 
                     List<Bank> listOfAccounts = bankDao.findBanksByDiscordid(interaction.getUser().getIdAsString());
-                    User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
+//                    User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
 
 
                     NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);

@@ -10,7 +10,7 @@
     </parent>
     <groupId>net.hk</groupId>
     <artifactId>hk-97</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>hk-97</name>
     <description>hk-97</description>
     <properties>
@@ -52,6 +52,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>io.github.adorable-skullmaster</groupId>

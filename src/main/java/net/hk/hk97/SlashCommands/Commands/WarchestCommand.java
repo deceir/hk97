@@ -52,10 +52,10 @@ public class WarchestCommand {
             String onHandAmountStr = "<:gasoline:1024144774602702868> " + d.format(cities * onhandgas) + " <:munitions:1024144775668051968> " + d.format(cities * onhandmunis) + " <:steel:1024144776548847656> " + d.format(cities * onhandsteel) + " <:aluminum:1024144777509347348> " + d.format(cities * onhandalu);
 
 
-            onhandgas = cities * 900;
-            onhandmunis = cities * 900;
-            onhandalu = cities * 600;
-            onhandsteel = cities * 1000;
+            onhandgas *= cities;
+            onhandmunis *= cities;
+            onhandalu *= cities;
+            onhandsteel *= cities;
 
             WarchestNation nation = WarchestUtil.getNationHoldings(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid());
 

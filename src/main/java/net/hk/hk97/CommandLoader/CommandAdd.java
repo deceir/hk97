@@ -81,8 +81,10 @@ public class CommandAdd implements MessageCreateListener {
                 SlashCommand audit =
                         SlashCommand.with("audit", "Retrieve list of nations that do not meet current nation requirements.",
                                         Arrays.asList(
-                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "activity", "Get list of inactive nations."),
-                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "spies", "Get list of nations that do not currently have max spies.")
+                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "activity", "Deprecated command."),
+                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "spies", "Deprecated command."),
+                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "nations", "Audit Requiem nations.")
+
                                         ))
                                 .createForServer(api.getServerById(Config.mainServerId).get())
                                 .join();

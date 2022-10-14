@@ -92,7 +92,7 @@ public class AuditUtil {
                         Instant instant = Instant.from( creationAccessor );
                         Duration duration = Duration.between(instant, Instant.now());
 
-                        if (duration.toHours() >= 24) {
+                        if (duration.toHours() >= 48) {
 
                             ActivityAudit audit = new ActivityAudit();
                            audit.setId(object.optInt("id"));

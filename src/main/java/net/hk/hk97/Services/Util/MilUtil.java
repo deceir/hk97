@@ -292,6 +292,57 @@ public class MilUtil {
         return cities;
     }
 
+    public static JSONObject getSpies(long id) throws JSONException {
+        CloseableHttpClient client = null;
+        CloseableHttpResponse response = null;
+
+        client = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
+
+        httpPost.addHeader("Content-Type", "application/json");
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("query", "{ nations (alliance_id: " + id + ") { data { id spies central_intelligence_agency food uranium } } }");
+
+
+        try {
+            StringEntity entity = new StringEntity(jsonObj.toString());
+
+            httpPost.setEntity(entity);
+            response = client.execute(httpPost);
+
+            System.out.println(response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        JSONObject nations = null;
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            String line = null;
+            StringBuilder builder = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+
+                builder.append(line);
+
+                JSONObject myObject = new JSONObject(builder.toString());
+
+                JSONObject data = myObject.getJSONObject("data");
+
+                nations = data.getJSONObject("nations");
+
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return nations;
+    }
+
 }
 
 

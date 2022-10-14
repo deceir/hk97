@@ -42,8 +42,7 @@ public class CalcCommand {
                         .addInlineField("2 Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
                         .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
                         .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
-                        .setColor(Color.orange);
-
+                        .setColor(Color.CYAN);
                 interaction.createFollowupMessageBuilder().addEmbed(eb).send();
 
 
@@ -65,7 +64,7 @@ public class CalcCommand {
                         .addInlineField("2 Cost", calc.getTwo_cost_f() + "\n saving: " + calc.getTwo_cost_saved_f())
                         .addInlineField("AEC Cost", calc.getAec_cost_f() + "\n saving: " + calc.getAec_cost_saved_f())
                         .addInlineField("GSA Cost", calc.getGsa_cost_f() + "\n saving: " + calc.getGsa_cost_saved_f())
-                        .setColor(Color.orange)
+                        .setColor(Color.CYAN)
                 ).send();
                 System.out.println("Embed sent.");
 
@@ -140,7 +139,7 @@ public class CalcCommand {
 
                     eb
                             .setTitle("The cost to get city " + start + " to city " + end)
-                            .setColor(Color.ORANGE)
+                            .setColor(Color.CYAN)
                             .setAuthor(interaction.getUser())
                             .addField("Base Cost", calc.getBase_cost_formatted())
                             .addInlineField("MD Cost", calc.getMd_cost_formatted() + "\n saving: " + calc.getMd_cost_saved_f())
@@ -164,7 +163,7 @@ public class CalcCommand {
                 eb
                         .setTitle("The cost to get city " + start + " has been calculated.")
                         .setAuthor(interaction.getUser())
-                        .setColor(Color.orange)
+                        .setColor(Color.CYAN)
                         .addField("Base Cost", calc.getBase_cost_formatted())
                         .addInlineField("MD Cost", calc.getMd_cost_formatted() + "\n saving: " + calc.getMd_cost_saved_f())
                         .addInlineField("UP + MD Cost", calc.getUp_cost_f() + "\n saving: " + calc.getUp_md_saved_f())

@@ -279,40 +279,47 @@ public class BadminCommand {
                 interaction.createFollowupMessageBuilder().setContent("Successfully removed withdrawal/modification.").send();
 
             } else if (interaction.getOptionByName("generate").isPresent()) {
+
                 org.javacord.api.entity.user.User member = null;
+
                 if (interaction.getOptionByName("generate").get().getOptionUserValueByName("member").isPresent()) {
+
                     member = interaction.getOptionByName("generate").get().getOptionUserValueByName("member").get();
+                    System.out.println("User value specified.");
+
                 } else {
                     member = interaction.getUser();
-                    Withdrawal b = new Withdrawal();
-                    b.setDiscordid(member.getIdAsString());
-                    b.setWithdrawalType(WithdrawalTypes.WITHDRAWAL);
-                    withdrawalRepository.save(b);
+                }
+                Withdrawal b = new Withdrawal();
+                b.setDiscordid(member.getIdAsString());
+                b.setWithdrawalType(WithdrawalTypes.WITHDRAWAL);
+                withdrawalRepository.save(b);
 
 
-                    String nationName = null;
-                    try {
+                String nationName = null;
 
-                        nationName = MilUtil.getNationName(userRepository.findById(member.getIdAsString()).get().getNationid());
-                        String fnation = nationName.replaceAll(" ", "+");
+                try {
 
-                        String withString = "[Requiem Bank](https://politicsandwar.com/alliance/id=10470&display=bank&w_money=" + b.getCash() + "&w_food=" + b.getFood() + "&w_coal=" + b.getCoal() + "&w_oil=" + b.getOil() + "&w_uranium=" + b.getUranium() + "&w_lead=" + b.getLeadRss() + "&w_iron=" + b.getIron() + "&w_bauxite=" + b.getBauxite() + "&w_gasoline=" + b.getGasoline() + "&w_munitions=" + b.getMunitions() + "&w_steel=" + b.getSteel() + "&w_aluminum=" + b.getAluminum() + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";
-                        EmbedBuilder embedBuilder = new EmbedBuilder()
-                                .setAuthor(interaction.getUser())
-                                .addField("Link:", withString);
-                        interaction.createFollowupMessageBuilder().setContent("Generated withdrawal code:").send();
-                        interaction.getChannel().get().sendMessage(b.getDepositcode());
-                        interaction.getChannel().get().sendMessage(embedBuilder);
-                    } catch (JSONException e) {
-                        interaction.createFollowupMessageBuilder().setContent("There was an error generating the withdrawal. \n" + e).send();
-                    }
+                    nationName = MilUtil.getNationName(userRepository.findById(member.getIdAsString()).get().getNationid());
+                    String fnation = nationName.replaceAll(" ", "+");
 
-
+                    String withString = "[Requiem Bank](https://politicsandwar.com/alliance/id=10470&display=bank&w_money=" + b.getCash() + "&w_food=" + b.getFood() + "&w_coal=" + b.getCoal() + "&w_oil=" + b.getOil() + "&w_uranium=" + b.getUranium() + "&w_lead=" + b.getLeadRss() + "&w_iron=" + b.getIron() + "&w_bauxite=" + b.getBauxite() + "&w_gasoline=" + b.getGasoline() + "&w_munitions=" + b.getMunitions() + "&w_steel=" + b.getSteel() + "&w_aluminum=" + b.getAluminum() + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";
+                    EmbedBuilder embedBuilder = new EmbedBuilder()
+                            .setAuthor(interaction.getUser())
+                            .addField("Link:", withString);
+                    interaction.createFollowupMessageBuilder().setContent("Generated withdrawal code:").send();
+                    interaction.getChannel().get().sendMessage(b.getDepositcode());
+                    interaction.getChannel().get().sendMessage(embedBuilder);
+                } catch (JSONException e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error generating the withdrawal. \n" + e).send();
                 }
 
 
             }
 
+
         }
+
     }
 }
+

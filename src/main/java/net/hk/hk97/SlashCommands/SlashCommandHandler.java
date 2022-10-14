@@ -71,7 +71,11 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "audit":
 
                 interaction.respondLater();
-                AuditCommand.audit(interaction, userRepository);
+                try {
+                    AuditCommand.audit(interaction, userRepository);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 break;
 
             case "account":
@@ -94,7 +98,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 break;
 
 
-            case "wc" :
+            case "wc":
                 interaction.respondLater();
                 try {
                     WarchestCommand.wc(interaction, resourceDao, userRepository, bankDao);
@@ -105,11 +109,11 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
             case "treasure":
                 interaction.respondLater();
-                TreasureCommand.treasures(interaction,nationRepository, treasureRepository, userRepository);
+                TreasureCommand.treasures(interaction, nationRepository, treasureRepository, userRepository);
                 break;
 
 
-                // new case goes here
+            // new case goes here
 
         }
     }
