@@ -8,6 +8,8 @@ import java.util.List;
 public interface NationRepository extends JpaRepository<Nation, Long> {
 
 
+    List<Nation> findNationByLeaderContainingIgnoreCaseAndAlliance(String name, String alliance);
+
     List<Nation> getNationsByColor(String color);
 
     List<Nation> getNationsByColorAndContinentLike(String color, String continent);

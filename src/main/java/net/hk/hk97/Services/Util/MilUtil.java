@@ -35,7 +35,7 @@ public class MilUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (id: " + id + ") { data { nation_name leader_name score last_active soldiers tanks aircraft ships missiles nukes cities } } }");
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { nation_name leader_name score last_active soldiers tanks aircraft ships missiles nukes num_cities } } }");
 
 
         try {
@@ -59,6 +59,8 @@ public class MilUtil {
                 builder.append(line);
 
                 JSONObject myObject = new JSONObject(builder.toString());
+                System.out.println("my object:");
+                System.out.println(myObject);
 
                 JSONObject data = myObject.getJSONObject("data");
 
@@ -80,7 +82,7 @@ public class MilUtil {
                         mil.setShips(object.optInt("ships"));
                         mil.setMissiles(object.optInt("missiles"));
                         mil.setNukes(object.optInt("nukes"));
-                        mil.setCities(object.optInt("cities"));
+                        mil.setCities(object.optInt("num_cities"));
 
                     }
                 } catch (JSONException e) {

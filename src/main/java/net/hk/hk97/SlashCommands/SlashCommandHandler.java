@@ -4,6 +4,7 @@ import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
 import net.hk.hk97.Repositories.*;
 import net.hk.hk97.SlashCommands.Commands.*;
 
+import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.listener.interaction.SlashCommandCreateListener;
@@ -53,7 +54,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
             case "apply":
 
-                interaction.respondLater();
+                interaction.createImmediateResponder().setContent("Processing application. Please check your pings in this server or your DM's for further info. Thank you.").setFlags(MessageFlag.EPHEMERAL).respond();
                 try {
                     ApplicationCommand.application(interaction, interviewRepository);
                 } catch (Exception e) {
@@ -112,8 +113,24 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 TreasureCommand.treasures(interaction, nationRepository, treasureRepository, userRepository);
                 break;
 
+            case "stats":
+                interaction.respondLater();
+                try {
+                    StatsCommand.getStats(interaction, userRepository);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-            // new case goes here
+                break;
+
+            case "who":
+                interaction.respondLater();
+                WhoCommand.getWho(interaction, nationRepository);
+                break;
+
+
+
+                    // new case goes here
 
         }
     }

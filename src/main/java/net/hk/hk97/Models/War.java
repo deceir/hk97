@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
@@ -43,5 +44,9 @@ public class War {
     @Column
     @Getter @Setter
     private String status;
+
+    @Column
+    @Getter @Setter
+    private LocalDateTime dateTimeAdded = LocalDateTime.now();
 
 }

@@ -81,8 +81,6 @@ public class CommandAdd implements MessageCreateListener {
                 SlashCommand audit =
                         SlashCommand.with("audit", "Retrieve list of nations that do not meet current nation requirements.",
                                         Arrays.asList(
-                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "activity", "Deprecated command."),
-                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "spies", "Deprecated command."),
                                                 SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "nations", "Audit Requiem nations.")
 
                                         ))
@@ -215,8 +213,27 @@ public class CommandAdd implements MessageCreateListener {
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();
 
-//                SlashCommand command = api.getGlobalSlashCommandById()
-//                        .get().deleteGlobal();
+                SlashCommand who = SlashCommand.with("who", "Search functionality.",
+                                Arrays.asList(
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "leader", "Get list of leaders.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.STRING, "Name", "Leader name.", true)
+                                                ))
+                                ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
+                SlashCommand stats =
+                        SlashCommand.with("stats", "A command dedicated to calculations",
+                                        Arrays.asList(
+                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "aarev", "Stat commands.",
+                                                        Arrays.asList(
+
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Alliance id.", true)
+                                                        ))
+                                        ))
+                                .createForServer(api.getServerById(Config.mainServerId).get())
+                                .join();
 
 
                 return;

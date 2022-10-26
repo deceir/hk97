@@ -34,7 +34,7 @@ public class ApplicationCommand {
         if (channel.get().getIdAsString().equals("1016465107468947559") || channel.get().getIdAsString().equalsIgnoreCase("1016449238567223406")) {
 
             if (interviewRepository.findById(interaction.getUser().getId()).isPresent()) {
-                interaction.createImmediateResponder().setContent("Error. You are only allowed a single interview room. Please check your existing room.").setFlags(MessageFlag.EPHEMERAL).respond();
+                interaction.getUser().sendMessage("Error. You are only allowed a single interview room. Please check your existing room.");
                 return;
             }
 
@@ -84,12 +84,12 @@ public class ApplicationCommand {
             MessageSet list = interview.asServerTextChannel().get().getMessages(0).get();
             list.getOldestMessage().get().pin();
 
-            interaction.createFollowupMessageBuilder().setContent("Your application room has been created, <@" + interaction.getUser().getIdAsString() + ">. <#" + interview.getIdAsString() + ">").setFlags(MessageFlag.EPHEMERAL).send();
-
             try {
+                interaction.getUser().sendMessage("Your application room has been created, <@" + interaction.getUser().getIdAsString() + ">. <#" + interview.getIdAsString() + ">");
+
                 TimeUnit.SECONDS.sleep(2);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
 
 

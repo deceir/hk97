@@ -88,28 +88,32 @@ public class AuditCommand {
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
+                try {
 
-                int cities = object.optInt("cities");
-                int id = object.optInt("id");
-                long foodHeld = object.optLong("food");
-                if (foodHeld <= 50000) {
-                    food += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                    int cities = object.optInt("cities");
+                    int id = object.optInt("id");
+                    long foodHeld = object.optLong("food");
+                    if (foodHeld <= 50000) {
+                        food += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                    }
+                    boolean hasIA = object.optBoolean("central_intelligence_agency");
+
+                    int spyCount = object.optInt("spies");
+
+                    if (hasIA && (spyCount < 60)) {
+                        spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                    } else if (!hasIA && spyCount < 50) {
+                        spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                    }
+                    long uraHeld = object.optInt("uranium");
+                    if (uraHeld < (cities * 3)) {
+                        uranium += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                    }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                boolean hasIA = object.optBoolean("central_intelligence_agency");
-
-                int spyCount = object.optInt("spies");
-
-                if (hasIA && (spyCount < 60)) {
-                    spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
-                } else if (!hasIA && spyCount < 50) {
-                    spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
-                }
-                long uraHeld = object.optInt("uranium");
-                if (uraHeld < (cities * 3)) {
-                    uranium += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
-                }
-
-
             }
             if (food.length() == 0) {
                 food = "No low food members.";
