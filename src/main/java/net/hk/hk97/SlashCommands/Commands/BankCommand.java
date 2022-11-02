@@ -1,10 +1,12 @@
 package net.hk.hk97.SlashCommands.Commands;
 
-import net.hk.hk97.Models.Bank;
+import net.hk.hk97.Models.Bank.Bank;
+import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
-import net.hk.hk97.Models.Withdrawal;
+import net.hk.hk97.Models.Bank.Withdrawal;
 import net.hk.hk97.Repositories.BankRepository;
+import net.hk.hk97.Repositories.LoanRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
@@ -19,13 +21,14 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class BankCommand {
 
-    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository) {
+    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository, LoanRepository loanRepository) {
 
         if (!userRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {
             interaction.createFollowupMessageBuilder().setContent("You do not have an HK account. Please use `/account register` before trying to use the bank.").send();
@@ -49,10 +52,12 @@ public class BankCommand {
                 }
 
             } else if (interaction.getOptionByName("info").isPresent()) {
+
                 try {
 
                     List<Bank> listOfAccounts = bankDao.findBanksByDiscordid(interaction.getUser().getIdAsString());
 //                    User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
+                    List<Loan> loans = loanRepository.getLoansByDiscordidAAndActive(interaction.getUser().getId(), true);
 
 
                     NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
@@ -69,6 +74,9 @@ public class BankCommand {
                                     n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
                             );
 
+                    if (listOfAccounts.size() > 0) {
+                        emb.addField("Loan Amount:" + loans.get(0).getAmount(), "   Due: " + loans.get(0).getDateDue() + "\nLoan Deposit Code: `" + loans.get(0).getDepositcode() + "`");
+                    }
 
 
                     interaction.createFollowupMessageBuilder().addEmbed(emb).send();
@@ -76,10 +84,18 @@ public class BankCommand {
                     interaction.getChannel().get().sendMessage("Deposit code:");
                     interaction.getChannel().get().sendMessage(b.getDepositcode());
 
+                    if (loans.size() > 0) {
+                        TimeUnit.SECONDS.sleep(1);
+                        interaction.getChannel().get().sendMessage("Loan code:");
+                        interaction.getChannel().get().sendMessage(loans.get(0).getDepositcode());
+                    }
+
                 } catch (Exception e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
                 }
+
             } else if (interaction.getOptionByName("deposit").isPresent()) {
+
                 try {
                     User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
                     Bank bank = bankDao.findByDiscordid(interaction.getUser().getIdAsString());
@@ -108,9 +124,11 @@ public class BankCommand {
 
 
                 } catch (Exception e) {
-                    interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
-                    e.printStackTrace();
-                }
+                        interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
+
+                    }
+
+
             } else if (interaction.getOptionByName("withdraw").isPresent()) {
 
                 if (!withdrawalRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {

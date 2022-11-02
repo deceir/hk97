@@ -1,6 +1,6 @@
 package net.hk.hk97.Controllers;
 
-import net.hk.hk97.Models.Bank;
+import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Repositories.BankRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -17,8 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller

@@ -1,6 +1,6 @@
 package net.hk.hk97.SlashCommands.Commands;
 
-import net.hk.hk97.Models.Bank;
+import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Models.WarchestNation;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
 import net.hk.hk97.Repositories.BankRepository;

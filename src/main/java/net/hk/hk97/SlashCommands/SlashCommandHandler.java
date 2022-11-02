@@ -32,6 +32,9 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     WithdrawalRepository withdrawalRepository;
 
     @Autowired
+    private LoanRepository loanRepository;
+
+    @Autowired
     private TreasureRepository treasureRepository;
 
     @Autowired
@@ -88,14 +91,14 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "bank":
 
                 interaction.respondLater();
-                BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository);
+                BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository, loanRepository);
                 break;
 
 
             case "badmin":
 
                 interaction.respondLater();
-                BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository);
+                BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository, loanRepository);
                 break;
 
 

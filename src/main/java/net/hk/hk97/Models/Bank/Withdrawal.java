@@ -1,9 +1,10 @@
-package net.hk.hk97.Models;
+package net.hk.hk97.Models.Bank;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.hk.hk97.Utils.RandomString;
 import net.hk.hk97.Models.Enums.WithdrawalTypes;
 
 import javax.persistence.Column;
@@ -11,7 +12,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Entity
 @Table

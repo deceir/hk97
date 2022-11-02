@@ -192,6 +192,19 @@ public class CommandAdd implements MessageCreateListener {
                                         SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "generate", "Generate member's withdrawal.",
                                                 Arrays.asList(
                                                         SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member account to view.", false)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND_GROUP, "loan", "Bank admin commands related to loans.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "create", "Create a loan for a user.",
+                                                                Arrays.asList(
+                                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "member", "User to add the new loan to.", true),
+                                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "amount", "Cash amount being loaned.", true),
+                                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "days", "Amount of days until loan is due.", true)
+                                                                )),
+                                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "remove", "Removes a loan by setting its status to inactive.",
+                                                                Arrays.asList(
+                                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "loan", "The loan id being removed.", true)
+                                                                ))
                                                 ))
 
 

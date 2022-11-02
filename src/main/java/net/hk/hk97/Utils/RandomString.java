@@ -1,9 +1,9 @@
-package net.hk.hk97.Models;
+package net.hk.hk97.Utils;
 
 import java.util.Random;
 
 public class RandomString {
-    static String getSaltString() {
+    public static String getSaltString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();

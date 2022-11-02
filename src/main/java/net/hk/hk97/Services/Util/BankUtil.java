@@ -1,7 +1,7 @@
 package net.hk.hk97.Services.Util;
 
 import net.hk.hk97.Config;
-import net.hk.hk97.Models.Bank;
+import net.hk.hk97.Models.Bank.Bank;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -10,7 +10,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
 import java.io.IOException;
