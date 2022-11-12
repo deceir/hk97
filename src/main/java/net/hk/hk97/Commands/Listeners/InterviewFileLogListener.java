@@ -1,4 +1,4 @@
-package net.hk.hk97.Listeners;
+package net.hk.hk97.Commands.Listeners;
 
 import org.javacord.api.listener.message.MessageCreateListener;
 

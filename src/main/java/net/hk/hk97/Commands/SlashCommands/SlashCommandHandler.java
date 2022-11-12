@@ -1,8 +1,8 @@
-package net.hk.hk97.SlashCommands;
+package net.hk.hk97.Commands.SlashCommands;
 
+import net.hk.hk97.Commands.SlashCommands.Commands.*;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
 import net.hk.hk97.Repositories.*;
-import net.hk.hk97.SlashCommands.Commands.*;
 
 import org.javacord.api.entity.message.MessageFlag;
 import org.javacord.api.event.interaction.SlashCommandCreateEvent;
@@ -31,8 +31,8 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     @Autowired
     WithdrawalRepository withdrawalRepository;
 
-    @Autowired
-    private LoanRepository loanRepository;
+//    @Autowired
+//    private LoanRepository loanRepository;
 
     @Autowired
     private TreasureRepository treasureRepository;
@@ -91,14 +91,14 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "bank":
 
                 interaction.respondLater();
-                BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository, loanRepository);
+                BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository);
                 break;
 
 
             case "badmin":
 
                 interaction.respondLater();
-                BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository, loanRepository);
+                BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository);
                 break;
 
 

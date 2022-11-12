@@ -30,7 +30,6 @@ public class BankController {
     public @ResponseBody
     ResponseEntity<?> viewAllBanksInJSONFormat() {
         ResponseEntity<List<Bank>> responseEntity;
-        List<Bank> list = bankDao.findAll();
         responseEntity = new ResponseEntity<>(bankDao.findAll(), HttpStatus.OK);
         return responseEntity;
     }

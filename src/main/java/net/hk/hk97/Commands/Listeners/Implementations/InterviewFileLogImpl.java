@@ -1,8 +1,8 @@
-package net.hk.hk97.Listeners.Implementations;
+package net.hk.hk97.Commands.Listeners.Implementations;
 
+import net.hk.hk97.Commands.Listeners.InterviewFileLogListener;
 import net.hk.hk97.Config;
 import net.hk.hk97.Models.Interview;
-import net.hk.hk97.Listeners.InterviewFileLogListener;
 import net.hk.hk97.Repositories.InterviewRepository;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.Channel;

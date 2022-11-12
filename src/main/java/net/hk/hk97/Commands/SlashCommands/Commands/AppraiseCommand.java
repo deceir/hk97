@@ -1,4 +1,4 @@
-package net.hk.hk97.SlashCommands.Commands;
+package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Models.calc.AppraiseCalc;
 import net.hk.hk97.Models.calc.graphql.models.charts.MakeChart;

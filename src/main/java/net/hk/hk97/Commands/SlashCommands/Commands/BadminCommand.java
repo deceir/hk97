@@ -1,4 +1,4 @@
-package net.hk.hk97.SlashCommands.Commands;
+package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Config;
 import net.hk.hk97.Models.Bank.Bank;
@@ -7,7 +7,7 @@ import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.Bank.Withdrawal;
 import net.hk.hk97.Repositories.BankRepository;
-import net.hk.hk97.Repositories.LoanRepository;
+//import net.hk.hk97.Repositories.LoanRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
@@ -29,7 +29,7 @@ import java.util.Locale;
 
 public class BadminCommand {
 
-    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository, LoanRepository loanRepository) {
+    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository) {
 
 
         org.javacord.api.entity.user.User user = interaction.getUser();
@@ -317,47 +317,49 @@ public class BadminCommand {
                 }
 
 
-            } else if (interaction.getOptionByName("loan").isPresent()) {
-                if (interaction.getOptionByName("loan").get().getOptionByName("create").isPresent()) {
-                    org.javacord.api.entity.user.User member = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionUserValueByName("member").get();
-
-                    LocalDate date = LocalDate.now().plusDays(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("days").get());
-                    long amount = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get();
-                    Loan loan = new Loan();
-                    loan.setDiscordid(member.getId());
-                    loan.setActive(true);
-                    loan.setDateDue(date);
-                    loan.setAmount(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get());
-                    loan.setBanker(interaction.getUser().getIdAsString());
-                    loanRepository.save(loan);
-
-                    NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
-
-
-                    EmbedBuilder eb = new EmbedBuilder()
-                            .setTitle("Loan Created for " + member.getDiscriminatedName())
-                            .setAuthor(member)
-                            .addField("Loan Amount: " + n.format(amount), "Due Date: " + date + "\nBanker: " + interaction.getUser().getMentionTag() + "\nLoan ID: " + loan.getId())
-                            .setFooter("Necron Banking Command", interaction.getApi().getYourself().getAvatar());
-
-
-                    interaction.createFollowupMessageBuilder().addEmbed(eb).send();
-
-                }
-
-            } else if (interaction.getOptionByName("loan").get().getOptionByName("remove").isPresent()) {
-
-                Loan loan = loanRepository.findById(interaction.getOptionByName("loan").get().getOptionByName("remove").get().getOptionLongValueByName("loan").get()).get();
-                loan.setActive(false);
-                loanRepository.save(loan);
-
-                EmbedBuilder eb = new EmbedBuilder()
-                        .setTitle("Loan Removed")
-                        .addField("Loan Removed", "Loan ID: " + loan.getId())
-                        .setFooter("Necron Banking Command", interaction.getApi().getYourself().getAvatar());
-
-                interaction.createFollowupMessageBuilder().addEmbed(eb).send();
             }
+//            else if (interaction.getOptionByName("loan").isPresent()) {
+//
+//                if (interaction.getOptionByName("loan").get().getOptionByName("create").isPresent()) {
+//                    org.javacord.api.entity.user.User member = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionUserValueByName("member").get();
+//
+//                    LocalDate date = LocalDate.now().plusDays(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("days").get());
+//                    long amount = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get();
+//                    Loan loan = new Loan();
+//                    loan.setDiscordid(member.getId());
+//                    loan.setActive(true);
+//                    loan.setDateDue(date);
+//                    loan.setAmount(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get());
+//                    loan.setBanker(interaction.getUser().getIdAsString());
+//                    loanRepository.save(loan);
+//
+//                    NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+//
+//
+//                    EmbedBuilder eb = new EmbedBuilder()
+//                            .setTitle("Loan Created for " + member.getDiscriminatedName())
+//                            .setAuthor(member)
+//                            .addField("Loan Amount: " + n.format(amount), "Due Date: " + date + "\nBanker: " + interaction.getUser().getMentionTag() + "\nLoan ID: " + loan.getId())
+//                            .setFooter("Necron Banking Command", interaction.getApi().getYourself().getAvatar());
+//
+//
+//                    interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+//
+//                }
+//
+//            } else if (interaction.getOptionByName("loan").get().getOptionByName("remove").isPresent()) {
+//
+//                Loan loan = loanRepository.findById(interaction.getOptionByName("loan").get().getOptionByName("remove").get().getOptionLongValueByName("loan").get()).get();
+//                loan.setActive(false);
+//                loanRepository.save(loan);
+//
+//                EmbedBuilder eb = new EmbedBuilder()
+//                        .setTitle("Loan Removed")
+//                        .addField("Loan Removed", "Loan ID: " + loan.getId())
+//                        .setFooter("Necron Banking Command", interaction.getApi().getYourself().getAvatar());
+//
+//                interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+//            }
 
 
         }

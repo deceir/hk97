@@ -1,6 +1,6 @@
-package net.hk.hk97.Listeners.Implementations;
+package net.hk.hk97.Commands.Listeners.Implementations;
 
-import net.hk.hk97.Listeners.ApplicationListener;
+import net.hk.hk97.Commands.Listeners.ApplicationListener;
 import net.hk.hk97.Repositories.InterviewRepository;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.*;

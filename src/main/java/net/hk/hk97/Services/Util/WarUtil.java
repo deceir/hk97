@@ -146,7 +146,7 @@ public class WarUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ wars (nation_id: " + id + ") { data { id reason ground_control air_superiority naval_blockade war_type turns_left att_resistance def_resistance att_points def_points att_infra_destroyed_value def_infra_destroyed_value attacker { alliance { acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes last_active } defender { alliance { acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes last_active }} } }");
+        jsonObj.put("query", "{ wars (nation_id: " + id + ") { data { id reason ground_control air_superiority naval_blockade war_type turns_left att_resistance def_resistance att_points def_points att_infra_destroyed_value def_infra_destroyed_value attacker { alliance { acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes iron_dome vital_defense_system last_active num_cities } defender { alliance { acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes last_active iron_dome vital_defense_system num_cities }} } }");
 
 
         try {
@@ -212,6 +212,9 @@ public class WarUtil {
                         attacker.setNukes(attackerNation.optInt("nukes"));
                         attacker.setId(attackerNation.optInt("id"));
                         attacker.setLast_active(attackerNation.optString("last_active"));
+                        attacker.setIronDome(attackerNation.optBoolean("iron_dome"));
+                        attacker.setVds(attackerNation.optBoolean("vital_defense_system"));
+                        attacker.setCities(attackerNation.optInt("num_cities"));
                         war.setAttackerNation(attacker);
 
                         //defender
@@ -238,6 +241,9 @@ public class WarUtil {
                         defender.setNukes(defenderNation.optInt("nukes"));
                         defender.setId(defenderNation.optInt("id"));
                         defender.setLast_active(defenderNation.optString("last_active"));
+                        defender.setIronDome(defenderNation.optBoolean("iron_dome"));
+                        defender.setVds(defenderNation.optBoolean("vital_defense_system"));
+                        defender.setCities(defenderNation.optInt("num_cities"));
                         war.setDefenderNation(defender);
 
                         int groundControl = object.optInt("ground_control");
@@ -317,7 +323,7 @@ public class WarUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (id: " + id + ") { data { nation_name score alliance { acronym name } soldiers tanks aircraft ships missiles nukes last_active } } }");
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { leader_name score alliance { acronym name } soldiers tanks aircraft ships missiles nukes last_active num_cities } } }");
 
         String name = "";
 
@@ -363,7 +369,7 @@ public class WarUtil {
                         nation.setAlliance(" ");
                     }
                     nation.setScore(object.optInt("score"));
-                    nation.setNation(object.optString("nation_name"));
+                    nation.setNation(object.optString("leader_name"));
                     nation.setSoldiers(object.optInt("soldiers"));
                     nation.setTanks(object.optInt("tanks"));
                     nation.setAircraft(object.optInt("aircraft"));
@@ -371,6 +377,7 @@ public class WarUtil {
                     nation.setNukes(object.optInt("nukes"));
                     nation.setMissiles(object.optInt("missiles"));
                     nation.setLast_active(object.optString("last_active"));
+                    nation.setCities(object.optInt("num_cities"));
 
 
                 } catch (JSONException e) {

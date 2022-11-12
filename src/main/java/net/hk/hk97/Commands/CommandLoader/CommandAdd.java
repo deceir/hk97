@@ -1,4 +1,4 @@
-package net.hk.hk97.CommandLoader;
+package net.hk.hk97.Commands.CommandLoader;
 
 
 import net.hk.hk97.Config;

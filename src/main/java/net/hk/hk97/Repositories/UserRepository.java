@@ -4,13 +4,15 @@ import net.hk.hk97.Models.User;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 @Configuration
 
 public interface UserRepository extends JpaRepository<User, String> {
 
     User findUserByNationid(long id);
 
-    User findUserByLeadernameLike(String name);
+    List<User> getUsersByLeadernameContainingIgnoreCase(String name);
 
 
 }

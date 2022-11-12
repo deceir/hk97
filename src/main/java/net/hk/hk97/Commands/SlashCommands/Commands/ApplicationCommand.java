@@ -1,4 +1,4 @@
-package net.hk.hk97.SlashCommands.Commands;
+package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import io.github.adorableskullmaster.pw4j.PoliticsAndWar;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWarBuilder;

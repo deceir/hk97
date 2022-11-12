@@ -1,4 +1,4 @@
-package net.hk.hk97.SlashCommands.Commands;
+package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Models.WarchestNation;

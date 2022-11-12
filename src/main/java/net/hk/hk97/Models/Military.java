@@ -61,6 +61,15 @@ public class Military {
     @Getter @Setter
     String last_active;
 
+    @Getter @Setter
+    private boolean ironDome;
+
+    @Getter @Setter
+    private boolean vds;
+
+    @Getter @Setter
+    private int beige_turns_left;
+
     public Duration getActivity() {
         TemporalAccessor creationAccessor = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(this.getLast_active() );
         Instant instant = Instant.from( creationAccessor );
