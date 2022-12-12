@@ -12,6 +12,8 @@ import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.Reaction;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -321,7 +323,9 @@ public class BankCommand {
                             channel1.sendMessage("Withdrawal request: ");
                             channel1.sendMessage(b.getDepositcode());
                             channel1.sendMessage(emb);
-                            channel1.sendMessage(role.getMentionTag());
+
+                            Message msg = channel1.sendMessage(role.getMentionTag()).get();
+                            msg.addReaction("✅");
 
 
                             interaction.createFollowupMessageBuilder().setContent("Withdrawal request submitted. Please wait for the Econ Department to process your request.").send();

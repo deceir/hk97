@@ -205,7 +205,10 @@ public class CommandAdd implements MessageCreateListener {
                                                                 Arrays.asList(
                                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "loan", "The loan id being removed.", true)
                                                                 ))
-                                                ))
+                                                )),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "member_deposits", "View the combined totals of member deposits."),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bankbalance", "View the 'true' bank balance, with member deposits subtracted..")
+
 
 
                                 ))

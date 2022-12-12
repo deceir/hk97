@@ -41,5 +41,7 @@ public class WarInfo {
     @Getter @Setter
     private int defmaps;
 
+    @Getter @Setter
+    private String allianceName;
 
 }

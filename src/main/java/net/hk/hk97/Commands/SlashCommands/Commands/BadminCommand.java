@@ -29,7 +29,7 @@ import java.util.Locale;
 
 public class BadminCommand {
 
-    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository) {
+    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository) throws JSONException {
 
 
         org.javacord.api.entity.user.User user = interaction.getUser();
@@ -263,7 +263,7 @@ public class BadminCommand {
 
                 EmbedBuilder emb = new EmbedBuilder()
                         .setTitle("Requiem Strongbox Services")
-                        .setColor(Color.black)
+                        .setColor(Color.cyan)
                         .setAuthor(viewUser)
                         .addField("Deposit Code: ", "`" + b.getDepositcode() + "`")
                         .addField("Totals:",
@@ -316,6 +316,73 @@ public class BadminCommand {
                     interaction.createFollowupMessageBuilder().setContent("There was an error generating the withdrawal. \n" + e).send();
                 }
 
+
+            } else if (interaction.getOptionByName("member_deposits").isPresent()) {
+                List<Bank> list = bankDao.findAll();
+                Bank b = new Bank();
+                for (Bank bank : list) {
+                    b.setAluminum(b.getAluminum() + bank.getAluminum());
+                    b.setBauxite(b.getBauxite() + bank.getBauxite());
+                    b.setGasoline(b.getGasoline() + bank.getGasoline());
+                    b.setFood(b.getFood() + bank.getFood());
+                    b.setCoal(b.getCoal() + bank.getCoal());
+                    b.setCash(b.getCash() + bank.getCash());
+                    b.setIron(b.getIron() + bank.getIron());
+                    b.setOil(b.getOil() + bank.getOil());
+                    b.setLeadRss(b.getLeadRss() + bank.getLeadRss());
+                    b.setSteel(b.getSteel() + bank.getSteel());
+                    b.setMunitions(b.getMunitions() + bank.getMunitions());
+                    b.setUranium(b.getUranium() + bank.getUranium());
+                }
+
+
+                NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+                DecimalFormat d = new DecimalFormat("#,###");
+
+                EmbedBuilder emb = new EmbedBuilder()
+                        .setTitle("Requiem Strongbox Services")
+                        .setDescription("Combined totals of all member account deposits.")
+                        .setColor(Color.cyan)
+                        .setAuthor(interaction.getUser())
+                        .addField("Totals:",
+                                n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
+                        );
+
+                interaction.createFollowupMessageBuilder().addEmbed(emb).send();
+
+            } else if (interaction.getOptionByName("bankbalance").isPresent()) {
+
+                Bank b = BankUtil.getBankBalance(10470);
+                List<Bank> banks = bankDao.findAll();
+
+                for (Bank bank : banks) {
+
+                    b.setAluminum(b.getAluminum() - bank.getAluminum());
+                    b.setBauxite(b.getBauxite() - bank.getBauxite());
+                    b.setGasoline(b.getGasoline() - bank.getGasoline());
+                    b.setFood(b.getFood() - bank.getFood());
+                    b.setCoal(b.getCoal() - bank.getCoal());
+                    b.setCash(b.getCash() - bank.getCash());
+                    b.setIron(b.getIron() - bank.getIron());
+                    b.setOil(b.getOil() - bank.getOil());
+                    b.setLeadRss(b.getLeadRss() - bank.getLeadRss());
+                    b.setSteel(b.getSteel() - bank.getSteel());
+                    b.setMunitions(b.getMunitions() - bank.getMunitions());
+                    b.setUranium(b.getUranium() - bank.getUranium());
+                }
+
+                NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+                DecimalFormat d = new DecimalFormat("#,###");
+                EmbedBuilder emb = new EmbedBuilder()
+                        .setTitle("Requiem Strongbox Services")
+                        .setDescription("Bank balance with all member deposits subtracted.")
+                        .setColor(Color.cyan)
+                        .setAuthor(interaction.getUser())
+                        .addField("Totals:",
+                                n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
+                        );
+
+                interaction.createFollowupMessageBuilder().addEmbed(emb).send();
 
             }
 //            else if (interaction.getOptionByName("loan").isPresent()) {

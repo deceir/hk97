@@ -89,6 +89,7 @@ public class Bank {
         total += this.aluminum;
         total += this.steel;
         total += this.gasoline;
+        total += this.bauxite;
         return total;
     }
 

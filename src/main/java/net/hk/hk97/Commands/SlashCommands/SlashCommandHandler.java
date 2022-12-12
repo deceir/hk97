@@ -98,7 +98,11 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "badmin":
 
                 interaction.respondLater();
-                BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository);
+                try {
+                    BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository);
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.").send();
+                }
                 break;
 
 

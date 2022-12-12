@@ -146,7 +146,7 @@ public class WarUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ wars (nation_id: " + id + ") { data { id reason ground_control air_superiority naval_blockade war_type turns_left att_resistance def_resistance att_points def_points att_infra_destroyed_value def_infra_destroyed_value attacker { alliance { acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes iron_dome vital_defense_system last_active num_cities } defender { alliance { acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes last_active iron_dome vital_defense_system num_cities }} } }");
+        jsonObj.put("query", "{ wars (nation_id: " + id + ") { data { id reason ground_control air_superiority naval_blockade war_type turns_left att_resistance def_resistance att_points def_points att_infra_destroyed_value def_infra_destroyed_value attacker { alliance { name acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes iron_dome vital_defense_system last_active num_cities } defender { alliance { name acronym } id score color nation_name leader_name soldiers tanks aircraft ships missiles nukes last_active iron_dome vital_defense_system num_cities }} } }");
 
 
         try {
@@ -194,6 +194,7 @@ public class WarUtil {
                             if (attackerNation.has("alliance")) {
                                 JSONObject defAlliance = attackerNation.getJSONObject("alliance");
                                 attacker.setAaAcronym(defAlliance.optString("acronym"));
+                                attacker.setAaname(defAlliance.optString("name"));
                             }
                         } catch (JSONException e) {
                             attacker.setAaAcronym("");
@@ -224,6 +225,7 @@ public class WarUtil {
                             if (defenderNation.has("alliance")) {
                                 JSONObject defAlliance = defenderNation.getJSONObject("alliance");
                                 defender.setAaAcronym(defAlliance.optString("acronym"));
+                                defender.setAaname(defAlliance.optString("name"));
                             }
                         } catch (JSONException e) {
                             defender.setAaAcronym("");
