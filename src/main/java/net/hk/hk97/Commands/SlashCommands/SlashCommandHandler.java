@@ -78,7 +78,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 try {
                     AuditCommand.audit(interaction, userRepository);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                interaction.createFollowupMessageBuilder().setContent("There was an error executing that command.\n" + e).send();
                 }
                 break;
 

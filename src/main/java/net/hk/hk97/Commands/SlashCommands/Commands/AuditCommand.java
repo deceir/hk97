@@ -58,13 +58,16 @@ public class AuditCommand {
 
         } else if (interaction.getOptionByName("nations").isPresent()) {
 
-            DiscordApi api = interaction.getApi();
+            try {
 
-            JSONObject nations = MilUtil.getSpies(10470);
-            //pings for each
-            String food = "";
-            String uranium = "";
-            String spies = "";
+
+                DiscordApi api = interaction.getApi();
+
+                JSONObject nations = MilUtil.getSpies(10470);
+                //pings for each
+                String food = "";
+                String uranium = "";
+                String spies = "";
 
 
                 List<ActivityAudit> audits = AuditUtil.getActivityAudit();
@@ -86,46 +89,46 @@ public class AuditCommand {
 
                 JSONArray array = nations.getJSONArray("data");
 
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject object = array.getJSONObject(i);
-                try {
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject object = array.getJSONObject(i);
+                    try {
 
-                    int cities = object.optInt("cities");
-                    int id = object.optInt("id");
-                    long foodHeld = object.optLong("food");
-                    if (foodHeld <= 50000) {
-                        food += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                        int cities = object.optInt("cities");
+                        int id = object.optInt("id");
+                        long foodHeld = object.optLong("food");
+                        if (foodHeld <= 50000) {
+                            food += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                        }
+                        boolean hasIA = object.optBoolean("central_intelligence_agency");
+
+                        int spyCount = object.optInt("spies");
+
+                        if (hasIA && (spyCount < 60)) {
+                            spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                        } else if (!hasIA && spyCount < 50) {
+                            spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                        }
+                        long uraHeld = object.optInt("uranium");
+                        if (uraHeld < (cities * 3)) {
+                            uranium += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    boolean hasIA = object.optBoolean("central_intelligence_agency");
-
-                    int spyCount = object.optInt("spies");
-
-                    if (hasIA && (spyCount < 60)) {
-                        spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
-                    } else if (!hasIA && spyCount < 50) {
-                        spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
-                    }
-                    long uraHeld = object.optInt("uranium");
-                    if (uraHeld < (cities * 3)) {
-                        uranium += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
-                    }
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-            if (food.length() == 0) {
-                food = "No low food members.";
-            }
+                if (food.length() == 0) {
+                    food = "No low food members.";
+                }
 
-            if (uranium.length() == 0) {
-                uranium = "No low uranium members.";
-            }
+                if (uranium.length() == 0) {
+                    uranium = "No low uranium members.";
+                }
 
-            if (spies.length() == 0) {
-                spies = "No members without max spies.";
-            }
+                if (spies.length() == 0) {
+                    spies = "No members without max spies.";
+                }
                 EmbedBuilder eb = new EmbedBuilder()
                         .setTitle("Requiem Audit")
                         .setColor(Color.CYAN)
@@ -138,6 +141,10 @@ public class AuditCommand {
 
 
                 interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+
+            } catch (Exception e) {
+                interaction.createFollowupMessageBuilder().setContent("There was an error retrieving the information for this audit.\n" + e).send();
+            }
 
 
         }
