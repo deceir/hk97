@@ -8,6 +8,7 @@ import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.Button;
+import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.interaction.SlashCommandOption;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.nio.channels.Channel;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class CommandAdd implements MessageCreateListener {
@@ -27,6 +29,22 @@ public class CommandAdd implements MessageCreateListener {
             DiscordApi api = messageCreateEvent.getApi();
 
             try {
+
+                //stuff for deleting command by id. use id for command to remove. server for server to remove from.
+
+//                String id = "1016240494948397066";
+//
+//                Server server = api.getServerById("1016240494948397066").get();
+//
+//                List<SlashCommand> commands = api.getServerSlashCommands(server).get();
+//
+//                for (SlashCommand command : commands) {
+//                    if(command.getIdAsString().equalsIgnoreCase(id)) {
+//                        command.deleteForServer(server);
+//                    }
+//                }
+
+
 
                 SlashCommand appraise =
                         SlashCommand.with("appraise", "Utilize the appraisal function.")
@@ -79,11 +97,7 @@ public class CommandAdd implements MessageCreateListener {
                                 .join();
 
                 SlashCommand audit =
-                        SlashCommand.with("audit", "Retrieve list of nations that do not meet current nation requirements.",
-                                        Arrays.asList(
-                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "nations", "Audit Requiem nations.")
-
-                                        ))
+                        SlashCommand.with("audit", "Retrieve list of nations that do not meet current nation requirements.")
                                 .createForServer(api.getServerById(Config.mainServerId).get())
                                 .join();
 
@@ -234,7 +248,12 @@ public class CommandAdd implements MessageCreateListener {
                                         SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "leader", "Get list of leaders.",
                                                 Arrays.asList(
                                                         SlashCommandOption.create(SlashCommandOptionType.STRING, "Name", "Leader name.", true)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "nation", "Get info for given nation within Requiem.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id for the nation to query.", true)
                                                 ))
+
                                 ))
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();

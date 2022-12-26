@@ -28,7 +28,7 @@ public class NationService {
 
         PoliticsAndWar pnw = new PoliticsAndWarBuilder().setApiKey(Config.itachiPnwKey).build();
 
-        List<SNationContainer> nationList = pnw.getNations().getNationsContainer();
+        List<SNationContainer> nationList = pnw.getNations(false).getNationsContainer();
 
         for (SNationContainer nation : nationList) {
             Nation newNation = new Nation();

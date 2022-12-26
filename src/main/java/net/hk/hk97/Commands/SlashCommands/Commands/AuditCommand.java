@@ -14,49 +14,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class AuditCommand {
 
     public static void audit(SlashCommandInteraction interaction, UserRepository userRepository) throws JSONException {
-        if (interaction.getOptionByName("activity").isPresent()) {
-
-            try {
-                List<ActivityAudit> audits = AuditUtil.getActivityAudit();
-
-                EmbedBuilder activityEmbed = new EmbedBuilder()
-                        .setAuthor(interaction.getUser())
-                        .setColor(Color.CYAN);
-
-                String inactiveUsers = "";
-
-                for (ActivityAudit audit : audits) {
-                    User user = userRepository.findUserByNationid(audit.getId());
-
-                    inactiveUsers += "<@" + user.getDiscordid() + "> last active " + audit.getLastActive() + "hrs ago";
-                    inactiveUsers += "\n";
-
-                }
-
-                if (inactiveUsers.length() == 0) {
-                    inactiveUsers = "No inactive users.";
-                }
-
-                activityEmbed.addField("Inactive Nations:", inactiveUsers);
-
-                interaction.createFollowupMessageBuilder().addEmbed(activityEmbed).send();
-
-
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-
-        } else if (interaction.getOptionByName("spies").isPresent()) {
-
-
-            interaction.createFollowupMessageBuilder().setContent("This command has been deprecated. Please use `/audit nations` to get this information.").setFlags(MessageFlag.EPHEMERAL).send();
-
-        } else if (interaction.getOptionByName("nations").isPresent()) {
 
             try {
 
@@ -68,6 +31,7 @@ public class AuditCommand {
                 String food = "";
                 String uranium = "";
                 String spies = "";
+                DecimalFormat d = new DecimalFormat("#,###");
 
 
                 List<ActivityAudit> audits = AuditUtil.getActivityAudit();
@@ -78,7 +42,7 @@ public class AuditCommand {
                 for (ActivityAudit audit : audits) {
                     User user = userRepository.findUserByNationid(audit.getId());
 
-                    inactiveUsers += "<@" + user.getDiscordid() + "> last active " + audit.getLastActive() + "hrs ago";
+                    inactiveUsers += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") last active " + audit.getLastActive() + "hrs ago";
                     inactiveUsers += "\n";
 
                 }
@@ -96,21 +60,23 @@ public class AuditCommand {
                         int cities = object.optInt("cities");
                         int id = object.optInt("id");
                         long foodHeld = object.optLong("food");
+                        User user = userRepository.findUserByNationid(id);
+
                         if (foodHeld <= 50000) {
-                            food += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                            food += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(foodHeld) + "\n";
                         }
                         boolean hasIA = object.optBoolean("central_intelligence_agency");
 
                         int spyCount = object.optInt("spies");
 
                         if (hasIA && (spyCount < 60)) {
-                            spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                            spies += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(spyCount) + "\n";
                         } else if (!hasIA && spyCount < 50) {
-                            spies += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                            spies += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + spyCount + "\n";
                         }
                         long uraHeld = object.optInt("uranium");
                         if (uraHeld < (cities * 3)) {
-                            uranium += "<@" + userRepository.findUserByNationid(id).getDiscordid() + "> ";
+                            uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
                         }
 
 
@@ -133,7 +99,8 @@ public class AuditCommand {
                         .setTitle("Requiem Audit")
                         .setColor(Color.CYAN)
                         .setAuthor(interaction.getUser())
-                        .addField("Inactive (48hrs)", inactiveUsers + " ")
+                        .setDescription("Format is <ping> (id) value")
+                        .addField("Inactive (48hrs+)", inactiveUsers + " ")
                         .addField("Low Food (Less than 50k)", food + " ")
                         .addField("Low Uranium", uranium + " ")
                         .addField("Not Maxed On Spies", spies + " ")
@@ -147,6 +114,6 @@ public class AuditCommand {
             }
 
 
-        }
+
     }
 }

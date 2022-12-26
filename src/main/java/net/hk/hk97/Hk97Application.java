@@ -4,6 +4,7 @@ package net.hk.hk97;
 import net.hk.hk97.Commands.CommandLoader.CommandAdd;
 import net.hk.hk97.Commands.Listeners.ApplicationListener;
 import net.hk.hk97.Commands.Listeners.InterviewFileLogListener;
+import net.hk.hk97.Commands.Listeners.MemberJoinListener;
 import net.hk.hk97.Commands.Listeners.MilComListener;
 import net.hk.hk97.Commands.SlashCommands.SlashCommandHandler;
 import org.javacord.api.DiscordApi;
@@ -35,6 +36,8 @@ public class Hk97Application {
     private CommandAdd commandAdd;
 
 
+    @Autowired
+    private MemberJoinListener memberJoinListener;
 
     @Autowired
     private MilComListener milComListener;
@@ -57,13 +60,13 @@ public class Hk97Application {
                 .addMessageCreateListener(commandAdd)
                 .addMessageCreateListener(milComListener)
                 .addMessageCreateListener(applicationListener)
+                .addServerMemberJoinListener(memberJoinListener)
                 .login()
                 .join();
 
         api.updateStatus(UserStatus.DO_NOT_DISTURB);
 //        ServerTextChannel channel = api.getServerTextChannelById("1024026875007340576").get();
 //        channel.addButtonClickListener(bankButtonListener);
-
 
 
         return api;

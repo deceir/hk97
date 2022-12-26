@@ -1749,7 +1749,7 @@ public class MilcomListenerImpl implements MilComListener {
                             String offWarsStr = "";
                             for (WarInfo warInfo : offensiveWars) {
                                 duration = warInfo.getDefenderNation().getActivity();
-                                offWarsStr += "[link](https://politicsandwar.com/nation/war/timeline/war=" + warInfo.getId() + ") - [" + warInfo.getDefenderNation().getNation_name() + "](https://politicsandwar.com/nation/id=" + warInfo.getDefenderNation().getId() + ") - (" + warInfo.getDefenderNation().getId() + ") | active: " + duration.toDaysPart() + "d " + duration.toHoursPart() + "h " + duration.toMinutesPart() + "m ago";
+                                offWarsStr += "[war](https://politicsandwar.com/nation/war/timeline/war=" + warInfo.getId() + ") - [" + warInfo.getDefenderNation().getNation_name() + "](https://politicsandwar.com/nation/id=" + warInfo.getDefenderNation().getId() + ") - (" + warInfo.getDefenderNation().getId() + ") | active: " + duration.toDaysPart() + "d " + duration.toHoursPart() + "h " + duration.toMinutesPart() + "m ago";
                                 offWarsStr += "\n";
                             }
                             embedBuilder.addField("Offensive Wars", offWarsStr);

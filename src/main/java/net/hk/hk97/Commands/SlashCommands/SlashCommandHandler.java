@@ -101,7 +101,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 try {
                     BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository);
                 } catch (Exception e) {
-                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.").send();
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
                 }
                 break;
 
@@ -132,7 +132,12 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
             case "who":
                 interaction.respondLater();
-                WhoCommand.getWho(interaction, nationRepository);
+                try {
+                    WhoCommand.getWho(interaction, nationRepository);
+
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                }
                 break;
 
 

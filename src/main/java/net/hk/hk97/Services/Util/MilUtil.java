@@ -2,6 +2,7 @@ package net.hk.hk97.Services.Util;
 
 import net.hk.hk97.Config;
 import net.hk.hk97.Models.Military;
+import net.hk.hk97.Models.NAudit;
 import net.hk.hk97.Models.War;
 import net.hk.hk97.Models.WarInfo;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class MilUtil {
 
@@ -343,6 +345,103 @@ public class MilUtil {
 
 
         return nations;
+    }
+
+    public static NAudit getNAudit(long id) throws JSONException {
+
+        NAudit nation = new NAudit();
+
+        CloseableHttpClient client = null;
+        CloseableHttpResponse response = null;
+
+        client = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
+
+        httpPost.addHeader("Content-Type", "application/json");
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { nation_name leader_name num_cities score id soldiers tanks aircraft ships missiles nukes money aluminum gasoline munitions steel alliance { name } } } }");
+
+        String name = "";
+
+
+        try {
+            StringEntity entity = new StringEntity(jsonObj.toString());
+
+            httpPost.setEntity(entity);
+            response = client.execute(httpPost);
+
+            System.out.println(response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            String line = null;
+            StringBuilder builder = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+
+                builder.append(line);
+
+                JSONObject myObject = new JSONObject(builder.toString());
+
+                JSONObject data = myObject.getJSONObject("data");
+
+                JSONObject nations = data.getJSONObject("nations");
+
+
+                try {
+
+                    JSONArray array = nations.getJSONArray("data");
+
+                    JSONObject object = array.getJSONObject(0);
+                    nation.setId(object.optInt("id"));
+                    nation.setName(object.optString("nation_name"));
+                    nation.setLeader(object.optString("leader_name"));
+                    nation.setScore(object.optDouble("score"));
+                    nation.setCities(object.optInt("num_cities"));
+                    nation.setCash(object.optLong("money"));
+                    nation.setAluminum(object.optInt("aluminum"));
+                    nation.setGas(object.optInt("gasoline"));
+                    nation.setSteel(object.optInt("steel"));
+                    nation.setMunitions(object.optInt("munitions"));
+                    nation.setMissiles(object.optInt("missiles"));
+                    nation.setNukes(object.optInt("nukes"));
+                    nation.setSoldiers(object.optInt("soldiers"));
+                    nation.setTanks(object.optInt("tanks"));
+                    nation.setJets(object.optInt("aircraft"));
+                    nation.setShips(object.optInt("ships"));
+                    JSONObject alliance = object.getJSONObject("alliance");
+                    nation.setAlliance(alliance.optString("name"));
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+        return nation;
+
+    }
+
+    public static List<NAudit> getNAudits(long id) throws JSONException {
+
+
+        List<NAudit> list = new ArrayList<>();
+
+
+
+        return list;
     }
 
 }
