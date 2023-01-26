@@ -101,6 +101,11 @@ public class CommandAdd implements MessageCreateListener {
                                 .createForServer(api.getServerById(Config.mainServerId).get())
                                 .join();
 
+                SlashCommand wcAudit =
+                        SlashCommand.with("wcaudit", "Retrieve list of nations that do not meet current warchest requirements.")
+                                .createForServer(api.getServerById(Config.mainServerId).get())
+                                .join();
+
                 SlashCommand account = SlashCommand.with("account", "Account registration and verification.",
                                 Arrays.asList(
                                         SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "register", "Initial registration step.",

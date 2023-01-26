@@ -293,6 +293,7 @@ public class MilUtil {
         }
 
 
+        System.out.println("cities: " + cities);
         return cities;
     }
 

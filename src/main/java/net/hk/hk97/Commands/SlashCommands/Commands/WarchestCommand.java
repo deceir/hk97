@@ -2,14 +2,17 @@ package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Models.WarchestNation;
+import net.hk.hk97.Models.WarchestRequirements;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
 import net.hk.hk97.Repositories.BankRepository;
 import net.hk.hk97.Repositories.UserRepository;
+import net.hk.hk97.Repositories.WarchestReqsRepository;
 import net.hk.hk97.Services.Util.MilUtil;
 import net.hk.hk97.Services.Util.WarchestUtil;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -20,7 +23,10 @@ public class WarchestCommand {
 
 
 
-    public static void wc(SlashCommandInteraction interaction, ResourceRepository resourceRepository, UserRepository userRepository, BankRepository bankRepository) throws JSONException {
+
+    public static void wc(SlashCommandInteraction interaction, ResourceRepository resourceRepository, UserRepository userRepository, BankRepository bankRepository, WarchestReqsRepository wcReqsRepository) throws JSONException {
+
+//        WarchestRequirements wc = wcReqsRepository.findById(10470L).get();
 
         long cash = 1000000;
         long gas = 2300;

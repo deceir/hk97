@@ -40,6 +40,8 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     @Autowired
     private NationRepository nationRepository;
 
+    @Autowired
+    private WarchestReqsRepository wcReqsRepository;
     @Override
     public void onSlashCommandCreate(SlashCommandCreateEvent slashCommandCreateEvent) {
 
@@ -109,7 +111,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "wc":
                 interaction.respondLater();
                 try {
-                    WarchestCommand.wc(interaction, resourceDao, userRepository, bankDao);
+                    WarchestCommand.wc(interaction, resourceDao, userRepository, bankDao, wcReqsRepository);
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -137,6 +139,16 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 } catch (Exception e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                }
+                break;
+
+            case "wcaudit":
+                interaction.respondLater();
+                try {
+                    WarchestAuditCommand.auditWarchests(interaction, bankDao);
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                    e.printStackTrace();
                 }
                 break;
 

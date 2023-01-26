@@ -13,5 +13,7 @@ public interface BankRepository extends JpaRepository<Bank, String> {
 
     List<Bank> findBanksByDiscordid(String id);
 
+    Bank findBankByNationid(long id);
+
     Bank findBankByDepositcode(String code);
 }

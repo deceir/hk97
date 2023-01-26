@@ -28,6 +28,8 @@ public class Bank {
     @Column
     private String name;
 
+    private Long cities;
+
     @Column
     private long nationid;
 

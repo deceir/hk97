@@ -1252,7 +1252,7 @@ public class MilcomListenerImpl implements MilComListener {
                         if (loff_string.length() > 0)
                             messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage(sending);
                         messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage("**DEFENSIVE WARS** (" + defWarCount + "/3)");
-                        if (defensiveWarString.length() > 0)
+                        if (defensiveWarString.length() > 3)
                             messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage(defensiveWarString);
                         messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage(embedBuilder);
 
@@ -1774,7 +1774,7 @@ public class MilcomListenerImpl implements MilComListener {
                         if (loff_string.length() > 0)
                             messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage(sending);
                         messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage("**DEFENSIVE WARS** (" + defWarCount + "/3)");
-                        if (defensiveWarString.length() > 0)
+                        if (defensiveWarString.length() > 3)
                             messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage(defensiveWarString);
                         messageCreateEvent.getChannel().asServerTextChannel().get().sendMessage(embedBuilder);
 
