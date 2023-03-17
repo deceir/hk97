@@ -2,8 +2,8 @@ package net.hk.hk97.Services.Util;
 
 import net.hk.hk97.Config;
 import net.hk.hk97.Models.ActivityAudit;
-import net.hk.hk97.Models.User;
-import net.hk.hk97.Repositories.UserRepository;
+import net.hk.hk97.Models.Nation;
+import net.hk.hk97.Services.Util.CustomUtil.NationScoreSorter;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -12,29 +12,22 @@ import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AuditUtil {
+public class CounterUtil {
 
-    @Autowired
-    UserRepository userDao;
+    public static List<Nation> getCounters(long max, long min) throws JSONException {
 
-    public static List<ActivityAudit> getActivityAudit() throws JSONException {
-
-        List<ActivityAudit> list = new ArrayList<>();
-
+        List<Nation> list = new ArrayList<>();
 
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
@@ -44,7 +37,7 @@ public class AuditUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (alliance_id: " + Config.aaId + ") { data { last_active id } } }");
+        jsonObj.put("query", "{ nations (alliance_id: " + Config.aaId + ") { data { id nation_name leader_name score num_cities } } }");
 
         String name = "";
 
@@ -85,22 +78,26 @@ public class AuditUtil {
 
                     for (int i = 0; i <= array.length() -1 ; i++) {
                         JSONObject object = array.getJSONObject(i);
-                        String activity = object.optString("last_active");
-                        int id = object.optInt("id");
 
-                        TemporalAccessor creationAccessor = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(activity);
-                        Instant instant = Instant.from( creationAccessor );
-                        Duration duration = Duration.between(instant, Instant.now());
+                        long score = object.optLong("score");
+                        if (score >= min && score <= max) {
 
-                        if (duration.toHours() >= 48) {
+                            String leader = object.optString("leader_name");
+                            String nationName = object.optString("nation_name");
+                            int cities = object.optInt("num_cities");
+                            long id = object.optLong("id");
 
-                            ActivityAudit audit = new ActivityAudit();
-                           audit.setId(object.optInt("id"));
-                           audit.setLastActive(duration.toHours());
-                           list.add(audit);
-                            System.out.println("id: " +  audit.getId());
+                            Nation nation = new Nation();
+                            nation.setScore(score);
+                            nation.setCities(cities);
+                            nation.setLeader(leader);
+                            nation.setNation(nationName);
+                            nation.setId(id);
+
+                            list.add(nation);
 
                         }
+
 
                     }
 
@@ -115,8 +112,8 @@ public class AuditUtil {
             e.printStackTrace();
         }
 
+        NationScoreSorter.sortObjectsByScore(list);
         return list;
 
     }
-
 }

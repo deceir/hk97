@@ -6,6 +6,7 @@ import net.hk.hk97.Commands.Listeners.ApplicationListener;
 import net.hk.hk97.Commands.Listeners.InterviewFileLogListener;
 import net.hk.hk97.Commands.Listeners.MemberJoinListener;
 import net.hk.hk97.Commands.Listeners.MilComListener;
+import net.hk.hk97.Commands.TextCommands.TextCommandHandler;
 import net.hk.hk97.Commands.SlashCommands.SlashCommandHandler;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
@@ -42,6 +43,9 @@ public class Hk97Application {
     @Autowired
     private MilComListener milComListener;
 
+    @Autowired
+    private TextCommandHandler textCommandHandler;
+
     public static void main(String[] args) {
         SpringApplication.run(Hk97Application.class, args);
 
@@ -56,6 +60,7 @@ public class Hk97Application {
         DiscordApi api = new DiscordApiBuilder().setToken(token)
                 .setAllNonPrivilegedIntents()
                 .addSlashCommandCreateListener(slashCommandHandler)
+                .addMessageCreateListener(textCommandHandler)
                 .addMessageCreateListener(interviewFileLogListener)
                 .addMessageCreateListener(commandAdd)
                 .addMessageCreateListener(milComListener)

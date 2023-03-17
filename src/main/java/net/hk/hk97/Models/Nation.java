@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,7 @@ import java.time.temporal.TemporalAccessor;
 
 @Entity
 @Table
-public class Nation {
+public class Nation{
 
     @Id
     @Getter @Setter
@@ -101,4 +102,6 @@ public class Nation {
         Duration duration = Duration.between(instant, Instant.now());
         return duration;
     }
+
+
 }
