@@ -13,7 +13,10 @@ import net.hk.hk97.Services.Util.BankUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.message.Message;
+import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.message.Reaction;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -69,7 +72,7 @@ public class BankCommand {
 
                     EmbedBuilder emb = new EmbedBuilder()
                             .setTitle("Requiem Strongbox Services")
-                            .setColor(Color.black)
+                            .setColor(Color.CYAN)
                             .setAuthor(interaction.getUser())
                             .addField("Deposit Code: ", "`" + listOfAccounts.get(0).getDepositcode() + "`")
                             .addField("Totals:",
@@ -122,13 +125,17 @@ public class BankCommand {
                         bank.updateDepositCode();
                         bankDao.save(bank);
                         interaction.createFollowupMessageBuilder().setContent("Deposit recorded successfully.").send();
-                    }
 
+                        new MessageBuilder()
+                                .setContent("Select an option if desired.")
+                                .addComponents(
+                                        ActionRow.of(Button.success("bankBalance", "Get Bank Balance"))
+                                ).send(interaction.getChannel().get());
+                    }
 
                 } catch (Exception e) {
-                        interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
-
-                    }
+                    interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
+                }
 
 
             } else if (interaction.getOptionByName("withdraw").isPresent()) {

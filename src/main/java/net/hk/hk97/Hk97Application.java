@@ -3,6 +3,7 @@ package net.hk.hk97;
 
 import net.hk.hk97.Commands.CommandLoader.CommandAdd;
 import net.hk.hk97.Commands.Listeners.ApplicationListener;
+import net.hk.hk97.Commands.Listeners.InteractionListener.ButtonListener;
 import net.hk.hk97.Commands.Listeners.InterviewFileLogListener;
 import net.hk.hk97.Commands.Listeners.MemberJoinListener;
 import net.hk.hk97.Commands.Listeners.MilComListener;
@@ -46,6 +47,9 @@ public class Hk97Application {
     @Autowired
     private TextCommandHandler textCommandHandler;
 
+    @Autowired
+    private ButtonListener buttonListener;
+
     public static void main(String[] args) {
         SpringApplication.run(Hk97Application.class, args);
 
@@ -66,6 +70,7 @@ public class Hk97Application {
                 .addMessageCreateListener(milComListener)
                 .addMessageCreateListener(applicationListener)
                 .addServerMemberJoinListener(memberJoinListener)
+                .addButtonClickListener(buttonListener)
                 .login()
                 .join();
 
