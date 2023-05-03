@@ -1,11 +1,14 @@
 package net.hk.hk97.Commands.Listeners.InteractionListener;
 
+import net.hk.hk97.Commands.SlashCommands.Commands.BankButtonsCommand;
 import net.hk.hk97.Models.Bank.Bank;
+import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
 import net.hk.hk97.Repositories.BankRepository;
 import net.hk.hk97.Repositories.InterviewRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WithdrawalRepository;
+import net.hk.hk97.Services.Util.BankUtil;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.interaction.ButtonClickEvent;
 import org.javacord.api.listener.interaction.ButtonClickListener;
@@ -72,14 +75,54 @@ public class ButtonListener implements ButtonClickListener {
 
                     interaction.getButtonInteraction().createFollowupMessageBuilder().addEmbed(emb).send();
                     TimeUnit.SECONDS.sleep(1);
+                    System.out.println("Deposit code sent.");
                     interaction.getInteraction().getChannel().get().sendMessage("Deposit code:");
                     interaction.getInteraction().getChannel().get().sendMessage(b.getDepositcode());
-
 
 
                 } catch (Exception e) {
                     interaction.getInteraction().getChannel().get().sendMessage("There was an error. " + e);
                 }
+                BankButtonsCommand.getBankButtons(interaction);
+                break;
+
+
+            case "bankDeposit":
+                interaction.getButtonInteraction().respondLater();
+                try {
+                    User user = userRepository.findById(interaction.getInteraction().getUser().getIdAsString()).get();
+                    Bank bank = bankDao.findByDiscordid(interaction.getInteraction().getUser().getIdAsString());
+                    Bank deposits = BankUtil.getTransactions(user.getNationid(), bank.getDepositcode());
+
+                    if (deposits.getTotals() == 0) {
+                        interaction.getInteraction().createFollowupMessageBuilder().setContent("**" + interaction.getInteraction().getUser().getDiscriminatedName() + "**\nDeposit code:").send();
+                        interaction.getInteraction().getChannel().get().sendMessage(bank.getDepositcode());
+                    } else {
+                        bank.setCash(bank.getCash() + deposits.getCash());
+                        bank.setFood(bank.getFood() + deposits.getFood());
+                        bank.setIron(bank.getIron() + deposits.getIron());
+                        bank.setOil(bank.getOil() + deposits.getOil());
+                        bank.setCoal(bank.getCoal() + deposits.getCoal());
+                        bank.setUranium(bank.getUranium() + deposits.getUranium());
+                        bank.setLeadRss(bank.getLeadRss() + deposits.getLeadRss());
+                        bank.setBauxite(bank.getBauxite() + deposits.getBauxite());
+                        bank.setGasoline(bank.getGasoline() + deposits.getGasoline());
+                        bank.setMunitions(bank.getMunitions() + deposits.getMunitions());
+                        bank.setSteel(bank.getSteel() + deposits.getSteel());
+                        bank.setAluminum(bank.getAluminum() + deposits.getAluminum());
+                        bank.updateDepositCode();
+                        bankDao.save(bank);
+                        interaction.getInteraction().createFollowupMessageBuilder().setContent("**" + interaction.getInteraction().getUser().getDiscriminatedName() + "**\nDeposit recorded successfully.").send();
+
+
+                    }
+
+
+                } catch (Exception e) {
+                    interaction.getInteraction().createFollowupMessageBuilder().setContent("There was an error. " + e).send();
+                }
+                BankButtonsCommand.getBankButtons(interaction);
+                break;
         }
     }
 }

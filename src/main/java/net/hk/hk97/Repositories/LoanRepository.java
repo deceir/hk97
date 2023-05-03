@@ -7,6 +7,7 @@
 //
 //public interface LoanRepository extends JpaRepository <Loan, Long> {
 //    List<Loan> getLoansByActive(Boolean active);
+//
 //    List<Loan> getLoansByDiscordidAAndActive(long id, boolean active);
 //
 //    Loan getLoanByDepositcode(String code);

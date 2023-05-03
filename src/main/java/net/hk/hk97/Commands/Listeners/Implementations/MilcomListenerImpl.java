@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -56,8 +57,24 @@ public class MilcomListenerImpl implements MilComListener {
 
             DiscordApi api = messageCreateEvent.getApi();
 
+            //structure to lock behind gov or staff role
+//            Boolean hasPerms = false;
+//
+//            try {
+//                List<Role> roles = api.getUserById(messageCreateEvent.getMessageAuthor().getId()).get().getRoles(api.getServerById(serverId).get());
+//                for (Role role : roles) {
+//                    if (role.getIdAsString().equals(staffId) || role.getIdAsString().equals(govRole)) {
+//                        hasPerms = true;
+//                    }
+//                }
+//            } catch (InterruptedException | ExecutionException e) {
+//                messageCreateEvent.getChannel().sendMessage("Error executing.");
+//            }
+
+
 
             if (messageCreateEvent.getMessageContent().startsWith("+wrc")) {
+
                 String messageContent = messageCreateEvent.getMessageContent();
                 messageContent = messageContent.replace(" ", ",");
                 List<String> list = Arrays.asList(messageContent.split(","));

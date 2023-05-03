@@ -42,6 +42,8 @@ public class Loan {
     @Column
     private String depositcode = RandomString.getSaltString();
 
+    @Column String notes;
+
     public void updateDepositCode() {
         this.depositcode = RandomString.getSaltString();
     }

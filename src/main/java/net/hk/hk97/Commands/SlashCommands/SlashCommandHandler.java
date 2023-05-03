@@ -31,7 +31,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     @Autowired
     WithdrawalRepository withdrawalRepository;
 
-//    @Autowired
+    //    @Autowired
 //    private LoanRepository loanRepository;
 
     @Autowired
@@ -93,7 +93,12 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "bank":
 
                 interaction.respondLater();
-                BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository);
+                try {
+                    BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository);
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                }
+                BankButtonsCommand.getBankButtons(interaction);
                 break;
 
 

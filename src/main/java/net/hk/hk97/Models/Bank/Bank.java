@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.hk.hk97.Utils.RandomString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,6 +65,7 @@ public class Bank {
 
     @Column
     private long aluminum =0;
+
 
     @Column
     @JsonIgnore

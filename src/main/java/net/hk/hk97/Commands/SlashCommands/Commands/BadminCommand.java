@@ -417,8 +417,7 @@ public class BadminCommand {
 //            } else if (interaction.getOptionByName("loan").get().getOptionByName("remove").isPresent()) {
 //
 //                Loan loan = loanRepository.findById(interaction.getOptionByName("loan").get().getOptionByName("remove").get().getOptionLongValueByName("loan").get()).get();
-//                loan.setActive(false);
-//                loanRepository.save(loan);
+//                loanRepository.delete(loan);
 //
 //                EmbedBuilder eb = new EmbedBuilder()
 //                        .setTitle("Loan Removed")

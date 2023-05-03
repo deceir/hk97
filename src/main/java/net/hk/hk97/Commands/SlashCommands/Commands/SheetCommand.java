@@ -26,7 +26,7 @@ public class SheetCommand {
         SpreadsheetService sheetsService = new SpreadsheetService("Print Google Demo");
 
         //login
-        sheetsService.setUserCredentials(Config.gmailName, Config.gmailPass);
+//        sheetsService.setUserCredentials(Config.gmailName, Config.gmailPass);
 
         //load sheet
         URL url = new URL(SPREADSHEET_URL);

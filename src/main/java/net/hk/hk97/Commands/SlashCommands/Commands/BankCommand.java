@@ -7,6 +7,7 @@ import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.Bank.Withdrawal;
 import net.hk.hk97.Repositories.BankRepository;
 //import net.hk.hk97.Repositories.LoanRepository;
+
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
@@ -126,11 +127,6 @@ public class BankCommand {
                         bankDao.save(bank);
                         interaction.createFollowupMessageBuilder().setContent("Deposit recorded successfully.").send();
 
-                        new MessageBuilder()
-                                .setContent("Select an option if desired.")
-                                .addComponents(
-                                        ActionRow.of(Button.success("bankBalance", "Get Bank Balance"))
-                                ).send(interaction.getChannel().get());
                     }
 
                 } catch (Exception e) {
