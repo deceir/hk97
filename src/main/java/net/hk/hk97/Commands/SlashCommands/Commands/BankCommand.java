@@ -1,6 +1,7 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Models.Bank.Bank;
+import net.hk.hk97.Models.Bank.BankStatus;
 import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
@@ -8,6 +9,7 @@ import net.hk.hk97.Models.Bank.Withdrawal;
 import net.hk.hk97.Repositories.BankRepository;
 //import net.hk.hk97.Repositories.LoanRepository;
 
+import net.hk.hk97.Repositories.BankStatusRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
@@ -34,12 +36,16 @@ import java.util.concurrent.TimeUnit;
 
 public class BankCommand {
 
-    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository) {
+    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository, BankStatusRepository bankStatusRepository) {
 
         if (!userRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {
             interaction.createFollowupMessageBuilder().setContent("You do not have an HK account. Please use `/account register` before trying to use the bank.").send();
 
         } else {
+
+//            BankStatus bankStatus = bankStatusRepository.findById(1).get();
+//            String with_status = bank.getWithdrawalStatus();
+//            String dep_status = bank.getDepositStatus();
 
             if (interaction.getOptionByName("create").isPresent()) {
 

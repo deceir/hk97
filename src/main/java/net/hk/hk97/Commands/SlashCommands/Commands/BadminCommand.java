@@ -13,6 +13,7 @@ import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.DiscordApi;
+import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -383,6 +384,36 @@ public class BadminCommand {
                         );
 
                 interaction.createFollowupMessageBuilder().addEmbed(emb).send();
+
+            } else if (interaction.getOptionByName("bank_audit").isPresent()) {
+
+                List<Bank> list = bankDao.findAll();
+
+                Channel channel = interaction.getChannel().get();
+
+
+                NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+                DecimalFormat d = new DecimalFormat("#,###");
+
+                for (Bank b : list) {
+
+                    try {
+                        EmbedBuilder emb = new EmbedBuilder()
+                                .setTitle(b.getName() + " ---" + b.getDiscordid())
+                                .setColor(Color.cyan)
+                                .setAuthor(interaction.getUser())
+                                .addField("Deposit Code: ", "`" + b.getDepositcode() + "`")
+                                .addField("Totals:",
+                                        n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
+                                );
+                        channel.asTextChannel().get().sendMessage(emb);
+                    } catch (Exception e) {
+                        channel.asTextChannel().get().sendMessage("Error with this account.");
+                    }
+
+                }
+
+                interaction.createFollowupMessageBuilder().setContent("Bank audit complete.").send();
 
             }
 //            else if (interaction.getOptionByName("loan").isPresent()) {

@@ -42,6 +42,10 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
     @Autowired
     private WarchestReqsRepository wcReqsRepository;
+
+    @Autowired
+    private BankStatusRepository bankStatusRepository;
+
     @Override
     public void onSlashCommandCreate(SlashCommandCreateEvent slashCommandCreateEvent) {
 
@@ -94,7 +98,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 interaction.respondLater();
                 try {
-                    BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository);
+                    BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository, bankStatusRepository);
                 } catch (Exception e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
                 }

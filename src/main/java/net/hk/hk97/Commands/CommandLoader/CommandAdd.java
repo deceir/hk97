@@ -226,8 +226,10 @@ public class CommandAdd implements MessageCreateListener {
                                                                 ))
                                                 )),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "member_deposits", "View the combined totals of member deposits."),
-                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bankbalance", "View the 'true' bank balance, with member deposits subtracted..")
-
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bankbalance", "View the 'true' bank balance, with member deposits subtracted.."),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "withdrawal_status", "Open and close the bank"),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "deposit_status", "Open and close the bank"),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bank_audit", "Retrieve the balances of every existing account.")
 
 
                                 ))
