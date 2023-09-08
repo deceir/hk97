@@ -1,17 +1,15 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
+import net.hk.hk97.Config;
 import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Models.Bank.BankStatus;
 import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.Bank.Withdrawal;
-import net.hk.hk97.Repositories.BankRepository;
+import net.hk.hk97.Repositories.*;
 //import net.hk.hk97.Repositories.LoanRepository;
 
-import net.hk.hk97.Repositories.BankStatusRepository;
-import net.hk.hk97.Repositories.UserRepository;
-import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -36,10 +34,10 @@ import java.util.concurrent.TimeUnit;
 
 public class BankCommand {
 
-    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository, BankStatusRepository bankStatusRepository) {
+    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository, AllianceKeyRepository allianceKeyRepository) {
 
         if (!userRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {
-            interaction.createFollowupMessageBuilder().setContent("You do not have an HK account. Please use `/account register` before trying to use the bank.").send();
+            interaction.createFollowupMessageBuilder().setContent("You do not have a Necron account. Please use `/account register` before trying to use the bank.").send();
 
         } else {
 
@@ -78,7 +76,7 @@ public class BankCommand {
                     Bank b = listOfAccounts.get(0);
 
                     EmbedBuilder emb = new EmbedBuilder()
-                            .setTitle("Requiem Strongbox Services")
+                            .setTitle("TGH Treasury")
                             .setColor(Color.CYAN)
                             .setAuthor(interaction.getUser())
                             .addField("Deposit Code: ", "`" + listOfAccounts.get(0).getDepositcode() + "`")
@@ -316,25 +314,26 @@ public class BankCommand {
                             String fnation = nationName.replaceAll(" ", "+");
 
 
-                            String withString = "[Requiem Bank](https://politicsandwar.com/alliance/id=10470&display=bank&w_money=" + cash + "&w_food=" + food + "&w_coal=" + coal + "&w_oil=" + oil + "&w_uranium=" + uranium + "&w_lead=" + lead + "&w_iron=" + iron + "&w_bauxite=" + bauxite + "&w_gasoline=" + gasoline + "&w_munitions=" + munitions + "&w_steel=" + steel + "&w_aluminum=" + aluminum + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";
+                            String withString = "[TGH Bank](https://politicsandwar.com/alliance/id=4567&display=bank&w_money=" + cash + "&w_food=" + food + "&w_coal=" + coal + "&w_oil=" + oil + "&w_uranium=" + uranium + "&w_lead=" + lead + "&w_iron=" + iron + "&w_bauxite=" + bauxite + "&w_gasoline=" + gasoline + "&w_munitions=" + munitions + "&w_steel=" + steel + "&w_aluminum=" + aluminum + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";
 
+                            String offshoreWithString = "[Offshore](https://politicsandwar.com/alliance/id=" + allianceKeyRepository.findAllianceKeysByAaName("offshore").getId() + "&display=bank&w_money=" + cash + "&w_food=" + food + "&w_coal=" + coal + "&w_oil=" + oil + "&w_uranium=" + uranium + "&w_lead=" + lead + "&w_iron=" + iron + "&w_bauxite=" + bauxite + "&w_gasoline=" + gasoline + "&w_munitions=" + munitions + "&w_steel=" + steel + "&w_aluminum=" + aluminum + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";;
                             EmbedBuilder emb = new EmbedBuilder()
-                                    .setTitle("Requiem Strongbox Services")
+                                    .setTitle("TGH Treasury")
                                     .setDescription("Withdrawal from " + interaction.getUser().getNicknameMentionTag() + " at " + LocalTime.now())
                                     .setColor(Color.CYAN)
                                     .setAuthor(interaction.getUser())
                                     .addField("Totals:",
                                             n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum()))
-                                    .addField("Bank", withString);
+                                    .addField("Bank", withString + " " + offshoreWithString);
 
-                            Role role = interaction.getApi().getRoleById("1024324511962763347").get();
-                            ServerTextChannel channel1 = interaction.getApi().getServerTextChannelById("1016460984103219281").get();
+                            Role role = interaction.getApi().getRoleById(Config.mainServerBankAdminId).get();
+                            ServerTextChannel channel1 = interaction.getApi().getServerTextChannelById("1128058377432477706").get();
                             channel1.sendMessage("Withdrawal request: ");
                             channel1.sendMessage(b.getDepositcode());
                             channel1.sendMessage(emb);
 
-                            Message msg = channel1.sendMessage(role.getMentionTag()).get();
-                            msg.addReaction("✅");
+                                Message msg = channel1.sendMessage(role.getMentionTag()).get();
+
 
 
                             interaction.createFollowupMessageBuilder().setContent("Withdrawal request submitted. Please wait for the Econ Department to process your request.").send();

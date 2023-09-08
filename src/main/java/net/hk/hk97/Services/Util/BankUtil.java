@@ -242,11 +242,19 @@ public class BankUtil {
     public static Bank getBankBalance(long id) throws JSONException {
         Bank bank = new Bank();
 
+        String keyToUse = "";
+
+        if (id == Config.offshoreAaId) {
+            keyToUse = Config.offshorePnwKey;
+        } else {
+            keyToUse = Config.itachiPnwKey;
+        }
+
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
 
         client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + keyToUse);
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
@@ -331,6 +339,7 @@ public class BankUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
 
         bank.setCash(money);

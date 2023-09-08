@@ -1,9 +1,13 @@
 package net.hk.hk97.Commands.Listeners.Implementations;
 
 import net.hk.hk97.Commands.Listeners.ApplicationListener;
+import net.hk.hk97.Config;
 import net.hk.hk97.Repositories.InterviewRepository;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.*;
+import org.javacord.api.entity.message.MessageBuilder;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.Button;
 import org.javacord.api.entity.permission.*;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
@@ -23,29 +27,16 @@ public class ApplicationListenerImpl implements ApplicationListener {
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
 
-        DiscordApi api = messageCreateEvent.getApi();
+        if (messageCreateEvent.isPrivateMessage() && messageCreateEvent.getMessageAuthor().isBotOwner() && messageCreateEvent.getMessageContent().equals("+interviewSetup")) {
 
-        Optional<Server> server = api.getServerById("1016240494948397066");
-        Optional<ChannelCategory> interviewCategory = api.getChannelCategoryById("1016487611780571156");
 
-        if (messageCreateEvent.getChannel().getIdAsString().equals("1016449238567223406")) {
+            TextChannel channel = messageCreateEvent.getApi().getTextChannelById(Config.applicationsChannelId).get();
 
-            Role govRole = api.getRoleById("1016448673825161327").get();
-
-            List<Role> userRoles = messageCreateEvent.getMessageAuthor().asUser().get().getRoles(server.get());
-
-            Boolean isGov = false;
-
-            for (Role role : userRoles) {
-                if (role.getIdAsString().equals(govRole.getIdAsString())) {
-                    isGov = true;
-                }
-            }
-
-            if (!isGov && (!messageCreateEvent.getMessageAuthor().getIdAsString().equals("1004820381586178058"))) {
-                messageCreateEvent.getMessage().delete();
-            }
-
+            new MessageBuilder()
+                    .setContent("__**The Golden Horde**__ is home only to warriors, united by the single purpose of expanding the dominion of The Golden Horde and bringing glory and honor to the Great Khan.\nOnly those willing to fight to their final pixel should apply.")
+                    .addComponents(
+                            ActionRow.of(Button.success("applicationButton", "Apply Now"))
+                    ).send(channel);
         }
 
     }

@@ -83,7 +83,7 @@ public class TreasureCommand {
 
                     httpPost.addHeader("Content-Type", "application/json");
                     JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("query", "{ nations (first: 500, alliance_id: 10470) { data { id color score continent vmode } } }");
+                    jsonObj.put("query", "{ nations (first: 500, alliance_id:" + Config.aaId + ") { data { id color score continent vmode } } }");
 
 
                     try {
@@ -153,7 +153,7 @@ public class TreasureCommand {
                             .setTitle("Treasure Time")
                             .setAuthor(interaction.getUser())
                             .setDescription("There are currently " + colorcount + " nations on " + color + " and in range.")
-                            .addInlineField("Requiem", reqCounter + " nations in range.\n" + Math.round(percentreq) + "% chance if all nations swap.")
+                            .addInlineField("The Golden Horde", reqCounter + " nations in range.\n" + Math.round(percentreq) + "% chance if all nations swap.")
                             .setColor(Color.CYAN)
                             .setFooter("Necron Treasure Service", interaction.getApi().getYourself().getAvatar());
 
@@ -173,7 +173,7 @@ public class TreasureCommand {
                         for (int i = 0; i < reqNations.size(); i++) {
                             leadersString += reqNations.get(i) + " ";
                         }
-                        leaderEmbed.addField("Requiem", leadersString);
+                        leaderEmbed.addField("The Golden Horde", leadersString);
                         interaction.getChannel().get().sendMessage(leaderEmbed);
                     }
 
@@ -237,7 +237,7 @@ public class TreasureCommand {
 
                     httpPost.addHeader("Content-Type", "application/json");
                     JSONObject jsonObj = new JSONObject();
-                    jsonObj.put("query", "{ nations (first: 500, alliance_id: 10470) { data { id color score continent vmode } } }");
+                    jsonObj.put("query", "{ nations (first: 500, alliance_id: " + Config.aaId + ") { data { id color score continent vmode } } }");
 
 
                     try {
@@ -307,7 +307,7 @@ public class TreasureCommand {
                             .setTitle("Treasure Time")
                             .setAuthor(interaction.getUser())
                             .setDescription("There are currently " + colorcount + " nations on " + color + " and in range on " + continent + ".")
-                            .addInlineField("Requiem", reqCounter + " nations in range.\n" + Math.round(percentreq) + "% chance if all nations swap.")
+                            .addInlineField("The Golden Horde", reqCounter + " nations in range.\n" + Math.round(percentreq) + "% chance if all nations swap.")
                             .setColor(Color.CYAN)
                             .setFooter("Necron Treasure Service", interaction.getApi().getYourself().getAvatar());
 
@@ -328,7 +328,7 @@ public class TreasureCommand {
                             leadersString += reqNations.get(i) + " ";
 
                         }
-                        leaderEmbed.addField("Requiem", leadersString);
+                        leaderEmbed.addField("The Golden Horde", leadersString);
                         interaction.getChannel().get().sendMessage(leaderEmbed);
                     }
 

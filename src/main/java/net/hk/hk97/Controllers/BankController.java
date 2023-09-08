@@ -26,7 +26,7 @@ public class BankController {
     @Autowired
     private BankRepository bankDao;
 
-    @GetMapping("/banks")
+    @GetMapping("/api/banks")
     public @ResponseBody
     ResponseEntity<?> viewAllBanksInJSONFormat() {
         ResponseEntity<List<Bank>> responseEntity;
@@ -34,7 +34,7 @@ public class BankController {
         return responseEntity;
     }
 
-    @GetMapping(value = "/bankCSV", produces = "text/csv")
+    @GetMapping(value = "/api/bankCSV", produces = "text/csv")
     public ResponseEntity<?> exportCSV() {
         // replace this with your header (if required)
         String[] csvHeader = {

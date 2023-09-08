@@ -44,8 +44,9 @@ public class ApplicationCommand {
 
             DiscordApi api = interaction.getApi();
 
-            ChannelCategory interviewCategory = api.getChannelCategoryById(Config.applicationsChannelId).get();
-
+            System.out.println("Attempting to get interview category...");
+            ChannelCategory interviewCategory = api.getChannelCategoryById("1016487611780571156").get();
+            System.out.println("Successfully retrieved interview category.");
 
             Optional<Server> server = api.getServerById(Config.mainServerId);
 

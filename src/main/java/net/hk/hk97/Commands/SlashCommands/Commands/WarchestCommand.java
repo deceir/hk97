@@ -1,5 +1,6 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
+import net.hk.hk97.Config;
 import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Models.WarchestNation;
 import net.hk.hk97.Models.WarchestRequirements;
@@ -26,7 +27,7 @@ public class WarchestCommand {
 
     public static void wc(SlashCommandInteraction interaction, ResourceRepository resourceRepository, UserRepository userRepository, BankRepository bankRepository, WarchestReqsRepository wcReqsRepository) throws JSONException {
 
-//        WarchestRequirements wc = wcReqsRepository.findById(10470L).get();
+//        WarchestRequirements wc = wcReqsRepository.findById().get();
 
         long cash = 1000000;
         long gas = 2300;
@@ -84,7 +85,7 @@ public class WarchestCommand {
             }
 
 
-            String depString = "[Deposit Link](https://politicsandwar.com/alliance/id=10470&display=bank&d_gasoline=" + depgas + "&d_munitions=" + depmunis + "&d_steel=" + depsteel + "&d_aluminum=" + depalu + "&d_note=" + bankRepository.findByDiscordid(interaction.getUser().getIdAsString()).getDepositcode() + ")";
+            String depString = "[Deposit Link](https://politicsandwar.com/alliance/id=" + Config.aaId + "&display=bank&d_gasoline=" + depgas + "&d_munitions=" + depmunis + "&d_steel=" + depsteel + "&d_aluminum=" + depalu + "&d_note=" + bankRepository.findByDiscordid(interaction.getUser().getIdAsString()).getDepositcode() + ")";
 
             EmbedBuilder embedBuilder = new EmbedBuilder()
                     .setAuthor(interaction.getUser())
@@ -158,7 +159,7 @@ public class WarchestCommand {
             }
             if (steelB) {
                 neededAmountStr += "<:steel:1024144776548847656> "  + d.format(neededSteel) + " ";
-                total += neededSteel * steel;
+                total += neededSteel * steelPrice;
             }
 
 

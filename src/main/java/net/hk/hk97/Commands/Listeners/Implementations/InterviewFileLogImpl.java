@@ -41,11 +41,11 @@ public class InterviewFileLogImpl implements InterviewFileLogListener {
 //        Optional<ChannelCategory> interviewCategory = api.getChannelCategoryById("1016487611780571156");
 
 
-        if (messageCreateEvent.getServerTextChannel().get().getCategory().get().getName().equalsIgnoreCase("interviews")) {
+        if (messageCreateEvent.getServerTextChannel().get().getCategory().get().getName().equalsIgnoreCase("internal affairs")) {
 
             Optional<Server> server = api.getServerById(Config.mainServerId);
-            Optional<Channel> loggingChannel = api.getChannelById("1016487721646166106");
-            Role ia = api.getRoleById("1016528192447717407").get();
+            Optional<Channel> loggingChannel = api.getChannelById("1128045466878226503");
+            Role ia = api.getRoleById(Config.mainserverIaRoleId).get();
 
 
             try {
@@ -79,7 +79,7 @@ public class InterviewFileLogImpl implements InterviewFileLogListener {
                 boolean isIA = false;
                 List<Role> roleList = messageCreateEvent.getMessageAuthor().asUser().get().getRoles(server.get());
                 for (Role role : roleList) {
-                    if (role.getIdAsString().equalsIgnoreCase("1016528192447717407") || role.getIdAsString().equals("1016448673825161327")) {
+                    if (role.getIdAsString().equals(Config.mainServerGovId) || role.getIdAsString().equals(Config.mainServerLowGovId) || role.getIdAsString().equals("404940752691396608") || role.getIdAsString().equals("404941145966116874")){
                         isIA = true;
                     }
                 }

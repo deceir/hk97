@@ -105,7 +105,7 @@ public class WarchestAuditCommand {
             interaction.createFollowupMessageBuilder().setContent("All nations currently meet warchest requirements!").send();
         } else {
             String message = "```\n";
-            message += "Requiem Warchest Audit \n--- \n";
+            message += "TGH Warchest Audit \n--- \n";
             for (String str : auditStr) {
                 message += str;
             }

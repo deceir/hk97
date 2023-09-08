@@ -26,7 +26,7 @@ public class WarchestUtil {
         CloseableHttpResponse response = null;
 
         client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.adamApiKey);
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();

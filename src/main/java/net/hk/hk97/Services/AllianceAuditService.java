@@ -1,4 +1,4 @@
-package net.hk.hk97.Commands.SlashCommands.Commands;
+package net.hk.hk97.Services;
 
 import net.hk.hk97.Config;
 import net.hk.hk97.Models.ActivityAudit;
@@ -7,22 +7,33 @@ import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Services.Util.AuditUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.DiscordApi;
-import org.javacord.api.entity.message.MessageFlag;
+import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
-import org.javacord.api.interaction.SlashCommandInteraction;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class AuditCommand {
+@Service
+@EnableScheduling
+public class AllianceAuditService {
 
-    public static void audit(SlashCommandInteraction interaction, UserRepository userRepository) throws JSONException {
+    @Autowired
+    UserRepository userRepository;
 
+    @Scheduled(cron = "0 30 0 * * *")
+    public void runDailyAudit() {
+        DiscordApi api = new DiscordApiBuilder()
+                .setToken(Config.discordToken)
+                .login().join();
         try {
+
 
 
 //            DiscordApi api = interaction.getApi();
@@ -95,7 +106,7 @@ public class AuditCommand {
                     System.out.println("ura held: " + uraHeld);
                     if (uraHeld < 500) {
                         try {
-                        uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
+                            uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
                         } catch (Exception e) {
                             //probably applicant
                         }
@@ -120,22 +131,23 @@ public class AuditCommand {
             EmbedBuilder eb = new EmbedBuilder()
                     .setTitle("TGH Audit")
                     .setColor(Color.CYAN)
-                    .setAuthor(interaction.getUser())
                     .setDescription("Format is <ping> (id) value")
                     .addField("Inactive (48hrs+)", inactiveUsers + " ")
                     .addField("Low Food (Less than 50k)", food + " ")
                     .addField("Low Uranium (Less than 500)", uranium + " ")
                     .addField("Not Maxed On Spies", spies + " ")
-                    .setFooter("Necron Internal Command", interaction.getApi().getYourself().getAvatar());
+                    .setFooter("Necron Internal Command");
+
+            api.getTextChannelById("1129269346015907912").get().sendMessage("__**TGH Automated Audit**__");
+            api.getTextChannelById("1129269346015907912").get().sendMessage(eb);
 
 
-            interaction.createFollowupMessageBuilder().addEmbed(eb).send();
 
         } catch (Exception e) {
-            interaction.createFollowupMessageBuilder().setContent("There was an error retrieving the information for this audit.\n" + e).send();
+            api.getTextChannelById("1129269346015907912").get().sendMessage("There was an error retrieving the information for this daily audit.\n" + e);
             e.printStackTrace();
         }
-
-
     }
+
+
 }

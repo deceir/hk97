@@ -9,6 +9,9 @@ import net.hk.hk97.Repositories.InterviewRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
+import org.javacord.api.entity.message.component.ActionRow;
+import org.javacord.api.entity.message.component.TextInput;
+import org.javacord.api.entity.message.component.TextInputStyle;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.event.interaction.ButtonClickEvent;
 import org.javacord.api.listener.interaction.ButtonClickListener;
@@ -64,7 +67,7 @@ public class ButtonListener implements ButtonClickListener {
                     Bank b = listOfAccounts.get(0);
 
                     EmbedBuilder emb = new EmbedBuilder()
-                            .setTitle("Requiem Strongbox Services")
+                            .setTitle("TGH Treasury")
                             .setColor(Color.CYAN)
                             .setAuthor(interaction.getButtonInteraction().getUser())
                             .addField("Deposit Code: ", "`" + listOfAccounts.get(0).getDepositcode() + "`")
@@ -122,6 +125,14 @@ public class ButtonListener implements ButtonClickListener {
                     interaction.getInteraction().createFollowupMessageBuilder().setContent("There was an error. " + e).send();
                 }
                 BankButtonsCommand.getBankButtons(interaction);
+                break;
+
+            case "applicationButton":
+
+                    interaction.getButtonInteraction().respondWithModal("applicationModal", "Application",
+                            ActionRow.of((TextInput.create(TextInputStyle.SHORT, "nationId", "Enter your nation ID below."))));
+
+
                 break;
         }
     }

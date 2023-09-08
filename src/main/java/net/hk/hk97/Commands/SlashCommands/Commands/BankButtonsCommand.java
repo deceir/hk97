@@ -13,7 +13,7 @@ import javax.swing.*;
 public class BankButtonsCommand {
 
     public static void getBankButtons(SlashCommandInteraction interaction) {
-        String title = "__**Requiem Banking**__";
+        String title = "__**TGH Banking**__";
 
         new MessageBuilder()
                 .setContent(title)
@@ -25,7 +25,7 @@ public class BankButtonsCommand {
     }
 
     public static void getBankButtons(ButtonClickEvent interaction) {
-        String title = "__**Requiem Banking**__";
+        String title = "__**TGH Banking**__";
 
         new MessageBuilder()
                 .setContent(title)

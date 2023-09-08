@@ -50,15 +50,15 @@ public class CommandAdd implements MessageCreateListener {
                         SlashCommand.with("appraise", "Utilize the appraisal function.")
                                 .addOption(SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id.", false))
 
-                                .createForServer(api.getServerById("1016240494948397066").get())
+                                .createForServer(api.getServerById(Config.mainServerId).get())
                                 .join();
 
 
-                SlashCommand apply =
-                        SlashCommand.with("apply", "Apply for an interview room.")
-                                .addOption(SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Enter your nation id here.", true))
-                                .createForServer(api.getServerById("1016240494948397066").get())
-                                .join();
+//                SlashCommand apply =
+//                        SlashCommand.with("apply", "Apply for an interview room.")
+//                                .addOption(SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Enter your nation id here.", true))
+//                                .createForServer(api.getServerById("1016240494948397066").get())
+//                                .join();
 
 
                 messageCreateEvent.getChannel().sendMessage("Commands deployed.");
@@ -136,7 +136,7 @@ public class CommandAdd implements MessageCreateListener {
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();
 
-                SlashCommand bank = SlashCommand.with("bank", "Requiem banking services.",
+                SlashCommand bank = SlashCommand.with("bank", "Necron banking services.",
                                 Arrays.asList(
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "create", "Create a bank account."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "info", "View the amounts currently in your account."),
@@ -256,7 +256,7 @@ public class CommandAdd implements MessageCreateListener {
                                                 Arrays.asList(
                                                         SlashCommandOption.create(SlashCommandOptionType.STRING, "Name", "Leader name.", true)
                                                 )),
-                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "nation", "Get info for given nation within Requiem.",
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "nation", "Get info for given nation within TGH.",
                                                 Arrays.asList(
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id for the nation to query.", true)
                                                 ))
@@ -290,7 +290,7 @@ public class CommandAdd implements MessageCreateListener {
             messageCreateEvent.getMessage().delete();
 
             new MessageBuilder()
-                    .setContent("__**Requiem Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*\nSelecting info will show ")
+                    .setContent("__**Necron Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*\nSelecting info will show ")
                     .addComponents(
                             ActionRow.of(
                                     Button.danger("info", "Info"),

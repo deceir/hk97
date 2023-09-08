@@ -37,9 +37,10 @@ public class MilUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (id: " + id + ") { data { nation_name leader_name score last_active soldiers tanks aircraft ships missiles nukes num_cities } } }");
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { id nation_name leader_name score last_active soldiers tanks aircraft ships missiles nukes num_cities vmode alliance_id } } }");
 
 
+        int aa_id = 0;
         try {
             StringEntity entity = new StringEntity(jsonObj.toString());
 
@@ -76,6 +77,7 @@ public class MilUtil {
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject object = array.getJSONObject(0);
                         mil.setLeader_name(object.optString("leader_name"));
+                        mil.setNation_name(object.optString("nation_name"));
                         mil.setScore(object.optDouble("score"));
                         mil.setLast_active(object.optString("last_active"));
                         mil.setSoldiers(object.optInt("soldiers"));
@@ -85,6 +87,10 @@ public class MilUtil {
                         mil.setMissiles(object.optInt("missiles"));
                         mil.setNukes(object.optInt("nukes"));
                         mil.setCities(object.optInt("num_cities"));
+                        mil.setId(object.optInt("id"));
+                        mil.setVmode(object.optBoolean("vmode"));
+                        mil.setAaname(object.optInt("alliance_id") + "");
+
 
                     }
                 } catch (JSONException e) {
@@ -302,7 +308,7 @@ public class MilUtil {
         CloseableHttpResponse response = null;
 
         client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.adamApiKey);
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();

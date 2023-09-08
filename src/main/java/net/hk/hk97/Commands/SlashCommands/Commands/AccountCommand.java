@@ -1,14 +1,16 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
+import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Models.Message.Messenger;
 import net.hk.hk97.Models.User;
+import net.hk.hk97.Repositories.BankRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandInteractionOption;
 
 public class AccountCommand {
-    public static void account(SlashCommandInteraction interaction, UserRepository userRepository) {
+    public static void account(SlashCommandInteraction interaction, UserRepository userRepository, BankRepository bankDao) {
         if (interaction.getOptionByName("register").isPresent()) {
             //initial registration
 
@@ -45,6 +47,17 @@ public class AccountCommand {
                 user.setRegistered(true);
                 userRepository.save(user);
                 interaction.createFollowupMessageBuilder().setContent("You have successfully verified your account.").send();
+
+                try {
+                    Bank newAccount = new Bank();
+                    newAccount.setDiscordid(interaction.getUser().getIdAsString());
+                    newAccount.setNationid(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid());
+                    newAccount.setName(interaction.getUser().getName());
+                    bankDao.save(newAccount);
+                    interaction.createFollowupMessageBuilder().setContent("Account created.").send();
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error creating your bank account as well. Please try creating your bank account separately.").send();
+                }
             } else {
                 interaction.createFollowupMessageBuilder().setContent("Your token is incorrect.").send();
             }

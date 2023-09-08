@@ -6,6 +6,7 @@ import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.Bank.Withdrawal;
+import net.hk.hk97.Repositories.AllianceKeyRepository;
 import net.hk.hk97.Repositories.BankRepository;
 //import net.hk.hk97.Repositories.LoanRepository;
 import net.hk.hk97.Repositories.UserRepository;
@@ -30,14 +31,14 @@ import java.util.Locale;
 
 public class BadminCommand {
 
-    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository) throws JSONException {
+    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository, AllianceKeyRepository allianceKeyRepository) throws JSONException {
 
 
         org.javacord.api.entity.user.User user = interaction.getUser();
         List<Role> roles = user.getRoles(interaction.getApi().getServerById(Config.mainServerId).get());
         boolean isAdmin = false;
         for (Role role : roles) {
-            if (role.getIdAsString().equals("1024324511962763347")) {
+            if (role.getIdAsString().equals(Config.mainServerBankAdminId) || role.getIdAsString().equals(Config.mainServerGovId) || role.getIdAsString().equals("404940752691396608") || role.getIdAsString().equals("404941145966116874")) {
                 isAdmin = true;
             }
         }
@@ -115,7 +116,7 @@ public class BadminCommand {
 
                             EmbedBuilder msgEmbed = new EmbedBuilder()
                                     .setAuthor(interaction.getUser())
-                                    .setTitle("Requiem Strongbox Services")
+                                    .setTitle("TGH Treasury")
                                     .addField("Your withdrawal was successfully processed by " + interaction.getUser().getDiscriminatedName(), "Proccessed on: " + text)
                                     .setColor(Color.CYAN)
                                     .setFooter("Necron Banking Command", api.getYourself().getAvatar());
@@ -263,7 +264,7 @@ public class BadminCommand {
                 Bank b = bankDao.findByDiscordid(viewUser.getIdAsString());
 
                 EmbedBuilder emb = new EmbedBuilder()
-                        .setTitle("Requiem Strongbox Services")
+                        .setTitle("TGH Treasury")
                         .setColor(Color.cyan)
                         .setAuthor(viewUser)
                         .addField("Deposit Code: ", "`" + b.getDepositcode() + "`")
@@ -306,7 +307,7 @@ public class BadminCommand {
                     nationName = MilUtil.getNationName(userRepository.findById(member.getIdAsString()).get().getNationid());
                     String fnation = nationName.replaceAll(" ", "+");
 
-                    String withString = "[Requiem Bank](https://politicsandwar.com/alliance/id=10470&display=bank&w_money=" + b.getCash() + "&w_food=" + b.getFood() + "&w_coal=" + b.getCoal() + "&w_oil=" + b.getOil() + "&w_uranium=" + b.getUranium() + "&w_lead=" + b.getLeadRss() + "&w_iron=" + b.getIron() + "&w_bauxite=" + b.getBauxite() + "&w_gasoline=" + b.getGasoline() + "&w_munitions=" + b.getMunitions() + "&w_steel=" + b.getSteel() + "&w_aluminum=" + b.getAluminum() + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";
+                    String withString = "[TGH Bank](https://politicsandwar.com/alliance/id=4567&display=bank&w_money=" + b.getCash() + "&w_food=" + b.getFood() + "&w_coal=" + b.getCoal() + "&w_oil=" + b.getOil() + "&w_uranium=" + b.getUranium() + "&w_lead=" + b.getLeadRss() + "&w_iron=" + b.getIron() + "&w_bauxite=" + b.getBauxite() + "&w_gasoline=" + b.getGasoline() + "&w_munitions=" + b.getMunitions() + "&w_steel=" + b.getSteel() + "&w_aluminum=" + b.getAluminum() + "&w_note=" + b.getDepositcode() + "&w_type=nation&w_recipient=" + fnation + ")";
                     EmbedBuilder embedBuilder = new EmbedBuilder()
                             .setAuthor(interaction.getUser())
                             .addField("Link:", withString);
@@ -341,7 +342,7 @@ public class BadminCommand {
                 DecimalFormat d = new DecimalFormat("#,###");
 
                 EmbedBuilder emb = new EmbedBuilder()
-                        .setTitle("Requiem Strongbox Services")
+                        .setTitle("TGH Treasury")
                         .setDescription("Combined totals of all member account deposits.")
                         .setColor(Color.cyan)
                         .setAuthor(interaction.getUser())
@@ -353,8 +354,8 @@ public class BadminCommand {
 
             } else if (interaction.getOptionByName("bankbalance").isPresent()) {
 
-                Bank b = BankUtil.getBankBalance(10470);
-                List<Bank> banks = bankDao.findAll();
+                Bank b = BankUtil.getBankBalance(Long.parseLong(Config.aaId));
+                                List<Bank> banks = bankDao.findAll();
 
                 for (Bank bank : banks) {
 
@@ -372,10 +373,29 @@ public class BadminCommand {
                     b.setUranium(b.getUranium() - bank.getUranium());
                 }
 
+                if (b.getTotals() < 0) {
+
+                        Bank a = BankUtil.getBankBalance(allianceKeyRepository.findAllianceKeysByAaName("offshore").getId());
+
+                        b.setAluminum(b.getAluminum() + a.getAluminum());
+                        b.setBauxite(b.getBauxite() + a.getBauxite());
+                        b.setGasoline(b.getGasoline() + a.getGasoline());
+                        b.setFood(b.getFood() + a.getFood());
+                        b.setCoal(b.getCoal() + a.getCoal());
+                        b.setCash(b.getCash() + a.getCash());
+                        b.setIron(b.getIron() + a.getIron());
+                        b.setOil(b.getOil() + a.getOil());
+                        b.setLeadRss(b.getLeadRss() + a.getLeadRss());
+                        b.setSteel(b.getSteel() + a.getSteel());
+                        b.setMunitions(b.getMunitions() + a.getMunitions());
+                        b.setUranium(b.getUranium() + a.getUranium());
+
+                }
+
                 NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
                 DecimalFormat d = new DecimalFormat("#,###");
                 EmbedBuilder emb = new EmbedBuilder()
-                        .setTitle("Requiem Strongbox Services")
+                        .setTitle("TGH Treasury")
                         .setDescription("Bank balance with all member deposits subtracted.")
                         .setColor(Color.cyan)
                         .setAuthor(interaction.getUser())
