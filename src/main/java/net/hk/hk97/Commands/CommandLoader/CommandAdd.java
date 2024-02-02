@@ -32,9 +32,9 @@ public class CommandAdd implements MessageCreateListener {
 
                 //stuff for deleting command by id. use id for command to remove. server for server to remove from.
 
-//                String id = "1016240494948397066";
+//                String id = "1128060246422724688";
 //
-//                Server server = api.getServerById("1016240494948397066").get();
+//                Server server = api.getServerById("404940534524936192").get();
 //
 //                List<SlashCommand> commands = api.getServerSlashCommands(server).get();
 //
@@ -229,7 +229,14 @@ public class CommandAdd implements MessageCreateListener {
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bankbalance", "View the 'true' bank balance, with member deposits subtracted.."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "withdrawal_status", "Open and close the bank"),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "deposit_status", "Open and close the bank"),
-                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bank_audit", "Retrieve the balances of every existing account.")
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bank_audit", "Retrieve the balances of every existing account."),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "rebuild", "Alliance rebuild command.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "allianceid", "Alliance ID to rebuild.", true),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "mincity", "Lowest nation city count to rebuild.", true),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "maxcity", "Highest nation city count to rebuild.", true),
+                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "infra", "Infra level to rebuild to.", true)
+                                                        ))
 
 
                                 ))

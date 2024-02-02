@@ -308,11 +308,11 @@ public class MilUtil {
         CloseableHttpResponse response = null;
 
         client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.adamApiKey);
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.kastorKey);
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (alliance_id: " + id + ") { data { id spies central_intelligence_agency food uranium } } }");
+        jsonObj.put("query", "{ nations (alliance_id: " + id + ") { data { id spies central_intelligence_agency food uranium vacation_mode_turns } } }");
 
 
         try {
@@ -362,7 +362,7 @@ public class MilUtil {
         CloseableHttpResponse response = null;
 
         client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.kastorKey);
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();

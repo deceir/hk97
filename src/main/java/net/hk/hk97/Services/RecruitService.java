@@ -33,14 +33,13 @@ public class RecruitService {
     private String tghMessage = "In the annals of history, there are few forces as awe-inspiring and unstoppable as the Mongol Hordes. Just as Genghis Khan once united the nomadic tribes of the steppes into a formidable empire, our alliance, the Golden Horde, stands united under a common banner to conquer the world of Politics and War.\nLike the swift riders of the Mongol Empire, our members are known for their unparalleled speed and precision in both diplomacy and warfare. We believe in the principles of strength through unity and collaboration through camaraderie. Just as the Mongols adapted to diverse terrains and cultures, we adapt to the ever-changing landscape of global politics, forging alliances, and expanding our reach.\nThe spirit of the Golden Horde is characterized by determination, fearlessness, and a relentless pursuit of victory. We are not bound by borders or limitations; instead, we transcend boundaries to establish a legacy of dominance. Our diplomatic acumen and military prowess make us a force to be reckoned with on the world stage.\nAs a member of the Golden Horde, you will find a community that values your contribution and supports your growth. Whether you are a seasoned strategist or a newcomer eager to learn, our alliance provides opportunities for development and advancement. Together, we ride into the realm, conquering challenges, securing resources, and leaving our mark on the world of Politics and War.\n\nJoin the Golden Horde today, and become part of a legacy that echoes the indomitable spirit of the ancient Mongol warriors. Together, we ride towards glory and domination, forging alliances, and leaving our rivals in awe of our might. The world of Politics and War will tremble before the horde!\n[url=https://politicsandwar.com/alliance/id=4567]Alliance[/url] \n[url=https://discord.gg/PpzcNDA]Discord Server[/url]\nJoin the Golden Horde and Ride to Victory!";
 
 
-            @Scheduled(cron = "0 */5 * * * *")
+            @Scheduled(cron = "0 */10 * * * *")
     public void recruitService() throws IOException, JSONException {
 
-        List<SNationContainer> listOfNations = pnw.getNations(false,0,400,0).getNationsContainer();
+        List<SNationContainer> listOfNations = pnw.getNations(false,0,1500,0).getNationsContainer();
 
         for (SNationContainer nation : listOfNations) {
             boolean firstMessage = false;
-            boolean adviceMessage = false;
 
             Recruit recruit = null;
 
@@ -48,9 +47,6 @@ public class RecruitService {
                 recruit = recruitDao.findById(nation.getNationId());
                 if (recruit.initial_message) {
                     firstMessage = true;
-                }
-                if (recruit.advice_message) {
-                    adviceMessage = true;
                 }
             } else {
                 recruit = new Recruit();
@@ -62,25 +58,17 @@ public class RecruitService {
 
 //            Channel channel = api.getChannelById("949114516652822629").get();
 
-            if (nation.getMinutessinceactive() < 60 && !firstMessage && nation.getScore() < 150) {
+            if (nation.getMinutessinceactive() < 60 && !firstMessage && nation.getScore() < 1500) {
 
-                Messenger.sendMessagePnw(nation.getNationId(),"Power.", tghMessage,Config.itachiPnwKey);
+                Messenger.sendMessagePnw(nation.getNationId(), "Join the Golden Horde", tghMessage, Config.itachiPnwKey);
 
                 recruit.setInitial_message(true);
                 recruitDao.save(recruit);
 //                channel.asTextChannel().get().sendMessage("I would send an initial message to this nation: https://politicsandwar.com/nation/id=" + nation.getNationId());
 
 
-
-
-            } else if (nation.getMinutessinceactive() < 60 && !adviceMessage && nation.getScore() >= 150) {
-
-                Messenger.sendMessagePnw(nation.getNationId(), "The Horde Wants You", tghMessage, Config.itachiPnwKey);
-//                channel.asTextChannel().get().sendMessage("I would send an advice message to this nation: https://politicsandwar.com/nation/id=" + nation.getNationId());
-                recruit.setAdvice_message(true);
-                recruitDao.save(recruit);
-
             }
+
         }
 
 

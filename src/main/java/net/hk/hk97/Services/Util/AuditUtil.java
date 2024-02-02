@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,6 +27,7 @@ import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class AuditUtil {
 
     @Autowired
@@ -40,11 +42,11 @@ public class AuditUtil {
         CloseableHttpResponse response = null;
 
         client = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.adamApiKey);
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.kastorKey);
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (alliance_id: " + Config.aaId + ") { data { last_active id } } }");
+        jsonObj.put("query", "{ nations (alliance_id: " + Config.aaId + ") { data { last_active id alliance_id alliance_position vacation_mode_turns } } }");
 
         String name = "";
 
@@ -85,23 +87,34 @@ public class AuditUtil {
 
                     for (int i = 0; i <= array.length() -1 ; i++) {
                         JSONObject object = array.getJSONObject(i);
-                        String activity = object.optString("last_active");
-                        int id = object.optInt("id");
 
-                        TemporalAccessor creationAccessor = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(activity);
-                        Instant instant = Instant.from( creationAccessor );
-                        Duration duration = Duration.between(instant, Instant.now());
-
-                        if (duration.toHours() >= 48) {
-
-                            ActivityAudit audit = new ActivityAudit();
-                           audit.setId(object.optInt("id"));
-                           audit.setLastActive(duration.toHours());
-                           list.add(audit);
-                            System.out.println("id: " +  audit.getId());
-
+                        if (object.optInt("vacation_mode_turns") > 0) {
+                            continue;
                         }
 
+                        int allianceId = object.optInt("alliance_id");
+                        String alliancePosition = object.optString("alliance_position");
+                        if (allianceId != Integer.parseInt(Config.aaId) || alliancePosition.equals("APPLICANT")) {
+                            //nothing
+                        } else {
+                            String activity = object.optString("last_active");
+                            int id = object.optInt("id");
+
+                            TemporalAccessor creationAccessor = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(activity);
+                            Instant instant = Instant.from(creationAccessor);
+                            Duration duration = Duration.between(instant, Instant.now());
+
+                            if (duration.toHours() >= 48) {
+
+                                ActivityAudit audit = new ActivityAudit();
+                                audit.setId(object.optInt("id"));
+                                audit.setLastActive(duration.toHours());
+                                list.add(audit);
+                                System.out.println("id: " + audit.getId());
+
+                            }
+
+                        }
                     }
 
                 } catch (JSONException e) {

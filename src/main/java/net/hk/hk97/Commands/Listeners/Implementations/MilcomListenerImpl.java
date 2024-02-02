@@ -1252,7 +1252,7 @@ public class MilcomListenerImpl implements MilComListener {
                         if (defensiveWars.size() > 0) {
                             String defWarStr = "";
                             for (WarInfo warInfo : defensiveWars) {
-                                duration = warInfo.getDefenderNation().getActivity();
+                                duration = warInfo.getAttackerNation().getActivity();
                                 defWarStr += "[war](https://politicsandwar.com/nation/war/timeline/war=" + warInfo.getId() + ") - [" + warInfo.getAttackerNation().getNation_name() + "](https://politicsandwar.com/nation/id=" + warInfo.getAttackerNation().getId() + ") - (" + warInfo.getAttackerNation().getId() + ") | active: " + duration.toDaysPart() + "d " + duration.toHoursPart() + "h " + duration.toMinutesPart() + "m ago";
                                 defWarStr += "\n";
                             }
@@ -1774,7 +1774,7 @@ public class MilcomListenerImpl implements MilComListener {
                         if (defensiveWars.size() > 0) {
                             String defWarStr = "";
                             for (WarInfo warInfo : defensiveWars) {
-                                duration = warInfo.getDefenderNation().getActivity();
+                                duration = warInfo.getAttackerNation().getActivity();
                                 defWarStr += "[war](https://politicsandwar.com/nation/war/timeline/war=" + warInfo.getId() + ") - [" + warInfo.getAttackerNation().getNation_name() + "](https://politicsandwar.com/nation/id=" + warInfo.getAttackerNation().getId() + ") - (" + warInfo.getAttackerNation().getId() + ") | active: " + duration.toDaysPart() + "d " + duration.toHoursPart() + "h " + duration.toMinutesPart() + "m ago";
                                 defWarStr += "\n";
                             }

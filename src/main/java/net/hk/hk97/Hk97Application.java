@@ -16,6 +16,7 @@ import net.hk.hk97.Commands.SlashCommands.SlashCommandHandler;
 import net.hk.hk97.Models.Military;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.War;
+import net.hk.hk97.Repositories.AllianceKeyRepository;
 import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Repositories.WarRepository;
 import net.hk.hk97.Services.Util.MilUtil;
@@ -83,6 +84,9 @@ public class Hk97Application {
     @Autowired
     private UserRepository userDao;
 
+    @Autowired
+    private AllianceKeyRepository allianceKeyRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(Hk97Application.class, args);
 
@@ -119,8 +123,10 @@ public class Hk97Application {
 
 //        api.getTextChannelById("1017291329283309608").get().sendMessage("War alerts function successfully activated with Discord api.");
         PoliticsAndWar pnw = new PoliticsAndWarBuilder().setApiKey(Config.itachiPnwKey).build();
+        int offshore = allianceKeyRepository.findAllianceKeysByAaName("offshore").getId().intValue();
+        String offshoreName = allianceKeyRepository.findAllianceKeysByAaName("offshore").getName();
 
-        List<SWarContainer> warList = pnw.getWarsByAlliance(4567).getWars();
+        List<SWarContainer> warList = pnw.getWarsByAlliance(4567, offshore).getWars();
         // tgh id 4567
 
 
@@ -142,7 +148,7 @@ public class Hk97Application {
 
                 EmbedBuilder eb = new EmbedBuilder();
 
-                if (newWar.getAttAa().equalsIgnoreCase("The Golden Horde")) {
+                if (newWar.getAttAa().equalsIgnoreCase("The Golden Horde") || newWar.getAttAa().equalsIgnoreCase(offshoreName)) {
 
 
                     System.out.println(newWar.getAttId());
@@ -174,7 +180,7 @@ public class Hk97Application {
                     warAlertChannel.asTextChannel().get().sendMessage(eb);
                     warDao.save(newWar);
 
-                } else if (newWar.getDefAa().equalsIgnoreCase("The Golden Horde")) {
+                } else if (newWar.getDefAa().equalsIgnoreCase("The Golden Horde") || newWar.getDefAa().equalsIgnoreCase(offshoreName)) {
 
                     if (api == null) {
                         api = new DiscordApiBuilder().setToken(Config.discordToken)

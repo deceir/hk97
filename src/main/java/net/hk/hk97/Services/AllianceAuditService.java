@@ -53,6 +53,7 @@ public class AllianceAuditService {
 
             for (ActivityAudit audit : audits) {
                 try {
+
                     User user = userRepository.findUserByNationid(audit.getId());
 
                     inactiveUsers += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") last active " + audit.getLastActive() + "hrs ago";
@@ -73,17 +74,23 @@ public class AllianceAuditService {
                 JSONObject object = array.getJSONObject(i);
                 try {
 
+
                     int cities = object.optInt("cities");
                     int id = object.optInt("id");
                     long foodHeld = object.optLong("food");
+                    if (object.optInt("vacation_mode_turns") > 0) {
+                        continue;
+                    }
                     User user = userRepository.findUserByNationid(id);
 
-                    if (foodHeld <= 50000) {
+                    if (foodHeld <= 50000 && cities >= 15) {
                         try {
                             food += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(foodHeld) + "\n";
                         } catch (Exception e) {
                             //probably applicant
                         }
+                    } else if (foodHeld < 1000) {
+                        food += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(foodHeld) + "\n";
                     }
                     boolean hasIA = object.optBoolean("central_intelligence_agency");
 
@@ -104,12 +111,14 @@ public class AllianceAuditService {
                     }
                     long uraHeld = object.optInt("uranium");
                     System.out.println("ura held: " + uraHeld);
-                    if (uraHeld < 500) {
+                    if (uraHeld < 500 && cities >= 15) {
                         try {
                             uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
                         } catch (Exception e) {
                             //probably applicant
                         }
+                    } else if (uraHeld < 100) {
+                        uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
                     }
 
 

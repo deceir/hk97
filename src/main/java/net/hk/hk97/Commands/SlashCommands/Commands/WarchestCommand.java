@@ -35,10 +35,10 @@ public class WarchestCommand {
         long alu = 1800;
         long steel = 2800;
 
-        long onhandgas = 900;
-        long onhandmunis = 900;
-        long onhandalu = 800;
-        long onhandsteel = 1000;
+        long onhandgas = (long)(900 * 0.75);
+        long onhandmunis = (long)(900 * 0.75);
+        long onhandalu = (long)(800 * 0.75);
+        long onhandsteel = (long)(1000 * 0.75);
 
         NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
         DecimalFormat d = new DecimalFormat("#,###");

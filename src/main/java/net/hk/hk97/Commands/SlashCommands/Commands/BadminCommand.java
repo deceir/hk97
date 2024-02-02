@@ -375,7 +375,8 @@ public class BadminCommand {
 
                 if (b.getTotals() < 0) {
 
-                        Bank a = BankUtil.getBankBalance(allianceKeyRepository.findAllianceKeysByAaName("offshore").getId());
+                    b = BankUtil.getBankBalanceAlternate(Long.parseLong(Config.aaId));
+                    Bank a = BankUtil.getBankBalance(allianceKeyRepository.findAllianceKeysByAaName("offshore").getId());
 
                         b.setAluminum(b.getAluminum() + a.getAluminum());
                         b.setBauxite(b.getBauxite() + a.getBauxite());
@@ -389,6 +390,22 @@ public class BadminCommand {
                         b.setSteel(b.getSteel() + a.getSteel());
                         b.setMunitions(b.getMunitions() + a.getMunitions());
                         b.setUranium(b.getUranium() + a.getUranium());
+
+                    for (Bank bank : banks) {
+
+                        b.setAluminum(b.getAluminum() - bank.getAluminum());
+                        b.setBauxite(b.getBauxite() - bank.getBauxite());
+                        b.setGasoline(b.getGasoline() - bank.getGasoline());
+                        b.setFood(b.getFood() - bank.getFood());
+                        b.setCoal(b.getCoal() - bank.getCoal());
+                        b.setCash(b.getCash() - bank.getCash());
+                        b.setIron(b.getIron() - bank.getIron());
+                        b.setOil(b.getOil() - bank.getOil());
+                        b.setLeadRss(b.getLeadRss() - bank.getLeadRss());
+                        b.setSteel(b.getSteel() - bank.getSteel());
+                        b.setMunitions(b.getMunitions() - bank.getMunitions());
+                        b.setUranium(b.getUranium() - bank.getUranium());
+                    }
 
                 }
 
@@ -435,6 +452,9 @@ public class BadminCommand {
 
                 interaction.createFollowupMessageBuilder().setContent("Bank audit complete.").send();
 
+            } else if (interaction.getOptionByName("rebuild").isPresent()) {
+                System.out.println("Entered rebuild sub command.");
+                AllianceRebuildCommand.getAllianceRebuild(interaction, userRepository, allianceKeyRepository);
             }
 //            else if (interaction.getOptionByName("loan").isPresent()) {
 //

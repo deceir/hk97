@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AllianceKeyRepository extends JpaRepository<AllianceKeys, Long> {
 
     AllianceKeys findAllianceKeysByAaName(String name);
+
+
 }

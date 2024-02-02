@@ -18,4 +18,6 @@ public class AllianceKeys {
 
     @Column
     private String aaName;
+
+    @Column String name;
 }

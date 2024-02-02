@@ -164,10 +164,15 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 }
                 break;
 
-
-
                     // new case goes here
 
+//            case "rebuild":
+//                interaction.respondLater();
+//                try {
+//                    AllianceRebuildCommand.getAllianceRebuild(interaction, userRepository, allianceKeyRepository);
+//                } catch (Exception e) {
+//                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+//                }
         }
     }
 }

@@ -132,10 +132,8 @@ public class InterviewFileLogImpl implements InterviewFileLogListener {
                 }
 
 
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
             }
         }
     }

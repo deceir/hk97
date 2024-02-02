@@ -106,7 +106,7 @@ public class ModalListener implements ModalSubmitListener {
                                 e.printStackTrace();
                             }
 
-                            interview.asTextChannel().get().sendMessage("Hello and thank you for applying, <@" + modalSubmitEvent.getModalInteraction().getUser().getId() + ">! Please refrain from declaring any new offensive wars at this time. Let us know when you are ready to begin the interview.");
+                            interview.asTextChannel().get().sendMessage("Hello and thank you for applying, <@" + modalSubmitEvent.getModalInteraction().getUser().getId() + ">! Please refrain from declaring any new offensive wars at this time. Let us know when you are ready to begin the interview. \n<@&590651219215646731>");
 
                             try {
                                 Interview interview1 = new Interview();
