@@ -37,8 +37,9 @@ public class BankButtonListener implements ButtonClickListener {
             DiscordApi api = event.getApi();
 
 
-        }
+        } else if (event.getButtonInteraction().getCustomId().equals("payloan")) {
 
+        }
     }
 }
 

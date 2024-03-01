@@ -2,12 +2,10 @@ package net.hk.hk97.Commands.Listeners.InteractionListener;
 
 import net.hk.hk97.Commands.SlashCommands.Commands.BankButtonsCommand;
 import net.hk.hk97.Models.Bank.Bank;
+import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
-import net.hk.hk97.Repositories.BankRepository;
-import net.hk.hk97.Repositories.InterviewRepository;
-import net.hk.hk97.Repositories.UserRepository;
-import net.hk.hk97.Repositories.WithdrawalRepository;
+import net.hk.hk97.Repositories.*;
 import net.hk.hk97.Services.Util.BankUtil;
 import org.javacord.api.entity.message.component.ActionRow;
 import org.javacord.api.entity.message.component.TextInput;
@@ -43,6 +41,9 @@ public class ButtonListener implements ButtonClickListener {
     @Autowired
     WithdrawalRepository withdrawalRepository;
 
+    @Autowired
+    LoanRepository loanRepository;
+
     @Override
     public void onButtonClick(ButtonClickEvent interaction) {
         String buttonId = interaction.getButtonInteraction().getCustomId();
@@ -75,6 +76,15 @@ public class ButtonListener implements ButtonClickListener {
                                     n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
                             );
 
+                    if (!loanRepository.getLoansByDiscordid(interaction.getButtonInteraction().getUser().getId()).isEmpty()) {
+                        List<Loan> loans = loanRepository.getLoansByDiscordid(interaction.getButtonInteraction().getUser().getId());
+
+                        for (Loan loan: loans) {
+                            if (loan.getActive()) {
+                                emb.addField("Loan ID: " + loan.getId(), "Amount Remaining: " + n.format(loan.getAmount()) + "\nOriginal Amount: " + n.format(loan.getOriginal_amount()) + " \nDue On: " + loan.getDateDue() + " \nDeposit Code: " + loan.getDepositcode() + "\nBanker: <@" + loan.getBanker() + ">");
+                            }
+                        }
+                    }
 
                     interaction.getButtonInteraction().createFollowupMessageBuilder().addEmbed(emb).send();
                     TimeUnit.SECONDS.sleep(1);
@@ -133,6 +143,46 @@ public class ButtonListener implements ButtonClickListener {
                             ActionRow.of((TextInput.create(TextInputStyle.SHORT, "nationId", "Enter your nation ID below."))));
 
 
+                break;
+            case "payloan":
+                interaction.getButtonInteraction().respondLater();
+
+                User user = userRepository.findById(interaction.getButtonInteraction().getUser().getIdAsString()).get();
+                List<Loan> loans = loanRepository.getLoansByDiscordid(interaction.getButtonInteraction().getUser().getId());
+                try {
+                    for (Loan loan : loans) {
+                        if (loan.getActive() == true) {
+
+                            Bank deposits = BankUtil.getTransactions(user.getNationid(), loan.getDepositcode());
+
+                            if (deposits.getTotals() == 0) {
+                                interaction.getInteraction().createFollowupMessageBuilder().setContent("Loan Deposit code:").send();
+                                interaction.getInteraction().getChannel().get().sendMessage(loan.getDepositcode());
+                            } else {
+
+                                loan.setAmount(loan.getAmount() - deposits.getCash());
+                                if (loan.getAmount() <= 0) {
+                                    loan.setActive(false);
+
+                                    EmbedBuilder paidOff = new EmbedBuilder()
+                                            .setAuthor(interaction.getInteraction().getUser())
+                                            .setTitle("Loan Repayment In Full")
+                                            .setDescription(interaction.getInteraction().getUser().getNicknameMentionTag() + " has repaid their loan (ID: " + loan.getId() + ")")
+                                            .setFooter("HK-97 Banking Service");
+
+                                    interaction.getApi().getTextChannelById("1128058377432477706").get().sendMessage(paidOff);
+                                }
+                                loan.updateDepositCode();
+                                loanRepository.save(loan);
+                                interaction.getInteraction().createFollowupMessageBuilder().setContent("Your loan payment has been received.").send();
+                            }
+                        }
+                    }
+
+                } catch (Exception e) {
+                    interaction.getInteraction().createFollowupMessageBuilder().setContent("There was an error. " + e).send();
+                }
+                BankButtonsCommand.getBankButtons(interaction);
                 break;
         }
     }

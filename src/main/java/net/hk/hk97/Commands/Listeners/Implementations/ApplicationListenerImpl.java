@@ -18,11 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Component
 public class ApplicationListenerImpl implements ApplicationListener {
 
-    @Autowired
-    InterviewRepository interviewRepository;
 
     @Override
     public void onMessageCreate(MessageCreateEvent messageCreateEvent) {

@@ -135,7 +135,7 @@ public class AuditCommand {
                     .addField("Low Food (Less than 50k)", food + " ")
                     .addField("Low Uranium (Less than 500)", uranium + " ")
                     .addField("Not Maxed On Spies", spies + " ")
-                    .setFooter("Necron Internal Command");
+                    .setFooter("HK-97 Internal Command");
 
             interaction.createFollowupMessageBuilder().addEmbed(eb).send();
 

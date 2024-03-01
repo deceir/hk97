@@ -60,7 +60,7 @@ public class WhoCommand {
             embedBuilder.addField("Military", ":military_helmet: " + d.format(nAudit.getSoldiers()) + " :bus: " + d.format(nAudit.getTanks()) + " :airplane: " + d.format(nAudit.getJets()) + " :ship: " + d.format(nAudit.getShips()) + "\n :rocket: " + d.format(nAudit.getMissiles()) + " :radioactive: " + d.format(nAudit.getNukes()))
                     .addField("Nation Link:", "[" + nAudit.getLeader() + " of " + nAudit.getName() + "](https://politicsandwar.com/nation/id=" + nAudit.getId() + ")")
                     .setColor(Color.CYAN)
-                    .setFooter("Necron Internal Command", interaction.getApi().getYourself().getAvatar());
+                    .setFooter("HK-97 Internal Command", interaction.getApi().getYourself().getAvatar());
 
             interaction.createFollowupMessageBuilder().addEmbed(embedBuilder).send();
         }

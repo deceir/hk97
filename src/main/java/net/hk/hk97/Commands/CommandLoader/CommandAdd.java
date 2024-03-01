@@ -136,11 +136,12 @@ public class CommandAdd implements MessageCreateListener {
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();
 
-                SlashCommand bank = SlashCommand.with("bank", "Necron banking services.",
+                SlashCommand bank = SlashCommand.with("bank", "HK-97 banking services.",
                                 Arrays.asList(
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "create", "Create a bank account."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "info", "View the amounts currently in your account."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "deposit", "Update your latest deposit"),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "payloan", "Pay your loan"),
 //                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "transfer", "Transfer funds to another member's account. *This is irreversible, make sure you know what you're doing.*",
 //                                                Arrays.asList(
 //
@@ -222,11 +223,14 @@ public class CommandAdd implements MessageCreateListener {
                                                                 )),
                                                         SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "remove", "Removes a loan by setting its status to inactive.",
                                                                 Arrays.asList(
-                                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "loan", "The loan id being removed.", true)
-                                                                ))
-                                                )),
+                                                                        SlashCommandOption.create(SlashCommandOptionType.LONG, "loan", "The loan ID being removed.", true)
+                                                                )),
+                                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "list", "View active outstanding loans.")
+
+                                                        )),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "member_deposits", "View the combined totals of member deposits."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bankbalance", "View the 'true' bank balance, with member deposits subtracted.."),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "visualizebalance", "Create a bank balance chart."),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "withdrawal_status", "Open and close the bank"),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "deposit_status", "Open and close the bank"),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "bank_audit", "Retrieve the balances of every existing account."),
@@ -297,7 +301,7 @@ public class CommandAdd implements MessageCreateListener {
             messageCreateEvent.getMessage().delete();
 
             new MessageBuilder()
-                    .setContent("__**Necron Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*\nSelecting info will show ")
+                    .setContent("__**HK-97 Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*\nSelecting info will show ")
                     .addComponents(
                             ActionRow.of(
                                     Button.danger("info", "Info"),

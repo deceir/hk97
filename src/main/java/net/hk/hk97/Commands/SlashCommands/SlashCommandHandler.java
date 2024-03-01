@@ -31,8 +31,8 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     @Autowired
     WithdrawalRepository withdrawalRepository;
 
-    //    @Autowired
-//    private LoanRepository loanRepository;
+    @Autowired
+    private LoanRepository loanRepository;
 
     @Autowired
     private TreasureRepository treasureRepository;
@@ -48,6 +48,9 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
     @Autowired
     private AllianceKeyRepository allianceKeyRepository;
+
+    @Autowired
+    private BankHistoryRepository bankHistoryRepository;
 
     @Override
     public void onSlashCommandCreate(SlashCommandCreateEvent slashCommandCreateEvent) {
@@ -101,7 +104,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 interaction.respondLater();
                 try {
-                    BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository, allianceKeyRepository);
+                    BankCommand.bank(interaction, bankDao, userRepository, withdrawalRepository, allianceKeyRepository, loanRepository);
                 } catch (Exception e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
                 }
@@ -113,7 +116,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 interaction.respondLater();
                 try {
-                    BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository, allianceKeyRepository);
+                    BadminCommand.badmin(interaction, bankDao, withdrawalRepository, userRepository, allianceKeyRepository, loanRepository, bankHistoryRepository);
                 } catch (Exception e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
                 }
@@ -165,6 +168,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 break;
 
                     // new case goes here
+
 
 //            case "rebuild":
 //                interaction.respondLater();

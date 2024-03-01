@@ -41,7 +41,7 @@ public class AllianceRebuildCommand {
                         .setColor(Color.CYAN)
                         .setDescription("There was an error running this command. You should not be here. Goodnight.")
                         .addField("Quick Alliance ID Reference:", "TGH- 4567", false)
-                        .setFooter("Necron", "https://i.imgur.com/qCq0TQe.png");
+                        .setFooter("HK-97", "https://i.imgur.com/qCq0TQe.png");
 
                     try {
 
@@ -206,7 +206,7 @@ public class AllianceRebuildCommand {
 
                             }
                             String formattedTotalCost = "$" + format.format(totalCost);
-                            interaction.getChannel().get().sendMessage("The total cost for this rebuild is: " + formattedTotalCost);
+                            interaction.createFollowupMessageBuilder().setContent("The total cost for this rebuild is: " + formattedTotalCost).send();
 
                         } catch (Exception e) {
                             interaction.createFollowupMessageBuilder().addEmbed(badArg).send();

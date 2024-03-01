@@ -145,7 +145,7 @@ public class AllianceAuditService {
                     .addField("Low Food (Less than 50k)", food + " ")
                     .addField("Low Uranium (Less than 500)", uranium + " ")
                     .addField("Not Maxed On Spies", spies + " ")
-                    .setFooter("Necron Internal Command");
+                    .setFooter("HK-97 Internal Command");
 
             api.getTextChannelById("1129269346015907912").get().sendMessage("__**TGH Automated Audit**__");
             api.getTextChannelById("1129269346015907912").get().sendMessage(eb);

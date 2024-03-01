@@ -32,6 +32,22 @@ public class RecruitService {
 
     private String tghMessage = "In the annals of history, there are few forces as awe-inspiring and unstoppable as the Mongol Hordes. Just as Genghis Khan once united the nomadic tribes of the steppes into a formidable empire, our alliance, the Golden Horde, stands united under a common banner to conquer the world of Politics and War.\nLike the swift riders of the Mongol Empire, our members are known for their unparalleled speed and precision in both diplomacy and warfare. We believe in the principles of strength through unity and collaboration through camaraderie. Just as the Mongols adapted to diverse terrains and cultures, we adapt to the ever-changing landscape of global politics, forging alliances, and expanding our reach.\nThe spirit of the Golden Horde is characterized by determination, fearlessness, and a relentless pursuit of victory. We are not bound by borders or limitations; instead, we transcend boundaries to establish a legacy of dominance. Our diplomatic acumen and military prowess make us a force to be reckoned with on the world stage.\nAs a member of the Golden Horde, you will find a community that values your contribution and supports your growth. Whether you are a seasoned strategist or a newcomer eager to learn, our alliance provides opportunities for development and advancement. Together, we ride into the realm, conquering challenges, securing resources, and leaving our mark on the world of Politics and War.\n\nJoin the Golden Horde today, and become part of a legacy that echoes the indomitable spirit of the ancient Mongol warriors. Together, we ride towards glory and domination, forging alliances, and leaving our rivals in awe of our might. The world of Politics and War will tremble before the horde!\n[url=https://politicsandwar.com/alliance/id=4567]Alliance[/url] \n[url=https://discord.gg/PpzcNDA]Discord Server[/url]\nJoin the Golden Horde and Ride to Victory!";
 
+    private String newTghMessage = "Hold your horses! Don’t delete me yet! Still here? Great! \n" +
+            "\n" +
+            "Here at the Golden Horde, we believe that through sharing our experiences with each other, everyone gets better. We believe that hard work leads to both individual and collective success. We believe that a close community is the cornerstone for an effective alliance. \n" +
+            "\n" +
+            "If you want that too, then The Golden Horde is the place for you. \n" +
+            "\n" +
+            "We have decades of combined experience between just a handful of members who are willing to teach you how to run a company, become a ruthless raider, wealthy trader, or a member of our government! \n" +
+            "\n" +
+            "We reject the idea common among larger alliances that new members are a waste of time and that experienced members should only talk to other experienced members. We bring together people of all experience levels to create a tight knit community where you are always welcome to bounce ideas off of or ask questions.\n" +
+            "\n" +
+            "We view every new member as the individual that we know you are. You are not just a number when you join us. We cap how many trainees we let in to guarantee individualized support and bring in some of the most experienced members of the game to train you!\n" +
+            "\n" +
+            "Pack up your bags, come see our [url=https://discord.gg/PpzcNDA]Discord community[/url], and see if this is the place for you! You can also [url=https://politicsandwar.com/alliance/id=4567]find us in-game[/url] as well! \n" +
+            "\n" +
+            "We look forward to seeing where you go with the Horde!\n";
+
 
             @Scheduled(cron = "0 */10 * * * *")
     public void recruitService() throws IOException, JSONException {
@@ -60,7 +76,7 @@ public class RecruitService {
 
             if (nation.getMinutessinceactive() < 60 && !firstMessage && nation.getScore() < 1500) {
 
-                Messenger.sendMessagePnw(nation.getNationId(), "Join the Golden Horde", tghMessage, Config.itachiPnwKey);
+                Messenger.sendMessagePnw(nation.getNationId(), "ACTION REQUIRED: Find Experienced Support and Tight Knit Community Today!", newTghMessage, Config.itachiPnwKey);
 
                 recruit.setInitial_message(true);
                 recruitDao.save(recruit);

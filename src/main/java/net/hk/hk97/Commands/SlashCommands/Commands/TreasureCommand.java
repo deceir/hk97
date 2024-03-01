@@ -155,7 +155,7 @@ public class TreasureCommand {
                             .setDescription("There are currently " + colorcount + " nations on " + color + " and in range.")
                             .addInlineField("The Golden Horde", reqCounter + " nations in range.\n" + Math.round(percentreq) + "% chance if all nations swap.")
                             .setColor(Color.CYAN)
-                            .setFooter("Necron Treasure Service", interaction.getApi().getYourself().getAvatar());
+                            .setFooter("HK-97 Treasure Service", interaction.getApi().getYourself().getAvatar());
 
                     //making list for users to ping
 
@@ -309,7 +309,7 @@ public class TreasureCommand {
                             .setDescription("There are currently " + colorcount + " nations on " + color + " and in range on " + continent + ".")
                             .addInlineField("The Golden Horde", reqCounter + " nations in range.\n" + Math.round(percentreq) + "% chance if all nations swap.")
                             .setColor(Color.CYAN)
-                            .setFooter("Necron Treasure Service", interaction.getApi().getYourself().getAvatar());
+                            .setFooter("HK-97 Treasure Service", interaction.getApi().getYourself().getAvatar());
 
                     //making list for users to ping
 
@@ -360,7 +360,7 @@ public class TreasureCommand {
                 for (Treasure treasure : sortedTreasure) {
                     treasuresEmbed.addInlineField(treasure.getName(), "Color: " + treasure.getColor() + "\nContinent: " + treasure.getContinent() + "\nSpawns: " + treasure.getNextSpawn());
                 }
-                treasuresEmbed.setFooter("Necron Treasure Service", interaction.getApi().getYourself().getAvatar());
+                treasuresEmbed.setFooter("HK-97 Treasure Service", interaction.getApi().getYourself().getAvatar());
 
                 System.out.println("embed ready to send");
                 interaction.createFollowupMessageBuilder().addEmbed(treasuresEmbed).send();

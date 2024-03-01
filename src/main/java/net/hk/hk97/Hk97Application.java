@@ -9,7 +9,7 @@ import net.hk.hk97.Commands.Listeners.ApplicationListener;
 import net.hk.hk97.Commands.Listeners.InteractionListener.ButtonListener;
 import net.hk.hk97.Commands.Listeners.InteractionListener.ModalListener;
 import net.hk.hk97.Commands.Listeners.InterviewFileLogListener;
-import net.hk.hk97.Commands.Listeners.MemberJoinListener;
+import net.hk.hk97.Commands.Listeners.MessageCreateListener;
 import net.hk.hk97.Commands.Listeners.MilComListener;
 import net.hk.hk97.Commands.TextCommands.TextCommandHandler;
 import net.hk.hk97.Commands.SlashCommands.SlashCommandHandler;
@@ -51,11 +51,11 @@ public class Hk97Application {
     DiscordApi api;
 
 
-    @Autowired
-    private ApplicationListener applicationListener;
-
-    @Autowired
-    private InterviewFileLogListener interviewFileLogListener;
+//    @Autowired
+//    private ApplicationListener applicationListener;
+//
+//    @Autowired
+//    private InterviewFileLogListener interviewFileLogListener;
 
     @Autowired
     private SlashCommandHandler slashCommandHandler;
@@ -63,11 +63,12 @@ public class Hk97Application {
     @Autowired
     private CommandAdd commandAdd;
 
-    @Autowired
-    private MemberJoinListener memberJoinListener;
 
     @Autowired
-    private MilComListener milComListener;
+    MessageCreateListener messageCreateListener;
+
+//    @Autowired
+//    private MilComListener milComListener;
 
     @Autowired
     private TextCommandHandler textCommandHandler;
@@ -100,13 +101,12 @@ public class Hk97Application {
         api = new DiscordApiBuilder().setToken(token)
                 .setAllNonPrivilegedIntents()
                 .addSlashCommandCreateListener(slashCommandHandler)
-                .addMessageCreateListener(applicationListener)
+                .addMessageCreateListener(messageCreateListener)
                 .addMessageCreateListener(textCommandHandler)
-                .addMessageCreateListener(interviewFileLogListener)
+//                .addMessageCreateListener(interviewFileLogListener)
                 .addMessageCreateListener(commandAdd)
-                .addMessageCreateListener(milComListener)
-                .addMessageCreateListener(applicationListener)
-                .addServerMemberJoinListener(memberJoinListener)
+//                .addMessageCreateListener(milComListener)
+//                .addMessageCreateListener(applicationListener)
                 .addButtonClickListener(buttonListener)
                 .addModalSubmitListener(modalListener)
                 .login()

@@ -19,21 +19,17 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Component
-public class InterviewFileLogImpl implements InterviewFileLogListener {
 
-    @Autowired
-    InterviewRepository interviewRepository;
+public class InterviewFileLogImpl {
 
-    String token = Config.discordToken;
+
+//    String token = Config.discordToken;
 
 //    @Value("discord-api")
 //    DiscordApi api;
 
 
-
-    @Override
-    public void onMessageCreate(MessageCreateEvent messageCreateEvent) {
+public static void getInterviewFileLog(MessageCreateEvent messageCreateEvent, InterviewRepository interviewRepository) {
 
 
         DiscordApi api = messageCreateEvent.getApi();

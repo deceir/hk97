@@ -79,7 +79,7 @@ public class ApplicationCommand {
                     .addField("Militarization", ":military_helmet: " + nation.getSoldiers() + " :bus: " + nation.getTanks() + " :airplane: " + nation.getAircraft() + " :ship: " + nation.getShips())
                     .addField("WMD's", ":rocket: " + nation.getMissiles() + " :radioactive: " + nation.getNukes())
                     .setColor(Color.CYAN)
-                    .setFooter("Necron Internal Command");
+                    .setFooter("HK-97 Internal Command");
 
             interview.asTextChannel().get().sendMessage(eb).get().pin();
             MessageSet list = interview.asServerTextChannel().get().getMessages(0).get();

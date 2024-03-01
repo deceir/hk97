@@ -29,7 +29,7 @@ public class AccountCommand {
                     userRepository.save(user);
 
                     try {
-                        Messenger.sendMessage(option.getOptionLongValueByName("id").get(), "Necron Verification", ("Your Necron verification code is: " + user.getVerification()));
+                        Messenger.sendMessage(option.getOptionLongValueByName("id").get(), "HK-97 Verification", ("Your HK-97 verification code is: " + user.getVerification()));
 
                         interaction.createFollowupMessageBuilder().setContent("Your account has been created. \nA DM with your verification code has been sent in-game. Use that token with `/account verify` to complete your registration.").send();
                     } catch (Exception e) {

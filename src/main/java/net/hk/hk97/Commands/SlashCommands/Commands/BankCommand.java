@@ -2,7 +2,6 @@ package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Config;
 import net.hk.hk97.Models.Bank.Bank;
-import net.hk.hk97.Models.Bank.BankStatus;
 import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
@@ -13,31 +12,30 @@ import net.hk.hk97.Repositories.*;
 import net.hk.hk97.Services.Util.BankUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.entity.channel.ServerTextChannel;
+import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.message.Message;
-import org.javacord.api.entity.message.MessageBuilder;
-import org.javacord.api.entity.message.Reaction;
-import org.javacord.api.entity.message.component.ActionRow;
-import org.javacord.api.entity.message.component.Button;
+import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.javacord.api.interaction.SlashCommandInteractionOption;
+import org.json.JSONException;
 
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class BankCommand {
 
-    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository, AllianceKeyRepository allianceKeyRepository) {
+    public static void bank(SlashCommandInteraction interaction, BankRepository bankDao, UserRepository userRepository, WithdrawalRepository withdrawalRepository, AllianceKeyRepository allianceKeyRepository, LoanRepository loanRepository) throws JSONException {
 
         if (!userRepository.findById(interaction.getUser().getIdAsString()).isPresent()) {
-            interaction.createFollowupMessageBuilder().setContent("You do not have a Necron account. Please use `/account register` before trying to use the bank.").send();
+            interaction.createFollowupMessageBuilder().setContent("You do not have a HK-97 account. Please use `/account register` before trying to use the bank.").send();
 
         } else {
 
@@ -84,10 +82,15 @@ public class BankCommand {
                                     n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
                             );
 
-//                    if (listOfAccounts.size() > 0) {
-//                        emb.addField("Loan Amount:" + loans.get(0).getAmount(), "   Due: " + loans.get(0).getDateDue() + "\nLoan Deposit Code: `" + loans.get(0).getDepositcode() + "`");
-//                    }
+                    if (!loanRepository.getLoansByDiscordid(interaction.getUser().getId()).isEmpty()) {
+                        List<Loan> loans = loanRepository.getLoansByDiscordid(interaction.getUser().getId());
 
+                        for (Loan loan: loans) {
+                            if (loan.getActive()) {
+                                emb.addField("Loan ID: " + loan.getId(), "Amount Remaining: " + n.format(loan.getAmount()) + "\nOriginal Amount: " + n.format(loan.getOriginal_amount()) + " \nDue On: " + loan.getDateDue() + " \nDeposit Code: " + loan.getDepositcode() + "\nBanker: <@" + loan.getBanker() + ">");
+                            }
+                        }
+                    }
 
                     interaction.createFollowupMessageBuilder().addEmbed(emb).send();
                     TimeUnit.SECONDS.sleep(1);
@@ -110,6 +113,7 @@ public class BankCommand {
                     User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
                     Bank bank = bankDao.findByDiscordid(interaction.getUser().getIdAsString());
                     Bank deposits = BankUtil.getTransactions(user.getNationid(), bank.getDepositcode());
+
 
                     if (deposits.getTotals() == 0) {
                         interaction.createFollowupMessageBuilder().setContent("Deposit code:").send();
@@ -136,6 +140,48 @@ public class BankCommand {
                 } catch (Exception e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
                 }
+
+            } else if(interaction.getOptionByName("payloan").isPresent()) {
+                User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
+                List<Loan> loans = loanRepository.getLoansByDiscordid(interaction.getUser().getId());
+                try {
+
+                        for (Loan loan : loans) {
+                            if (loan.getActive() == true) {
+
+                                Bank deposits = BankUtil.getTransactions(user.getNationid(), loan.getDepositcode());
+
+                                if (deposits.getTotals() == 0) {
+                                    interaction.createFollowupMessageBuilder().setContent("Loan Deposit code:").send();
+                                    interaction.getChannel().get().sendMessage(loan.getDepositcode());
+                                } else {
+
+                                    loan.setAmount(loan.getAmount() - deposits.getCash());
+                                    if (loan.getAmount() <= 0) {
+                                        loan.setActive(false);
+
+                                        EmbedBuilder paidOff = new EmbedBuilder()
+                                                .setAuthor(interaction.getUser())
+                                                .setTitle("Loan Repayment In Full")
+                                                .setDescription(interaction.getUser().getNicknameMentionTag() + " has repaid their loan (ID: " + loan.getId() + ")")
+                                                .setFooter("HK-97 Banking Service");
+
+                                        interaction.getApi().getTextChannelById("1128058377432477706").get().sendMessage(paidOff);
+                                    }
+                                    loan.updateDepositCode();
+                                    loanRepository.save(loan);
+                                    interaction.createFollowupMessageBuilder().setContent("Your loan payment has been received.").send();
+                                }
+                            }
+                        }
+
+
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
+                }
+
+
+
 
 
             } else if (interaction.getOptionByName("withdraw").isPresent()) {

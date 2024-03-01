@@ -2,6 +2,7 @@ package net.hk.hk97.Services.Util;
 
 import net.hk.hk97.Config;
 import net.hk.hk97.Models.Bank.Bank;
+import net.hk.hk97.Repositories.AllianceKeyRepository;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -10,10 +11,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class BankUtil {
 
@@ -28,7 +32,7 @@ public class BankUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (id: " + id + ") { data { bankrecs { sender_id note money coal oil uranium iron bauxite lead gasoline munitions steel aluminum food  } } } }");
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { bankrecs { receiver_id sender_id note money coal oil uranium iron bauxite lead gasoline munitions steel aluminum food  } } } }");
 
         long money = 0;
         long coal = 0;
@@ -42,6 +46,8 @@ public class BankUtil {
         long steel = 0;
         long aluminum = 0;
         long food = 0;
+
+        long aaid = 0;
 
 
         try {
@@ -83,7 +89,9 @@ public class BankUtil {
                         JSONObject bankreqs = newArray.getJSONObject(i);
                         String note = bankreqs.optString("note");
                         long sender = bankreqs.optLong("sender_id");
-                        if (note.trim().equals(code) && (sender == id)) {
+                        String receiver = bankreqs.optString("receiver_id");
+                        
+                        if (note.trim().equals(code) && (sender == id) && Arrays.asList(Config.alliancesForDeposit).contains(receiver)) {
                             money += bankreqs.optDouble("money");
                             coal += bankreqs.optDouble("coal");
                             oil += bankreqs.optDouble("oil");

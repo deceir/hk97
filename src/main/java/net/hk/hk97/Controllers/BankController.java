@@ -1,7 +1,9 @@
 package net.hk.hk97.Controllers;
 
 import net.hk.hk97.Models.Bank.Bank;
+import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Repositories.BankRepository;
+import net.hk.hk97.Repositories.LoanRepository;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class BankController {
 
     @Autowired
     private BankRepository bankDao;
+
+    @Autowired
+    private LoanRepository loanDao;
 
     @GetMapping("/api/banks")
     public @ResponseBody
@@ -85,6 +90,14 @@ public class BankController {
                 headers,
                 HttpStatus.OK
         );
+    }
+
+    @GetMapping("/api/loans")
+    public @ResponseBody
+    ResponseEntity<?> viewAllLoansJSON() {
+        ResponseEntity<List<Loan>> responseEntity;
+        responseEntity = new ResponseEntity<>(loanDao.getLoansByActive(true), HttpStatus.OK);
+        return responseEntity;
     }
 
 }

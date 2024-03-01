@@ -1,20 +1,20 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Config;
+import net.hk.hk97.Models.Bank.AllianceBankHistory;
 import net.hk.hk97.Models.Bank.Bank;
 import net.hk.hk97.Models.Bank.Loan;
 import net.hk.hk97.Models.Enums.WithdrawalTypes;
 import net.hk.hk97.Models.User;
 import net.hk.hk97.Models.Bank.Withdrawal;
-import net.hk.hk97.Repositories.AllianceKeyRepository;
-import net.hk.hk97.Repositories.BankRepository;
+import net.hk.hk97.Models.calc.graphql.models.charts.MakeChart;
+import net.hk.hk97.Repositories.*;
 //import net.hk.hk97.Repositories.LoanRepository;
-import net.hk.hk97.Repositories.UserRepository;
-import net.hk.hk97.Repositories.WithdrawalRepository;
 import net.hk.hk97.Services.Util.BankUtil;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.Channel;
+import org.javacord.api.entity.message.embed.Embed;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -22,16 +22,18 @@ import org.javacord.api.interaction.SlashCommandInteractionOption;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class BadminCommand {
 
-    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository, AllianceKeyRepository allianceKeyRepository) throws JSONException {
+    public static void badmin(SlashCommandInteraction interaction, BankRepository bankDao, WithdrawalRepository withdrawalRepository, UserRepository userRepository, AllianceKeyRepository allianceKeyRepository, LoanRepository loanRepository, BankHistoryRepository bankHistoryRepository) throws JSONException, IOException {
 
 
         org.javacord.api.entity.user.User user = interaction.getUser();
@@ -119,7 +121,7 @@ public class BadminCommand {
                                     .setTitle("TGH Treasury")
                                     .addField("Your withdrawal was successfully processed by " + interaction.getUser().getDiscriminatedName(), "Proccessed on: " + text)
                                     .setColor(Color.CYAN)
-                                    .setFooter("Necron Banking Command", api.getYourself().getAvatar());
+                                    .setFooter("HK-97 Banking Command", api.getYourself().getAvatar());
 
                             org.javacord.api.entity.user.User member = interaction.getApi().getUserById(bankingUser.getDiscordid()).get();
                             member.sendMessage(msgEmbed);
@@ -224,7 +226,7 @@ public class BadminCommand {
                     String modString = n.format(cash) + "\n<:food:915071870636789792> " + d.format(food) + " <:uranium:1024144769871523870> " + d.format(uranium) + " <:coal:1024144767858266222> " + d.format(coal) + " <:oil:1024144768487391303> " + d.format(oil) + " <:lead:1024144770857177119> " + d.format(lead) + " <:iron:1024144771884793918> " + d.format(iron) + " <:bauxite:1024144773075976243> " + d.format(bauxite) + " <:gasoline:1024144774602702868> " + d.format(gasoline) + " <:munitions:1024144775668051968> " + d.format(munitions) + " <:steel:1024144776548847656> " + d.format(steel) + " <:aluminum:1024144777509347348> " + d.format(aluminum);
 
                     modEmbed.addField("Modification Amounts", modString)
-                            .setFooter("NECRON BADMIN ACCOUNT MODIFICATION", interaction.getApi().getYourself().getAvatar());
+                            .setFooter("HK-97 BADMIN ACCOUNT MODIFICATION", interaction.getApi().getYourself().getAvatar());
 
 
                     Withdrawal b = new Withdrawal();
@@ -456,47 +458,85 @@ public class BadminCommand {
                 System.out.println("Entered rebuild sub command.");
                 AllianceRebuildCommand.getAllianceRebuild(interaction, userRepository, allianceKeyRepository);
             }
-//            else if (interaction.getOptionByName("loan").isPresent()) {
-//
-//                if (interaction.getOptionByName("loan").get().getOptionByName("create").isPresent()) {
-//                    org.javacord.api.entity.user.User member = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionUserValueByName("member").get();
-//
-//                    LocalDate date = LocalDate.now().plusDays(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("days").get());
-//                    long amount = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get();
-//                    Loan loan = new Loan();
-//                    loan.setDiscordid(member.getId());
-//                    loan.setActive(true);
-//                    loan.setDateDue(date);
-//                    loan.setAmount(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get());
-//                    loan.setBanker(interaction.getUser().getIdAsString());
-//                    loanRepository.save(loan);
-//
-//                    NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
-//
-//
-//                    EmbedBuilder eb = new EmbedBuilder()
-//                            .setTitle("Loan Created for " + member.getDiscriminatedName())
-//                            .setAuthor(member)
-//                            .addField("Loan Amount: " + n.format(amount), "Due Date: " + date + "\nBanker: " + interaction.getUser().getMentionTag() + "\nLoan ID: " + loan.getId())
-//                            .setFooter("Necron Banking Command", interaction.getApi().getYourself().getAvatar());
-//
-//
-//                    interaction.createFollowupMessageBuilder().addEmbed(eb).send();
-//
-//                }
-//
-//            } else if (interaction.getOptionByName("loan").get().getOptionByName("remove").isPresent()) {
-//
-//                Loan loan = loanRepository.findById(interaction.getOptionByName("loan").get().getOptionByName("remove").get().getOptionLongValueByName("loan").get()).get();
-//                loanRepository.delete(loan);
-//
-//                EmbedBuilder eb = new EmbedBuilder()
-//                        .setTitle("Loan Removed")
-//                        .addField("Loan Removed", "Loan ID: " + loan.getId())
-//                        .setFooter("Necron Banking Command", interaction.getApi().getYourself().getAvatar());
-//
-//                interaction.createFollowupMessageBuilder().addEmbed(eb).send();
-//            }
+            else if (interaction.getOptionByName("loan").isPresent()) {
+                System.out.println("Loans");
+
+                if (interaction.getOptionByName("loan").get().getOptionByName("create").isPresent()) {
+                    org.javacord.api.entity.user.User member = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionUserValueByName("member").get();
+
+                    LocalDate date = LocalDate.now().plusDays(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("days").get());
+                    long amount = interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get();
+                    Loan loan = new Loan();
+                    loan.setDiscordid(member.getId());
+                    loan.setActive(true);
+                    loan.setDateDue(date);
+                    loan.setAmount(interaction.getOptionByName("loan").get().getOptionByName("create").get().getOptionLongValueByName("amount").get());
+                    loan.setBanker(interaction.getUser().getIdAsString());
+                    loan.setOriginal_amount(loan.getAmount());
+                    loanRepository.save(loan);
+
+                    NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+
+
+                    EmbedBuilder eb = new EmbedBuilder()
+                            .setTitle("Loan Created for " + member.getDiscriminatedName())
+                            .setAuthor(member)
+                            .addField("Loan Amount: " + n.format(amount), "Due Date: " + date + "\nBanker: " + interaction.getUser().getMentionTag() + "\nLoan ID: " + loan.getId())
+                            .setFooter("HK-97 Banking Command", interaction.getApi().getYourself().getAvatar());
+
+
+                    interaction.createFollowupMessageBuilder().addEmbed(eb).send();
+
+                } else if (interaction.getOptionByName("loan").get().getOptionByName("remove").isPresent()) {
+                    System.out.println("Remove suboption");
+
+                    long id = interaction.getOptionByName("loan").get().getOptionByName("remove").get().getOptionLongValueByName("loan").get();
+                    Loan loan = loanRepository.findById(id).get();
+
+                    loan.setActive(false);
+                    loanRepository.save(loan);
+
+                    interaction.createFollowupMessageBuilder().setContent("You have set the loan with ID: " + id + " to inactive.").send();
+                } else if (interaction.getOptionByName("loan").get().getOptionByName("list").isPresent()) {
+                    NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+
+                    List<Loan> loans = loanRepository.getLoansByActive(true);
+                    List<EmbedBuilder> embeds = new ArrayList<>();
+                    for (Loan loan : loans) {
+                        EmbedBuilder eb = new EmbedBuilder()
+                                .setTitle("Loan ID: " + loan.getId())
+                                .addField("Debt Owner:", "<@" + loan.getDiscordid() + ">")
+                                .addField("Amount Remaining:", n.format(loan.getAmount()))
+                                .addField("Original Amount: ", n.format(loan.getOriginal_amount()))
+                                .addInlineField("Due Date:", loan.getDateDue() + "")
+                                .addInlineField("Banker:", "<@" + loan.getBanker() + ">");
+                        embeds.add(eb);
+                    }
+                    for (EmbedBuilder embedBuilder : embeds) {
+                        interaction.createFollowupMessageBuilder().addEmbed(embedBuilder).send();
+                    }
+
+                }
+
+
+            } else if (interaction.getOptionByName("visualizebalance").isPresent()) {
+                System.out.println("Entered visualize");
+
+                List<AllianceBankHistory> histories = bankHistoryRepository.findAll();
+
+                List<AllianceBankHistory> refined = new ArrayList<>();
+
+                for (AllianceBankHistory history : histories) {
+                    System.out.println("History entered for: " + history.getDate());
+                    if (history.getDate().isAfter(LocalDate.now().minusDays(14))) {
+                        refined.add(history);
+                    }
+                }
+
+                interaction.createFollowupMessageBuilder().addAttachment(MakeChart.generateOtherChart("Bank Balance", refined)).send();
+                interaction.createFollowupMessageBuilder().addAttachment(MakeChart.generateRssOtherChart("Bank Resource Balance",refined)).send();
+
+            }
 
 
         }

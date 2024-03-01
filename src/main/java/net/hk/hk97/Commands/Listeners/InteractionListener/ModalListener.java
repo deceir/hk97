@@ -91,7 +91,7 @@ public class ModalListener implements ModalSubmitListener {
                                     .addField("Militarization", ":military_helmet: " + nation.getSoldiers() + " :bus: " + nation.getTanks() + " :airplane: " + nation.getJets() + " :ship: " + nation.getShips())
                                     .addField("WMD's", ":rocket: " + nation.getMissiles() + " :radioactive: " + nation.getNukes())
                                     .setColor(Color.CYAN)
-                                    .setFooter("Necron Internal Command");
+                                    .setFooter("HK-97 Internal Command");
 
                             try {
                                 interview.asTextChannel().get().sendMessage(eb).get().pin();

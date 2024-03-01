@@ -34,37 +34,39 @@ public class Bank {
     private long cash = 0;
 
     @Column
-    private long food =0;
+    private long food = 0;
 
     @Column
-    private long uranium =0;
+    private long uranium = 0;
 
     @Column
-    private long coal =0;
+    private long coal = 0;
 
     @Column
-    private long oil =0;
+    private long oil = 0;
 
     @Column
-    private long leadRss =0;
+    private long leadRss = 0;
 
     @Column
-    private long iron =0;
+    private long iron = 0;
 
     @Column
-    private long bauxite =0;
+    private long bauxite = 0;
 
     @Column
-    private long gasoline =0;
+    private long gasoline = 0;
 
     @Column
-    private long munitions =0;
+    private long munitions = 0;
 
     @Column
-    private long steel =0;
+    private long steel = 0;
 
     @Column
-    private long aluminum =0;
+    private long aluminum = 0;
+
+
 
 
     @Column

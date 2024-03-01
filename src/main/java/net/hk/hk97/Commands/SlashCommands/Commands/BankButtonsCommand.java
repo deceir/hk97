@@ -18,7 +18,7 @@ public class BankButtonsCommand {
         new MessageBuilder()
                 .setContent(title)
                 .addComponents(
-                        ActionRow.of(Button.success("bankBalance", "Balance"),Button.success("bankDeposit", "Deposit") )
+                        ActionRow.of(Button.success("bankBalance", "Balance"),Button.success("bankDeposit", "Deposit"), Button.success("payloan", "Loan Deposit") )
 
                 ).send(interaction.getChannel().get());
 
@@ -30,7 +30,7 @@ public class BankButtonsCommand {
         new MessageBuilder()
                 .setContent(title)
                 .addComponents(
-                        ActionRow.of(Button.success("bankBalance", "Balance"),Button.success("bankDeposit", "Deposit") )
+                        ActionRow.of(Button.success("bankBalance", "Balance"),Button.success("bankDeposit", "Deposit"), Button.success("payloan", "Loan Deposit") )
 
 
                 ).send(interaction.getInteraction().getChannel().get());
