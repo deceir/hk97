@@ -54,9 +54,9 @@ public class AccountCommand {
                     newAccount.setNationid(userRepository.findById(interaction.getUser().getIdAsString()).get().getNationid());
                     newAccount.setName(interaction.getUser().getName());
                     bankDao.save(newAccount);
-                    interaction.createFollowupMessageBuilder().setContent("Account created.").send();
+                    interaction.createFollowupMessageBuilder().setContent("Bank account initialized. Use the buttons or `/bank info` to check your bank balance.").send();
                 } catch (Exception e) {
-                    interaction.createFollowupMessageBuilder().setContent("There was an error creating your bank account as well. Please try creating your bank account separately.").send();
+                    interaction.createFollowupMessageBuilder().setContent("There was an error creating your bank account. Please try creating your bank account separately.").send();
                 }
             } else {
                 interaction.createFollowupMessageBuilder().setContent("Your token is incorrect.").send();

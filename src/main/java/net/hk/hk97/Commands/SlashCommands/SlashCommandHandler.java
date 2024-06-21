@@ -44,13 +44,19 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     private WarchestReqsRepository wcReqsRepository;
 
     @Autowired
-    private BankStatusRepository bankStatusRepository;
-
-    @Autowired
     private AllianceKeyRepository allianceKeyRepository;
 
     @Autowired
     private BankHistoryRepository bankHistoryRepository;
+
+    @Autowired
+    private BankLogsRepository bankLogsRepository;
+
+    @Autowired
+    private WarroomRepository warroomRepository;
+
+    @Autowired
+    private RadiationRepository radiationRepository;
 
     @Override
     public void onSlashCommandCreate(SlashCommandCreateEvent slashCommandCreateEvent) {
@@ -81,7 +87,11 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "calc":
 
                 interaction.respondLater();
-                CalcCommand.calc(interaction);
+                try {
+                    CalcCommand.calc(interaction, radiationRepository);
+                } catch (JSONException e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing that command.\n" + e).send();
+                }
                 break;
 
             case "audit":
@@ -150,7 +160,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
             case "who":
                 interaction.respondLater();
                 try {
-                    WhoCommand.getWho(interaction, nationRepository);
+                    WhoCommand.getWho(interaction, nationRepository, userRepository);
 
                 } catch (Exception e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
@@ -167,16 +177,43 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
                 }
                 break;
 
-                    // new case goes here
+            case "sbadmin":
+                interaction.respondLater();
+                try {
+                    SBadminCommand.getSuperBadminCommands(interaction, userRepository, bankLogsRepository);
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                    e.printStackTrace();
+                }
 
+            case "audits":
+                interaction.respondLater();
 
-//            case "rebuild":
-//                interaction.respondLater();
-//                try {
-//                    AllianceRebuildCommand.getAllianceRebuild(interaction, userRepository, allianceKeyRepository);
-//                } catch (Exception e) {
-//                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
-//                }
+                try {
+                    AuditCommand.audits(interaction, userRepository);
+                } catch (JSONException e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                }
+                // new case goes here
+
+            case "warroom":
+                interaction.respondLater();
+
+                try {
+                    WarroomCommand.getWarroomCommands(interaction, userRepository, warroomRepository);
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                    e.printStackTrace();
+                }
+            case "optin":
+                interaction.respondLater();
+                try {
+                    OptIn.optInRoles(interaction);
+                } catch (Exception e) {
+                    interaction.createFollowupMessageBuilder().setContent("There was an error executing your request.\n" + e).send();
+                    e.printStackTrace();
+                }
+
         }
     }
 }

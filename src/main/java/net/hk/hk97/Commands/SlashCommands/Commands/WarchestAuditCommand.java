@@ -1,21 +1,30 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Models.Bank.Bank;
+import net.hk.hk97.Models.Stats.NationRevenue;
 import net.hk.hk97.Repositories.BankRepository;
 import net.hk.hk97.Services.Util.MilUtil;
+import net.hk.hk97.Services.Util.StatsUtil;
 import net.hk.hk97.Services.Util.WarUtil;
 import net.hk.hk97.Services.Util.WcUtil;
 import org.javacord.api.interaction.SlashCommandInteraction;
 import org.json.JSONException;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class WarchestAuditCommand {
 
-    public static void auditWarchests(SlashCommandInteraction interaction, BankRepository bankRepository) throws JSONException {
+    public static void auditWarchests(SlashCommandInteraction interaction, BankRepository bankRepository) throws JSONException, IOException, InterruptedException {
 
         List<String> auditStr = new ArrayList<>();
 
@@ -104,13 +113,31 @@ public class WarchestAuditCommand {
         if (auditStr.isEmpty()) {
             interaction.createFollowupMessageBuilder().setContent("All nations currently meet warchest requirements!").send();
         } else {
-            String message = "```\n";
-            message += "TGH Warchest Audit \n--- \n";
+
+
+
+
+            File logfile = new File("wc" + ".txt");
+
+            FileWriter fw = new FileWriter(logfile.getAbsoluteFile(), true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.append("The Golden Horde Warchest Audit");
+            bw.newLine();
+
+
             for (String str : auditStr) {
-                message += str;
+                bw.append(str);
+                bw.newLine();
             }
-            message += "```";
-            interaction.createFollowupMessageBuilder().setContent(message).send();
+            bw.close();
+
+            System.out.println("Sending file...");
+            interaction.createFollowupMessageBuilder().addAttachment(logfile).send();
+            TimeUnit.SECONDS.sleep(5);
+
+            logfile.delete();
+
+
         }
     }
 }

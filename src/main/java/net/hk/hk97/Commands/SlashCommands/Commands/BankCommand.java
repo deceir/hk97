@@ -192,90 +192,114 @@ public class BankCommand {
 
                     try {
                         long cash = 0;
+                        boolean withCash = false;
                         long food = 0;
+                        boolean withFood = false;
                         long oil = 0;
+                        boolean withOil = false;
                         long uranium = 0;
+                        boolean withUra = false;
                         long lead = 0;
+                        boolean withLead = false;
                         long iron = 0;
+                        boolean withIron = false;
                         long bauxite = 0;
+                        boolean withBauxite = false;
                         long gasoline = 0;
+                        boolean withGas = false;
                         long munitions = 0;
+                        boolean withMunis = false;
                         long steel = 0;
+                        boolean withSteel = false;
                         long aluminum = 0;
+                        boolean withAlu = false;
                         long coal = 0;
+                        boolean withCoal = false;
 
                         if (option.getOptionLongValueByName("cash").isPresent()) {
                             cash = option.getOptionLongValueByName("cash").get();
+                            withCash = true;
                         }
                         if (option.getOptionLongValueByName("food").isPresent()) {
                             food = option.getOptionLongValueByName("food").get();
+                            withFood = true;
                         }
                         if (option.getOptionLongValueByName("oil").isPresent()) {
                             oil = option.getOptionLongValueByName("oil").get();
+                            withOil = true;
                         }
                         if (option.getOptionLongValueByName("uranium").isPresent()) {
                             uranium = option.getOptionLongValueByName("uranium").get();
+                            withUra = true;
                         }
                         if (option.getOptionLongValueByName("lead").isPresent()) {
                             lead = option.getOptionLongValueByName("lead").get();
+                            withLead = true;
                         }
                         if (option.getOptionLongValueByName("iron").isPresent()) {
                             iron = option.getOptionLongValueByName("iron").get();
+                            withIron = true;
                         }
                         if (option.getOptionLongValueByName("bauxite").isPresent()) {
                             bauxite = option.getOptionLongValueByName("bauxite").get();
+                            withBauxite = true;
                         }
                         if (option.getOptionLongValueByName("gasoline").isPresent()) {
                             gasoline = option.getOptionLongValueByName("gasoline").get();
+                            withGas = true;
                         }
                         if (option.getOptionLongValueByName("munitions").isPresent()) {
                             munitions = option.getOptionLongValueByName("munitions").get();
+                            withMunis = true;
                         }
                         if (option.getOptionLongValueByName("steel").isPresent()) {
                             steel = option.getOptionLongValueByName("steel").get();
+                            withSteel = true;
                         }
                         if (option.getOptionLongValueByName("aluminum").isPresent()) {
                             aluminum = option.getOptionLongValueByName("aluminum").get();
+                            withAlu = true;
                         }
                         if (option.getOptionLongValueByName("coal").isPresent()) {
                             coal = option.getOptionLongValueByName("coal").get();
+                            withCoal = true;
                         }
 
                         String errorLog = "";
 
                         Bank bank = bankDao.findByDiscordid(interaction.getUser().getIdAsString());
 
-                        if (cash > bank.getCash()) {
+                        if (cash > bank.getCash() && withCash) {
                             errorLog += "You do not have enough cash for this withdrawal. \n";
                         }
-                        if (food > bank.getFood()) {
+                        if (food > bank.getFood() && withFood) {
                             errorLog += "You do not have enough food for this withdrawal. \n";
                         }
-                        if (aluminum > bank.getAluminum()) {
+                        if (aluminum > bank.getAluminum() && withAlu) {
                             errorLog += "You do not have enough aluminum for this withdrawal. \n";
                         }
-                        if (bauxite > bank.getBauxite()) {
+                        if (bauxite > bank.getBauxite() && withBauxite) {
                             errorLog += "You do not have enough bauxite for this withdrawal. \n";
                         }
-                        if (iron > bank.getIron()) {
+                        if (iron > bank.getIron() && withIron) {
                             errorLog += "You do not have enough iron for this withdrawal. \n";
                         }
-                        if (coal > bank.getCoal()) {
+                        if (coal > bank.getCoal() && withCoal) {
                             errorLog += "You do not have enough coal for this withdrawal. \n";
                         }
-                        if (oil > bank.getOil()) {
+                        if (oil > bank.getOil() && withOil) {
                             errorLog += "You do not have enough oil for this withdrawal. \n";
                         }
-                        if (gasoline > bank.getGasoline()) {
+                        if (gasoline > bank.getGasoline() && withGas) {
                             errorLog += "You do not have enough gasoline for this withdrawal. \n";
                         }
-                        if (steel > bank.getSteel()) {
+                        if (steel > bank.getSteel() && withSteel) {
                             errorLog += "You do not have enough steel for this withdrawal. \n";
                         }
-                        if (uranium > bank.getUranium()) {
+                        if (uranium > bank.getUranium() && withUra) {
                             errorLog += "You do not have enough uranium for this withdrawal. \n";
                         }
-                        if (lead > bank.getLeadRss()) {
+                        if (lead > bank.getLeadRss() && withLead) {
                             errorLog += "You do not have enough lead for this withdrawal. \n";
                         }
 

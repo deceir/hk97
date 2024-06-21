@@ -56,7 +56,22 @@ public class BankHistoryService {
 
         if (b.getTotals() < 0) {
 
-            b = BankUtil.getBankBalanceAlternate(Long.parseLong(Config.aaId));
+            b = BankUtil.getBankBalanceAlternate(Long.parseLong(Config.aaId), false);
+            Bank c = BankUtil.getBankBalanceAlternate(Long.parseLong(Config.adamOffshoreId), true);
+
+            b.setAluminum(b.getAluminum() + c.getAluminum());
+            b.setBauxite(b.getBauxite() + c.getBauxite());
+            b.setGasoline(b.getGasoline() + c.getGasoline());
+            b.setFood(b.getFood() + c.getFood());
+            b.setCoal(b.getCoal() + c.getCoal());
+            b.setCash(b.getCash() + c.getCash());
+            b.setIron(b.getIron() + c.getIron());
+            b.setOil(b.getOil() + c.getOil());
+            b.setLeadRss(b.getLeadRss() + c.getLeadRss());
+            b.setSteel(b.getSteel() + c.getSteel());
+            b.setMunitions(b.getMunitions() + c.getMunitions());
+            b.setUranium(b.getUranium() + c.getUranium());
+
             Bank a = BankUtil.getBankBalance(allianceKeyRepository.findAllianceKeysByAaName("offshore").getId());
 
             b.setAluminum(b.getAluminum() + a.getAluminum());

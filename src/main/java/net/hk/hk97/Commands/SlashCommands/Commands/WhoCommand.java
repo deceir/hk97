@@ -2,7 +2,9 @@ package net.hk.hk97.Commands.SlashCommands.Commands;
 
 import net.hk.hk97.Models.NAudit;
 import net.hk.hk97.Models.Nation;
+import net.hk.hk97.Models.User;
 import net.hk.hk97.Repositories.NationRepository;
+import net.hk.hk97.Repositories.UserRepository;
 import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.interaction.SlashCommandInteraction;
@@ -16,7 +18,7 @@ import java.util.Locale;
 
 public class WhoCommand {
 
-    public static void getWho(SlashCommandInteraction interaction, NationRepository nationRepository) throws JSONException {
+    public static void getWho(SlashCommandInteraction interaction, NationRepository nationRepository, UserRepository userRepository) throws JSONException {
 
         if (interaction.getOptionByName("leader").isPresent()) {
 
@@ -48,10 +50,12 @@ public class WhoCommand {
             NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
             DecimalFormat d = new DecimalFormat("#,###");
 
+            String discord = userRepository.findUserByNationid(interaction.getOptionByName("nation").get().getOptionLongValueByName("id").get()).getDiscordid();
             EmbedBuilder embedBuilder = new EmbedBuilder()
                     .setAuthor(interaction.getUser())
                     .setTitle(nAudit.getName() + " led by " + nAudit.getLeader())
-                    .setDescription("Cities: " + nAudit.getCities() + "\n" + nAudit.getAlliance());
+                    .setDescription("Cities: " + nAudit.getCities() + "\n" + nAudit.getAlliance())
+                    .addField("Discord", "<@" + discord + ">");
 
             if (nAudit.getAlliance().equalsIgnoreCase("The Golden Horde")) {
                 embedBuilder.addField("Resources", n.format(nAudit.getCash()) + " <:gasoline:1024144774602702868> " + d.format(nAudit.getGas()) + " <:munitions:1024144775668051968> " + d.format(nAudit.getMunitions()) + " <:steel:1024144776548847656> " + d.format(nAudit.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(nAudit.getAluminum()));
@@ -61,6 +65,18 @@ public class WhoCommand {
                     .addField("Nation Link:", "[" + nAudit.getLeader() + " of " + nAudit.getName() + "](https://politicsandwar.com/nation/id=" + nAudit.getId() + ")")
                     .setColor(Color.CYAN)
                     .setFooter("HK-97 Internal Command", interaction.getApi().getYourself().getAvatar());
+
+            interaction.createFollowupMessageBuilder().addEmbed(embedBuilder).send();
+        } else if (interaction.getOptionByName("user").isPresent()) {
+
+            interaction.getOptionByName("user").get().getOptionUserValueByName("usertosearch").get();
+            System.out.println(interaction.getOptionByName("user").get().getOptionUserValueByName("usertosearch").get());
+            User user = userRepository.getUserByDiscordid(interaction.getOptionByName("user").get().getOptionUserValueByName("usertosearch").get().getIdAsString());
+
+            String nation = MilUtil.getNationName(user.getNationid());
+            EmbedBuilder embedBuilder = new EmbedBuilder()
+                    .setTitle("User Search")
+                    .addField("" + user.getName(), "[" + nation + "](https://politicsandwar.com/nation/id=" + user.getNationid() + ") (" + user.getNationid() + ")");
 
             interaction.createFollowupMessageBuilder().addEmbed(embedBuilder).send();
         }

@@ -32,4 +32,17 @@ public class UserNationNameService {
         }
 
     }
+//
+//    @Scheduled(cron = "0 0 10 * * *")
+//    public void updateNationNames() throws JSONException {
+//
+//        List<User> list = userDao.findAll();
+//
+//        for (User user : list) {
+//
+//            user.setNation(MilUtil.getNationName(user.getNationid()));
+//            userDao.save(user);
+//        }
+//
+//    }
 }

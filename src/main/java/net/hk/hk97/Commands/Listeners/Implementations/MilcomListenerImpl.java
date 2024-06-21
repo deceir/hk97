@@ -43,6 +43,7 @@ public class MilcomListenerImpl {
         String serverId = Config.mainServerId;
         String staffId = Config.mainServerStaffId;
 
+
         String commandsChannel = Config.mainServerCommandRoom;
 
         String hkRole = Config.mainServerHkRole;

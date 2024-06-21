@@ -27,6 +27,10 @@ public class User {
 
     @Column
     @Getter @Setter
+    private String nation;
+
+    @Column
+    @Getter @Setter
     private String leadername;
 
     @Column(unique = true)

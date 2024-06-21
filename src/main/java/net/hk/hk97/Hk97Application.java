@@ -5,12 +5,9 @@ import io.github.adorableskullmaster.pw4j.PoliticsAndWar;
 import io.github.adorableskullmaster.pw4j.PoliticsAndWarBuilder;
 import io.github.adorableskullmaster.pw4j.domains.subdomains.SWarContainer;
 import net.hk.hk97.Commands.CommandLoader.CommandAdd;
-import net.hk.hk97.Commands.Listeners.ApplicationListener;
+import net.hk.hk97.Commands.Listeners.*;
 import net.hk.hk97.Commands.Listeners.InteractionListener.ButtonListener;
 import net.hk.hk97.Commands.Listeners.InteractionListener.ModalListener;
-import net.hk.hk97.Commands.Listeners.InterviewFileLogListener;
-import net.hk.hk97.Commands.Listeners.MessageCreateListener;
-import net.hk.hk97.Commands.Listeners.MilComListener;
 import net.hk.hk97.Commands.TextCommands.TextCommandHandler;
 import net.hk.hk97.Commands.SlashCommands.SlashCommandHandler;
 import net.hk.hk97.Models.Military;
@@ -23,6 +20,7 @@ import net.hk.hk97.Services.Util.MilUtil;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 
+import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.user.UserStatus;
@@ -37,6 +35,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.awt.*;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -88,6 +87,9 @@ public class Hk97Application {
     @Autowired
     private AllianceKeyRepository allianceKeyRepository;
 
+    @Autowired
+    private MessageDeletecListener messageDeletecListener;
+
     public static void main(String[] args) {
         SpringApplication.run(Hk97Application.class, args);
 
@@ -103,17 +105,15 @@ public class Hk97Application {
                 .addSlashCommandCreateListener(slashCommandHandler)
                 .addMessageCreateListener(messageCreateListener)
                 .addMessageCreateListener(textCommandHandler)
-//                .addMessageCreateListener(interviewFileLogListener)
                 .addMessageCreateListener(commandAdd)
-//                .addMessageCreateListener(milComListener)
-//                .addMessageCreateListener(applicationListener)
                 .addButtonClickListener(buttonListener)
                 .addModalSubmitListener(modalListener)
+                .addMessageDeleteListener(messageDeletecListener)
                 .login()
                 .join();
         api.updateStatus(UserStatus.DO_NOT_DISTURB);
-//        ServerTextChannel channel = api.getServerTextChannelById("1024026875007340576").get();
-//        channel.addButtonClickListener(bankButtonListener);
+        api.updateActivity(ActivityType.PLAYING, "Keno with your savings");
+
 
         return api;
     }
@@ -165,13 +165,14 @@ public class Hk97Application {
                     Duration defduration = Duration.between(definstant, Instant.now());
 
 
+                    DecimalFormat n = new DecimalFormat("#,###");
 
 
                     eb.setTitle(newWar.getAttAa() + " has attacked " + newWar.getDefAa() + "!")
                             .setColor(Color.GREEN)
                             .setDescription("[" + attackerMil.getLeader_name() + " has declared war on " + defenderMil.getLeader_name() + "!](https://politicsandwar.com/nation/war/timeline/war=" + war.getWarID() + ")")
-                            .addInlineField(attackerMil.getLeader_name() + " score: " + attackerMil.getScore() + "\nCities: " + attackerMil.getCities(), ":military_helmet: " + attackerMil.getSoldiers() + " :bus: " + attackerMil.getTanks() + " :airplane: " + attackerMil.getJets() + " :ship: " + attackerMil.getShips() + "\n:rocket: " + attackerMil.getMissiles() + " :radioactive: " + attackerMil.getNukes())
-                            .addInlineField(defenderMil.getLeader_name() + " score: " + defenderMil.getScore() + "\nCities: " + defenderMil.getCities(), ":military_helmet: " + defenderMil.getSoldiers() + " :bus: " + defenderMil.getTanks() + " :airplane: " + defenderMil.getJets() + " :ship: " + defenderMil.getShips() + "\n:rocket: " + defenderMil.getMissiles() + " :radioactive: " + defenderMil.getNukes())
+                            .addInlineField(attackerMil.getLeader_name() + " score: " + n.format(attackerMil.getScore()) + "\nCities: " + attackerMil.getCities(), ":military_helmet: " + n.format(attackerMil.getSoldiers()) + " :bus: " + n.format(attackerMil.getTanks()) + " :airplane: " + n.format(attackerMil.getJets()) + " :ship: " + n.format(attackerMil.getShips()) + "\n:rocket: " + n.format(attackerMil.getMissiles()) + " :radioactive: " + n.format(attackerMil.getNukes()))
+                            .addInlineField(defenderMil.getLeader_name() + " score: " + n.format(defenderMil.getScore()) + "\nCities: " + defenderMil.getCities(), ":military_helmet: " + n.format(defenderMil.getSoldiers()) + " :bus: " + n.format(defenderMil.getTanks()) + " :airplane: " + n.format(defenderMil.getJets()) + " :ship: " + n.format(defenderMil.getShips()) + "\n:rocket: " + n.format(defenderMil.getMissiles()) + " :radioactive: " + n.format(defenderMil.getNukes()))
                             .addField(attackerMil.getLeader_name() + " was last active", attduration.toMinutesPart() + "m " + attduration.toHoursPart() + "h " + attduration.toDaysPart() + "d")
                             .addField(defenderMil.getLeader_name() + " was last active", defduration.toMinutesPart() + "m " + defduration.toHoursPart() + "h " + defduration.toDaysPart() + "d");
 
@@ -200,12 +201,13 @@ public class Hk97Application {
                     Instant definstant = Instant.from( creationAccessor );
                     Duration defduration = Duration.between(definstant, Instant.now());
 
+                    DecimalFormat n = new DecimalFormat("#,###");
 
                     eb.setTitle(newWar.getAttAa() + " has attacked " + newWar.getDefAa() + "!")
                             .setColor(Color.RED)
                             .setDescription("[" + attackerMil.getLeader_name() + " has declared war on " + defenderMil.getLeader_name() + "!](https://politicsandwar.com/nation/war/timeline/war=" + war.getWarID() + ")")
-                            .addInlineField(attackerMil.getLeader_name() + " score: " + attackerMil.getScore() + "\nCities: " + attackerMil.getCities(), ":military_helmet: " + attackerMil.getSoldiers() + " :bus: " + attackerMil.getTanks() + " :airplane: " + attackerMil.getJets() + " :ship: " + attackerMil.getShips() + "\n:rocket: " + attackerMil.getMissiles() + " :radioactive: " + attackerMil.getNukes())
-                            .addInlineField(defenderMil.getLeader_name() + " score: " + defenderMil.getScore() + "\nCities: " + defenderMil.getCities(), ":military_helmet: " + defenderMil.getSoldiers() + " :bus: " + defenderMil.getTanks() + " :airplane: " + defenderMil.getJets() + " :ship: " + defenderMil.getShips() + "\n:rocket: " + defenderMil.getMissiles() + " :radioactive: " + defenderMil.getNukes())
+                            .addInlineField(attackerMil.getLeader_name() + " score: " + n.format(attackerMil.getScore()) + "\nCities: " + attackerMil.getCities(), ":military_helmet: " + n.format(attackerMil.getSoldiers()) + " :bus: " + n.format(attackerMil.getTanks()) + " :airplane: " + n.format(attackerMil.getJets()) + " :ship: " + n.format(attackerMil.getShips()) + "\n:rocket: " + n.format(attackerMil.getMissiles()) + " :radioactive: " + n.format(attackerMil.getNukes()))
+                            .addInlineField(defenderMil.getLeader_name() + " score: " + n.format(defenderMil.getScore()) + "\nCities: " + defenderMil.getCities(), ":military_helmet: " + n.format(defenderMil.getSoldiers()) + " :bus: " + n.format(defenderMil.getTanks()) + " :airplane: " + n.format(defenderMil.getJets()) + " :ship: " + n.format(defenderMil.getShips()) + "\n:rocket: " + n.format(defenderMil.getMissiles()) + " :radioactive: " + n.format(defenderMil.getNukes()))
                             .addField(attackerMil.getLeader_name() + " was last active", attduration.toMinutesPart() + "m " + attduration.toHoursPart() + "h " + attduration.toDaysPart() + "d")
                             .addField(defenderMil.getLeader_name() + " was last active", defduration.toMinutesPart() + "m " + defduration.toHoursPart() + "h " + defduration.toDaysPart() + "d");
 

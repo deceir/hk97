@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -44,6 +45,29 @@ public class AllianceAuditService {
             String uranium = "";
             String spies = "";
             DecimalFormat d = new DecimalFormat("#,###");
+            String colors = "";
+
+            List<JSONObject> nationsList = new ArrayList<>();
+            nationsList.add(nations);
+
+            if (nationsList.get(0).getJSONObject("paginatorInfo").optBoolean("hasMorePages")) {
+                JSONObject pageObj = nationsList.get(0).getJSONObject("paginatorInfo");
+                int currentPage =  pageObj.optInt("currentPage");
+                int lastPage = pageObj.optInt("lastPage");
+
+                if (lastPage - currentPage > 0) {
+                    int index = currentPage + 1;
+                    while (index < lastPage) {
+                        JSONObject jsonObject = MilUtil.getSpiesAdditional(Long.parseLong(Config.aaId), index);
+                        nationsList.add(jsonObject);
+                        index++;
+                    }
+                } else {
+                    JSONObject jsonObject = MilUtil.getSpiesAdditional(Long.parseLong(Config.aaId), currentPage + 1);
+                    nationsList.add(jsonObject);
+                }
+
+            }
 
 
             List<ActivityAudit> audits = AuditUtil.getActivityAudit();
@@ -60,6 +84,7 @@ public class AllianceAuditService {
                     inactiveUsers += "\n";
                 } catch (Exception e) {
                     //probably applicant
+                    inactiveUsers += "Someone that's on the list was not able to be added. \n";
                 }
 
             }
@@ -68,74 +93,83 @@ public class AllianceAuditService {
                 inactiveUsers = "No inactive members.";
             }
 
-            JSONArray array = nations.getJSONArray("data");
+            for (JSONObject jsonObject: nationsList) {
+                JSONArray array = jsonObject.getJSONArray("data");
 
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject object = array.getJSONObject(i);
-                try {
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject object = array.getJSONObject(i);
 
-
-                    int cities = object.optInt("cities");
-                    int id = object.optInt("id");
-                    long foodHeld = object.optLong("food");
-                    if (object.optInt("vacation_mode_turns") > 0) {
-                        continue;
-                    }
-                    User user = userRepository.findUserByNationid(id);
-
-                    if (foodHeld <= 50000 && cities >= 15) {
+                    if (!object.optString("alliance_position").equalsIgnoreCase("APPLICANT")) {
                         try {
-                            food += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(foodHeld) + "\n";
+
+
+                            int cities = object.optInt("cities");
+                            int id = object.optInt("id");
+                            long foodHeld = object.optLong("food");
+                            if (object.optInt("vacation_mode_turns") > 0) {
+                                continue;
+                            }
+                            User user = userRepository.findUserByNationid(id);
+                            String nationColor = object.optString("color");
+                            if (!nationColor.equalsIgnoreCase("yellow") && !colors.contains(user.getDiscordid())) {
+                                colors += "<@" + user.getDiscordid() + ">" + " (" + nationColor + ") ";
+                            }
+
+                            if (foodHeld <= 50000 && cities >= 15 && !food.contains(user.getDiscordid())) {
+                                try {
+                                    food += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(foodHeld) + "\n";
+                                } catch (Exception e) {
+                                    //probably applicant
+                                }
+                            } else if (foodHeld < 1000) {
+                                food += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(foodHeld) + "\n";
+                            }
+                            boolean hasIA = object.optBoolean("central_intelligence_agency");
+
+                            int spyCount = object.optInt("spies");
+
+                            if (hasIA && (spyCount < 60) && !spies.contains(user.getDiscordid())) {
+                                try {
+                                    spies += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(spyCount) + "\n";
+                                } catch (Exception e) {
+                                    //probably applicant
+                                }
+                            } else if (!hasIA && spyCount < 50) {
+                                try {
+                                    spies += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + spyCount + "\n";
+                                } catch (Exception e) {
+                                    //probably applicant
+                                }
+                            }
+                            long uraHeld = object.optInt("uranium");
+                            System.out.println("ura held: " + uraHeld);
+                            if (uraHeld < 500 && cities >= 15 && !uranium.contains(user.getDiscordid())) {
+                                try {
+                                    uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
+                                } catch (Exception e) {
+                                    //probably applicant
+                                }
+                            } else if (uraHeld < 100) {
+                                uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
+                            }
+
+
                         } catch (Exception e) {
-                            //probably applicant
+                            e.printStackTrace();
                         }
-                    } else if (foodHeld < 1000) {
-                        food += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(foodHeld) + "\n";
                     }
-                    boolean hasIA = object.optBoolean("central_intelligence_agency");
-
-                    int spyCount = object.optInt("spies");
-
-                    if (hasIA && (spyCount < 60)) {
-                        try {
-                            spies += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(spyCount) + "\n";
-                        } catch (Exception e) {
-                            //probably applicant
-                        }
-                    } else if (!hasIA && spyCount < 50) {
-                        try {
-                            spies += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + spyCount + "\n";
-                        } catch (Exception e) {
-                            //probably applicant
-                        }
-                    }
-                    long uraHeld = object.optInt("uranium");
-                    System.out.println("ura held: " + uraHeld);
-                    if (uraHeld < 500 && cities >= 15) {
-                        try {
-                            uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
-                        } catch (Exception e) {
-                            //probably applicant
-                        }
-                    } else if (uraHeld < 100) {
-                        uranium += "<@" + user.getDiscordid() + "> (" + user.getNationid() + ") " + d.format(uraHeld) + "\n";
-                    }
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
-            if (food.length() == 0) {
-                food = "No low food members.";
-            }
+                if (food.length() == 0) {
+                    food = "No low food members.";
+                }
 
-            if (uranium.length() == 0) {
-                uranium = "No low uranium members.";
-            }
+                if (uranium.length() == 0) {
+                    uranium = "No low uranium members.";
+                }
 
-            if (spies.length() == 0) {
-                spies = "No members without max spies.";
+                if (spies.length() == 0) {
+                    spies = "No members without max spies.";
+                }
             }
             EmbedBuilder eb = new EmbedBuilder()
                     .setTitle("TGH Audit")
@@ -149,6 +183,9 @@ public class AllianceAuditService {
 
             api.getTextChannelById("1129269346015907912").get().sendMessage("__**TGH Automated Audit**__");
             api.getTextChannelById("1129269346015907912").get().sendMessage(eb);
+            if (colors.length() > 0) {
+                api.getTextChannelById("1129269346015907912").get().sendMessage("Color Audit: \n```\n" + colors + "\n```");
+            }
 
 
 

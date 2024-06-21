@@ -1,7 +1,8 @@
-package net.hk.hk97.Services.Util;
+package net.hk.hk97.Services.Util.Mutations;
+
 
 import net.hk.hk97.Config;
-import net.hk.hk97.Models.Stats.NationRevenue;
+import net.hk.hk97.Models.Bank.Bank;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -14,24 +15,29 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Arrays;
+public class WithdrawalMutationService {
 
-public class StatsUtil {
 
-    public static List<NationRevenue> getAllianceNationRevenue(long id) throws JSONException {
 
-        List<NationRevenue> list = new ArrayList<>();
+    public static JSONObject bankWithdrawal(long receiver, long money, long food, long uranium, long coal, long oil, long iron, long bauxite, long lead, long gasoline, long munitions, long steel, long aluminum, String note) throws JSONException {
 
 
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
 
+        JSONObject myObject = null;
+
         client = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
 
         httpPost.addHeader("Content-Type", "application/json");
+        httpPost.addHeader("X-Bot-Key", Config.xboxKeySniper);
+        httpPost.addHeader("X-Api-Key", Config.sniperKey);
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (alliance_id: " + id + ", vmode: false, first: 150) { data { nation_name leader_name num_cities gross_national_income } } }");
+        jsonObj.put("query", "mutation { bankWithdraw (receiver:" + receiver + ", receiver_type: 1, money:" + money + ", food:" + food + ", uranium:" + uranium + ", coal:" + coal + ",oil: " + oil + ", iron:" + iron +  ", bauxite:" + bauxite +", lead:" + lead + ", gasoline:" + gasoline + ", munitions:" + munitions + ", steel:" + steel + ", aluminum:" + aluminum + ", note:\"" + note + "\") { money, note } }");
+        System.out.println(jsonObj);
+
 
 
         try {
@@ -42,7 +48,8 @@ public class StatsUtil {
 
             System.out.println(response);
 
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
 
@@ -54,33 +61,10 @@ public class StatsUtil {
 
                 builder.append(line);
 
-                JSONObject myObject = new JSONObject(builder.toString());
-                System.out.println("my object:");
+                myObject = new JSONObject(builder.toString());
+
                 System.out.println(myObject);
 
-                JSONObject data = myObject.getJSONObject("data");
-
-                JSONObject nations = data.getJSONObject("nations");
-
-
-                try {
-
-                    JSONArray array = nations.getJSONArray("data");
-
-                    for (int i = 0; i < array.length(); i++) {
-
-                        JSONObject object = array.getJSONObject(i);
-                        NationRevenue nationRevenue = new NationRevenue();
-                        nationRevenue.setName(object.optString("nation_name"));
-                        nationRevenue.setLeader(object.optString("leader_name"));
-                        nationRevenue.setCities(object.optInt("num_cities"));
-                        nationRevenue.setRevenue(object.optLong("gross_national_income"));
-                        list.add(nationRevenue);
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
 
             }
@@ -89,23 +73,28 @@ public class StatsUtil {
             e.printStackTrace();
         }
 
+        return myObject;
 
-        Collections.sort(list, Comparator.comparingLong(NationRevenue::getRevenue));
-        return list;
     }
 
-    public static String getAaName(long id) throws JSONException {
+    public static JSONObject bankWithdrawal(long receiver, long money, double food, double uranium, double coal, double oil, double iron, double bauxite, double lead, double gasoline, double munitions, double steel, double aluminum, String note) throws JSONException {
+
+
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;
+
+        JSONObject myObject = null;
 
         client = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.itachiPnwKey);
 
         httpPost.addHeader("Content-Type", "application/json");
+        httpPost.addHeader("X-Bot-Key", Config.xboxKeySniper);
+        httpPost.addHeader("X-Api-Key", Config.sniperKey);
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ alliances (id: " + id + ") { data { name } } }");
+        jsonObj.put("query", "mutation { bankWithdraw (receiver:" + receiver + ", receiver_type: 1, money:" + money + ", food:" + food + ", uranium:" + uranium + ", coal:" + coal + ",oil: " + oil + ", iron:" + iron +  ", bauxite:" + bauxite +", lead:" + lead + ", gasoline:" + gasoline + ", munitions:" + munitions + ", steel:" + steel + ", aluminum:" + aluminum + ", note:\"" + note + "\") { money, note } }");
+        System.out.println(jsonObj);
 
-        String name = "";
 
 
         try {
@@ -116,7 +105,8 @@ public class StatsUtil {
 
             System.out.println(response);
 
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             e.printStackTrace();
         }
 
@@ -128,24 +118,10 @@ public class StatsUtil {
 
                 builder.append(line);
 
-                JSONObject myObject = new JSONObject(builder.toString());
+                myObject = new JSONObject(builder.toString());
 
-                JSONObject data = myObject.getJSONObject("data");
+                System.out.println(myObject);
 
-                JSONObject nations = data.getJSONObject("alliances");
-
-
-                try {
-
-                    JSONArray array = nations.getJSONArray("data");
-
-                    JSONObject object = array.getJSONObject(0);
-                    name = object.optString("name");
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
 
             }
@@ -154,7 +130,10 @@ public class StatsUtil {
             e.printStackTrace();
         }
 
+        return myObject;
 
-        return name;
     }
+
+
+
 }

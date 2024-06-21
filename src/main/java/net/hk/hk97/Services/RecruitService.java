@@ -32,6 +32,17 @@ public class RecruitService {
 
     private String tghMessage = "In the annals of history, there are few forces as awe-inspiring and unstoppable as the Mongol Hordes. Just as Genghis Khan once united the nomadic tribes of the steppes into a formidable empire, our alliance, the Golden Horde, stands united under a common banner to conquer the world of Politics and War.\nLike the swift riders of the Mongol Empire, our members are known for their unparalleled speed and precision in both diplomacy and warfare. We believe in the principles of strength through unity and collaboration through camaraderie. Just as the Mongols adapted to diverse terrains and cultures, we adapt to the ever-changing landscape of global politics, forging alliances, and expanding our reach.\nThe spirit of the Golden Horde is characterized by determination, fearlessness, and a relentless pursuit of victory. We are not bound by borders or limitations; instead, we transcend boundaries to establish a legacy of dominance. Our diplomatic acumen and military prowess make us a force to be reckoned with on the world stage.\nAs a member of the Golden Horde, you will find a community that values your contribution and supports your growth. Whether you are a seasoned strategist or a newcomer eager to learn, our alliance provides opportunities for development and advancement. Together, we ride into the realm, conquering challenges, securing resources, and leaving our mark on the world of Politics and War.\n\nJoin the Golden Horde today, and become part of a legacy that echoes the indomitable spirit of the ancient Mongol warriors. Together, we ride towards glory and domination, forging alliances, and leaving our rivals in awe of our might. The world of Politics and War will tremble before the horde!\n[url=https://politicsandwar.com/alliance/id=4567]Alliance[/url] \n[url=https://discord.gg/PpzcNDA]Discord Server[/url]\nJoin the Golden Horde and Ride to Victory!";
 
+    private String tghImprovedInitial = "Hello! I'd like to invite you to join us in The Golden Horde! We are a military-focused alliance that prides ourselves on our storied history as one of the greatest fighting alliances in the game. As a Warrior of The Golden Horde you would have access to a plethora of benefits to aid you on your own journey to greatness, including:\n" +
+            "\n" +
+            "• Expert guides crafted by experienced players\n" +
+            "• Project and city grants that help you boost your nation to catch up with older nations\n" +
+            "• Absolute raid and war protection - The Golden Horde defends its own\n" +
+            "• Guidance to increase your income by learning how to efficiently raid\n" +
+            "\n" +
+            " In addition to the in-game benefits, as a Warrior of The Golden Horde you would have access to our community events! These events include cooperative and party games played by many of your fellow Warriors!\n" +
+            "\n" +
+            "As long as you are active and willing to learn, we'd be happy to have you in our ranks. Join our [url=https://discord.gg/thegoldenhorde] Discord server [/url] and create an application by goint to the #apply-here channel.";
+
     private String newTghMessage = "Hold your horses! Don’t delete me yet! Still here? Great! \n" +
             "\n" +
             "Here at the Golden Horde, we believe that through sharing our experiences with each other, everyone gets better. We believe that hard work leads to both individual and collective success. We believe that a close community is the cornerstone for an effective alliance. \n" +
@@ -47,6 +58,8 @@ public class RecruitService {
             "Pack up your bags, come see our [url=https://discord.gg/PpzcNDA]Discord community[/url], and see if this is the place for you! You can also [url=https://politicsandwar.com/alliance/id=4567]find us in-game[/url] as well! \n" +
             "\n" +
             "We look forward to seeing where you go with the Horde!\n";
+
+    private String tghAIMsg = "Welcome to [url=https://politicsandwar.com/alliance/join/id=4829]The Golden Horde[/url] – where history meets the future, and excellence is our tradition.\nFor centuries, The Golden Horde has stood as a beacon of strength and prowess on the battlefield. Our storied military history echoes with the triumphs of conquerors and the resilience of warriors. From the vast steppes of Eurasia to the heartlands of civilizations, our name has inspired fear and admiration alike.\n\nAt the helm of our forces are leaders seasoned by countless campaigns, their wisdom forged in the fires of conflict. Their guidance is our compass, steering us towards victory with unwavering resolve and strategic brilliance.\n\nJoin us, and become part of a legacy that transcends time. Embrace the challenges of the present with the wisdom of the past, and together, let us forge a future worthy of The Golden Horde.\nYou can make contact with us [url=https://discord.gg/jYd4RPeGAA]here[/url] and begin your journey with the legendary Golden Horde.";
 
 
             @Scheduled(cron = "0 */10 * * * *")
@@ -76,10 +89,14 @@ public class RecruitService {
 
             if (nation.getMinutessinceactive() < 60 && !firstMessage && nation.getScore() < 1500) {
 
-                Messenger.sendMessagePnw(nation.getNationId(), "ACTION REQUIRED: Find Experienced Support and Tight Knit Community Today!", newTghMessage, Config.itachiPnwKey);
+                try {
+                    Messenger.sendMessagePnw(nation.getNationId(), "Power", tghImprovedInitial, Config.itachiPnwKey);
 
-                recruit.setInitial_message(true);
-                recruitDao.save(recruit);
+                    recruit.setInitial_message(true);
+                    recruitDao.save(recruit);
+                } catch (Exception e) {
+
+                }
 //                channel.asTextChannel().get().sendMessage("I would send an initial message to this nation: https://politicsandwar.com/nation/id=" + nation.getNationId());
 
 

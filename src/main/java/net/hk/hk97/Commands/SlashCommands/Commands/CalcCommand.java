@@ -1,17 +1,25 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
+import net.hk.hk97.Models.CityBuild.Revenue.CalcRevenue;
+import net.hk.hk97.Models.CityBuild.Revenue.CityRevenue;
+import net.hk.hk97.Models.CityBuild.Revenue.CityRevenueBuilds.CityRevenueModel;
 import net.hk.hk97.Models.calc.CityCalc;
 import net.hk.hk97.Models.calc.InfraCalc;
 import net.hk.hk97.Models.calc.LandCalc;
 import net.hk.hk97.Models.calc.graphql.repositories.ResourceRepository;
+import net.hk.hk97.Repositories.RadiationRepository;
+import net.hk.hk97.Utils.Econ.NationUtil;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.interaction.SlashCommandInteraction;
+import org.json.JSONException;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CalcCommand {
 
-    public static void calc(SlashCommandInteraction interaction) {
+    public static void calc(SlashCommandInteraction interaction, RadiationRepository radiationRepository) throws JSONException {
 
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -176,6 +184,26 @@ public class CalcCommand {
                 interaction.createFollowupMessageBuilder().addEmbed(eb).send();
 
             }
+
+        } else if (interaction.getOptionByName("revenue").isPresent()) {
+
+            long id = interaction.getOptionByName("revenue").get().getOptionByName("id").get().getLongValue().get();
+
+            List<CityRevenueModel> cities = NationUtil.getCitiesForRevenue(id);
+
+            List<CityRevenue> revenues = new ArrayList<>();
+
+            double globalRadiation = radiationRepository.findRadiationByID("global").getRadiationLevel();
+            double contRadiation = radiationRepository.findRadiationByID(cities.get(0).getContinent()).getRadiationLevel();
+
+
+            for (CityRevenueModel c : cities) {
+                CityRevenue cityRevenue = CalcRevenue.CalcRevenue(c.getCoalPower(), c.getOilPower(), c.getWindPower(), c.getNuclearPower(), c.getCoalMine(), c.getOilWell(), c.getUraMine(), c.getLeadMine(), c.getIronMine(), c.getBauxMine(), c.getFarm(), c.getGasRefinery(), c.getAluRefinery(), c.getMuniFactory(), c.getSteelFactory(), c.getPoliceStation(), c.getHospital(), c.getRecyclingCenter(), c.getSubway(), c.getSupermarket(), c.getBank(), c.getMall(), c.getStadium(), c.getInfrastructure(), c.getLand(), c.isItc(), c.isTelecomSat(), c.isGreenTech(), c.isRecylcyingInitiative(), c.isOpenMarkets(), c.isGSA(), c.getDate(), c.isArmsStockpile(), c.isGasolineReserve(), c.isBauxworks(), c.isIronworks(), c.isIrrigation(), contRadiation, globalRadiation, c.isUraniumEnrichment());
+                revenues.add(cityRevenue);
+            }
+
+            //whats left? get resource value on a per city basis and format revenue response
+
 
         }
 

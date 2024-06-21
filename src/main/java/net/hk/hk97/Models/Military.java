@@ -76,6 +76,9 @@ public class Military {
     @Getter @Setter
     private boolean vmode;
 
+    @Getter @Setter
+    private long population;
+
     public Duration getActivity() {
         TemporalAccessor creationAccessor = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(this.getLast_active() );
         Instant instant = Instant.from( creationAccessor );

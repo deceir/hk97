@@ -12,6 +12,7 @@ import org.javacord.api.entity.server.Server;
 import org.javacord.api.event.message.MessageCreateEvent;
 import org.javacord.api.interaction.SlashCommand;
 import org.javacord.api.interaction.SlashCommandOption;
+import org.javacord.api.interaction.SlashCommandOptionChoice;
 import org.javacord.api.interaction.SlashCommandOptionType;
 import org.javacord.api.listener.message.MessageCreateListener;
 import org.springframework.stereotype.Component;
@@ -65,7 +66,7 @@ public class CommandAdd implements MessageCreateListener {
                 messageCreateEvent.getApi().getTextChannelById("1017291329283309608").get().sendMessage("Commands deployed at " + LocalTime.now());
 
 //                messageCreateEvent.getApi().getGlobalSlashCommandById(Long.parseLong("1017297253842550805")).get().deleteGlobal();
-//                messageCreateEvent.getApi().getServerSlashCommandById(messageCreateEvent.getApi().getServerById(Long.parseLong("1016240494948397066")).get(), Long.parseLong("1017297253842550805")).get().deleteForServer(messageCreateEvent.getApi().getServerById(Long.parseLong("1016240494948397066")).get());
+//                messageCreateEvent.getApi().getServerSlashCommandById(messageCreateEvent.getApi().getServerById(Long.parseLong("404940534524936192")).get(), Long.parseLong("1213874101140328499")).get().deleteForServer(messageCreateEvent.getApi().getServerById(Long.parseLong("404940534524936192")).get());
 
 
                 SlashCommand calc =
@@ -91,6 +92,10 @@ public class CommandAdd implements MessageCreateListener {
                                                                 SlashCommandOption.create(SlashCommandOptionType.LONG, "start", "City count to purchase OR starting city if calculating multiple", true),
                                                                 SlashCommandOption.create(SlashCommandOptionType.LONG, "end", "Ending cities number", false)
 
+                                                        )),
+                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "revenue", "Calculates the revenue of a given nation.",
+                                                        Arrays.asList(
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id.", true)
                                                         ))
                                         ))
                                 .createGlobal(api)
@@ -251,13 +256,28 @@ public class CommandAdd implements MessageCreateListener {
                 SlashCommand tr = SlashCommand.with("treasure", "Treasure-related functions.",
                                 Arrays.asList(
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "maxscore", "Get the top nation score."),
+                                        SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "range", "Get range of spawning treasures."),
                                         SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "hunt", "Get nations in-range of a specified color treasure (and optional continent.",
                                                 Arrays.asList(
                                                         SlashCommandOption.create(SlashCommandOptionType.STRING, "color", "Color to hunt for.", true),
                                                         SlashCommandOption.create(SlashCommandOptionType.STRING, "continent", "Continent to hunt for.", false)
                                                 )),
                                         SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "list", "Get list of spawning treasures.")
+
                                 ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
+                SlashCommand warroom = SlashCommand.with("warroom", "Warroom related functions.",
+                                Arrays.asList(
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "add", "Add someone to the warroom.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member to add.", true)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "remove", "Add someone to the warroom.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member to remove.", true)
+                                                        ))                                ))
                         .createForServer(api.getServerById(Config.mainServerId).get())
                         .join();
 
@@ -270,6 +290,10 @@ public class CommandAdd implements MessageCreateListener {
                                         SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "nation", "Get info for given nation within TGH.",
                                                 Arrays.asList(
                                                         SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Nation id for the nation to query.", true)
+                                                )),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "user", "Get info for given user within TGH.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "usertosearch", "User to query.", true)
                                                 ))
 
                                 ))
@@ -283,10 +307,84 @@ public class CommandAdd implements MessageCreateListener {
                                                         Arrays.asList(
 
                                                                 SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Alliance id.", true)
+                                                        )),
+                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "aarevbycity", "Stat commands.",
+                                                        Arrays.asList(
+
+                                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "id", "Alliance id.", true)
                                                         ))
                                         ))
                                 .createForServer(api.getServerById(Config.mainServerId).get())
                                 .join();
+
+                SlashCommand selfrole =
+                        SlashCommand.with("optin", "A command dedicated to calculations",
+                                        Arrays.asList(
+                                                SlashCommandOption.create(SlashCommandOptionType.SUB_COMMAND, "community", "Opt-in to Community (game) pings for events.")
+                                        ))
+                                .createForServer(api.getServerById(Config.mainServerId).get())
+                                .join();
+//                SlashCommand information =
+//                        SlashCommand.with("info", "A command dedicated to alliance information.",
+//                                        Arrays.asList(
+//                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "send message", "Send the message to given channel..",
+//                                                        Arrays.asList(
+//                                                                SlashCommandOption.create(SlashCommandOptionType.CHANNEL, "channel", "Channel", true)
+//                                                        )),
+//                                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "update", "Update information.",
+//                                                        Arrays.asList(
+//                                                                SlashCommandOption.createWithChoices(SlashCommandOptionType.STRING, "Rank", "Rank to update", true),
+//                                                                Arrays.asList(
+//                                                                        SlashCommandOptionChoice.create("Jinong", "jinong"),
+//                                                                        SlashCommandOptionChoice.create("IA Head", "ia"),
+//                                                                        SlashCommandOptionChoice.create("FA Head", "fahead"),
+//                                                                        SlashCommandOptionChoice.create("MA Head", "mahead"),
+//                                                                        SlashCommandOptionChoice.create("EA Head", "eahead")
+//
+//                                                        ))
+//                                        )))
+//                                .createForServer(api.getServerById(Config.mainServerId).get())
+//                                .join();
+
+
+                SlashCommand sbadmin = SlashCommand.with("sbadmin", "Super restricted Banking Administration. Only for authorized personnel.",
+                        Arrays.asList(
+                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "grant", "Send a grant to the specified player nation.",
+                                        Arrays.asList(
+                                                SlashCommandOption.create(SlashCommandOptionType.USER, "member", "Member nation to modify.", true),
+                                                SlashCommandOption.create(SlashCommandOptionType.STRING, "note", "Note for grant.", true),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "cash", "Cash to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "food", "Food to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "uranium", "Uranium to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "coal", "Coal to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "iron", "Iron to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "bauxite", "Bauxite to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "oil", "Oil to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "steel", "Steel to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "munitions", "Munitions to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "gasoline", "Gasoline to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "lead", "Lead to withdraw.", false),
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "aluminum", "Aluminum to withdraw.", false)
+                                        )),
+                                SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "resource_disperse", "Disperse missing resources to Command Economy nations.",
+                                        Arrays.asList(
+                                                SlashCommandOption.create(SlashCommandOptionType.LONG, "days", "Number of days to account for, not to exceed 7.", true)
+                                        )
+                        ),
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "onhand_wc", "Disperse missing resources to Command Economy nations."))
+
+                ).createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
+
+                SlashCommand audits = SlashCommand.with("audits", "Nation Auditing Functions.",
+                                Arrays.asList(
+                                        SlashCommandOption.createWithOptions(SlashCommandOptionType.SUB_COMMAND, "food", "Get food consumption for a nation.",
+                                                Arrays.asList(
+                                                        SlashCommandOption.create(SlashCommandOptionType.USER, "member", "The nation to be audited.", true)
+                                                ))
+                                ))
+                        .createForServer(api.getServerById(Config.mainServerId).get())
+                        .join();
 
 
                 return;

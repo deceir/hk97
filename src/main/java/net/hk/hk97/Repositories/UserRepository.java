@@ -16,6 +16,11 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     User getUserByDiscordid(String id);
 
+    List<User> getUsersByNameLikeIgnoreCase(String name);
+
+    List<User> getUsersByNameContainingIgnoreCase(String name);
+
+
 
 
 }

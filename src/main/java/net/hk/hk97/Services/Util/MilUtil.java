@@ -37,7 +37,7 @@ public class MilUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (id: " + id + ") { data { id nation_name leader_name score last_active soldiers tanks aircraft ships missiles nukes num_cities vmode alliance_id } } }");
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { id nation_name leader_name score last_active soldiers tanks aircraft ships missiles nukes num_cities vmode alliance_id population } } }");
 
 
         int aa_id = 0;
@@ -90,6 +90,8 @@ public class MilUtil {
                         mil.setId(object.optInt("id"));
                         mil.setVmode(object.optBoolean("vmode"));
                         mil.setAaname(object.optInt("alliance_id") + "");
+                        mil.setPopulation(object.optInt("population"));
+
 
 
                     }
@@ -312,7 +314,10 @@ public class MilUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (alliance_id: " + id + ") { data { id spies central_intelligence_agency food uranium vacation_mode_turns } } }");
+        jsonObj.put("query", "{ nations (alliance_id: " + id + ", vmode: false) { paginatorInfo { currentPage hasMorePages lastPage } data { alliance_position id spies central_intelligence_agency food uranium vacation_mode_turns color } } }");
+
+        boolean needsToRunAgain = false;
+        int nextPage = 0;
 
 
         try {
@@ -439,6 +444,60 @@ public class MilUtil {
 
         return nation;
 
+    }
+
+    public static JSONObject getSpiesAdditional(long id, int page) throws JSONException {
+        CloseableHttpClient client = null;
+        CloseableHttpResponse response = null;
+
+        client = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("https://api.politicsandwar.com/graphql?api_key=" + Config.kastorKey);
+
+        httpPost.addHeader("Content-Type", "application/json");
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("query", "{ nations (alliance_id: " + id + ", vmode: false, page: " + page + ") { paginatorInfo { currentPage hasMorePages } data { id spies central_intelligence_agency food uranium vacation_mode_turns color } } }");
+
+        boolean needsToRunAgain = false;
+        int nextPage = 0;
+
+
+        try {
+            StringEntity entity = new StringEntity(jsonObj.toString());
+
+            httpPost.setEntity(entity);
+            response = client.execute(httpPost);
+
+            System.out.println(response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        JSONObject nations = null;
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            String line = null;
+            StringBuilder builder = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+
+                builder.append(line);
+
+                JSONObject myObject = new JSONObject(builder.toString());
+
+                JSONObject data = myObject.getJSONObject("data");
+
+                nations = data.getJSONObject("nations");
+
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return nations;
     }
 
     public static List<NAudit> getNAudits(long id) throws JSONException {

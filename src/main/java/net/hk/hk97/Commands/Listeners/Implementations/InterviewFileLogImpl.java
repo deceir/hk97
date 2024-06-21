@@ -14,6 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -114,7 +118,19 @@ public static void getInterviewFileLog(MessageCreateEvent messageCreateEvent, In
 
                     bw.close(); // Be sure to close BufferedWriter
 
-                    loggingChannel.get().asServerTextChannel().get().sendMessage("<@" + interviewRepository.findInterviewByChannelId(channelId).getId() + "> interview: ");
+                    ZonedDateTime from = list.get(0).getCreationTimestamp().atZone(ZoneId.systemDefault());
+                    ZonedDateTime to = list.get(list.size()-1).getCreationTimestamp().atZone(ZoneId.systemDefault());
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss z");
+
+                    String message = "<@" + interviewRepository.findInterviewByChannelId(channelId).getId() + "> interview ";
+                    try {
+                        message += "from " + formatter.format(to) + " to " + formatter.format(from);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    loggingChannel.get().asServerTextChannel().get().sendMessage(message);
                     loggingChannel.get().asServerTextChannel().get().sendMessage(logfile);
 
                     TimeUnit.SECONDS.sleep(5);

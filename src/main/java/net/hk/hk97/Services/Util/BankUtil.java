@@ -202,7 +202,7 @@ public class BankUtil {
                         JSONObject bankreqs = newArray.getJSONObject(i);
                         String note = bankreqs.optString("note");
                         long receiver = bankreqs.optLong("receiver_id");
-                        if (note.equals(code) && (receiver == id)) {
+                        if (note.contains(code) && (receiver == id)) {
                             money += bankreqs.optDouble("money");
                             coal += bankreqs.optDouble("coal");
                             oil += bankreqs.optDouble("oil");
@@ -362,10 +362,15 @@ public class BankUtil {
         return bank;
     }
 
-    public static Bank getBankBalanceAlternate(long id) throws JSONException {
+    public static Bank getBankBalanceAlternate(long id, boolean adam) throws JSONException {
         Bank bank = new Bank();
+        String keyToUse = "";
+        if (adam) {
+            keyToUse = Config.adamApiKey;
+        } else {
+            keyToUse = Config.itachiPnwKey;
 
-        String keyToUse = Config.adamApiKey;
+        }
 
         CloseableHttpClient client = null;
         CloseableHttpResponse response = null;

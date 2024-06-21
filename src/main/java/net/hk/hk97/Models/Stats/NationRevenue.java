@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
-public class NationRevenue {
+public class NationRevenue  {
     private String name;
 
     private String leader;
