@@ -58,6 +58,9 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
     @Autowired
     private RadiationRepository radiationRepository;
 
+    @Autowired
+    private ResourceRepository resourceRepository;
+
     @Override
     public void onSlashCommandCreate(SlashCommandCreateEvent slashCommandCreateEvent) {
 
@@ -88,7 +91,7 @@ public class SlashCommandHandler implements SlashCommandCreateListener {
 
                 interaction.respondLater();
                 try {
-                    CalcCommand.calc(interaction, radiationRepository);
+                    CalcCommand.calc(interaction, radiationRepository, resourceRepository);
                 } catch (JSONException e) {
                     interaction.createFollowupMessageBuilder().setContent("There was an error executing that command.\n" + e).send();
                 }

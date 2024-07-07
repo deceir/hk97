@@ -175,31 +175,31 @@ public class TreasureService {
                         List<Radiation> list = new ArrayList<>();
 
                         Radiation globalRadiation = new Radiation();
-                        globalRadiation.setName("global");
+                        globalRadiation.setId("global");
                         globalRadiation.setRadiationLevel(object.optDouble("global"));
                         list.add(globalRadiation);
                         Radiation naRadiation = new Radiation();
-                        naRadiation.setName("north_america");
+                        naRadiation.setId("north_america");
                         naRadiation.setRadiationLevel(object.optDouble("north_america"));
                         list.add(naRadiation);
                         Radiation saRadiation = new Radiation();
-                        saRadiation.setName("south_america");
+                        saRadiation.setId("south_america");
                         saRadiation.setRadiationLevel(object.optDouble("south_america"));
                         list.add(saRadiation);
                         Radiation euRadiation = new Radiation();
-                        euRadiation.setName("europe");
+                        euRadiation.setId("europe");
                         euRadiation.setRadiationLevel(object.optDouble("europe"));
                         list.add(euRadiation);
                         Radiation africaRadiation =  new Radiation();
-                        africaRadiation.setName("africa");
+                        africaRadiation.setId("africa");
                         africaRadiation.setRadiationLevel(object.optDouble("africa"));
                         list.add(africaRadiation);
                         Radiation asiaRadiation =  new Radiation();
-                        asiaRadiation.setName("asia");
+                        asiaRadiation.setId("asia");
                         asiaRadiation.setRadiationLevel(object.optDouble("asia"));
                         list.add(asiaRadiation);
                         Radiation australiaRadiation =  new Radiation();
-                        australiaRadiation.setName("australia");
+                        australiaRadiation.setId("australia");
                         australiaRadiation.setRadiationLevel(object.optDouble("australia"));
                         list.add(australiaRadiation);
 

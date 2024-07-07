@@ -72,12 +72,16 @@ public class BankCommand {
                     DecimalFormat d = new DecimalFormat("#,###");
 
                     Bank b = listOfAccounts.get(0);
+                    System.out.println("testing that new code is even running...");
+
+                    String depString = "[Deposit Link](https://politicsandwar.com/alliance/id=" + Config.aaId + "&d_note=" + b.getDepositcode() + ")";
 
                     EmbedBuilder emb = new EmbedBuilder()
                             .setTitle("TGH Treasury")
                             .setColor(Color.CYAN)
                             .setAuthor(interaction.getUser())
-                            .addField("Deposit Code: ", "`" + listOfAccounts.get(0).getDepositcode() + "`")
+                            .addField("Deposit Code: ", "`" + b.getDepositcode() + "`")
+                            .addField("Deposit Link", depString)
                             .addField("Totals:",
                                     n.format(b.getCash()) + " \n<:food:915071870636789792> " + d.format(b.getFood()) + " <:uranium:1024144769871523870> " + d.format(b.getUranium()) + " <:coal:1024144767858266222> " + d.format(b.getCoal()) + " <:oil:1024144768487391303> " + d.format(b.getOil()) + " <:lead:1024144770857177119> " + d.format(b.getLeadRss()) + " <:iron:1024144771884793918> " + d.format(b.getIron()) + " <:bauxite:1024144773075976243> " + d.format(b.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(b.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(b.getMunitions()) + " <:steel:1024144776548847656> " + d.format(b.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(b.getAluminum())
                             );
@@ -115,9 +119,12 @@ public class BankCommand {
                     Bank deposits = BankUtil.getTransactions(user.getNationid(), bank.getDepositcode());
 
 
+
                     if (deposits.getTotals() == 0) {
+                        String depString = "[Deposit Link](https://politicsandwar.com/alliance/id=" + Config.aaId + "&d_note=" + bank.getDepositcode() + ")";
                         interaction.createFollowupMessageBuilder().setContent("Deposit code:").send();
                         interaction.getChannel().get().sendMessage(bank.getDepositcode());
+                        interaction.getChannel().get().sendMessage(depString);
                     } else {
                         bank.setCash(bank.getCash() + deposits.getCash());
                         bank.setFood(bank.getFood() + deposits.getFood());
@@ -144,7 +151,11 @@ public class BankCommand {
             } else if(interaction.getOptionByName("payloan").isPresent()) {
                 User user = userRepository.findById(interaction.getUser().getIdAsString()).get();
                 List<Loan> loans = loanRepository.getLoansByDiscordid(interaction.getUser().getId());
-                try {
+
+                if (loans.size() == 0) {
+                    interaction.createFollowupMessageBuilder().setContent("You do not have a loan to repay.").send();
+                } else {
+                    try {
 
                         for (Loan loan : loans) {
                             if (loan.getActive() == true) {
@@ -176,9 +187,12 @@ public class BankCommand {
                         }
 
 
-                } catch (Exception e) {
-                    interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
+
+                    } catch (Exception e) {
+                        interaction.createFollowupMessageBuilder().setContent("There was an error. " + e).send();
+                    }
                 }
+
 
 
 

@@ -451,7 +451,7 @@ public class NationUtil {
 
         httpPost.addHeader("Content-Type", "application/json");
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put("query", "{ nations (id: " + id + ") { data { international_trade_center,telecommunications_satellite,recycling_initiative,government_support_agency,arms_stockpile,emergency_gasoline_reserve,bauxite_works,iron_works,mass_irrigation,uranium_enrichment_program cities { id, infrastructure, land, date, oil_power, wind_power, coal_power, nuclear_power, coal_mine, oil_well, uranium_mine, farm, police_station, hospital, recycling_center, subway, supermarket, bank, shopping_mall, stadium, lead_mine, iron_mine, bauxite_mine, oil_refinery, aluminum_refinery, steel_mill, munitions_factory, green_technologies, continent }  } } }");
+        jsonObj.put("query", "{ nations (id: " + id + ") { data { international_trade_center,telecommunications_satellite,recycling_initiative, green_technologies,government_support_agency,arms_stockpile, continent,emergency_gasoline_reserve,bauxite_works,iron_works,mass_irrigation,uranium_enrichment_program cities { id, infrastructure, land, date, oil_power, wind_power, coal_power, nuclear_power, coal_mine, oil_well, uranium_mine, farm, police_station, hospital, recycling_center, subway, supermarket, bank, shopping_mall, stadium, lead_mine, iron_mine, bauxite_mine, oil_refinery, aluminum_refinery, steel_mill, munitions_factory }  } } }");
 
 
         try {
@@ -478,6 +478,8 @@ public class NationUtil {
                 builder.append(line);
 
                 JSONObject myObject = new JSONObject(builder.toString());
+
+                System.out.println(myObject);
 
                 JSONObject data = myObject.getJSONObject("data");
 
@@ -585,6 +587,7 @@ public class NationUtil {
             e.printStackTrace();
         }
 
+        System.out.println("number of cities: " + list.size());
         return list;
     }
 

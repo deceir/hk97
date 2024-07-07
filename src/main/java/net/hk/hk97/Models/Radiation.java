@@ -13,7 +13,7 @@ import javax.persistence.Table;
 public class Radiation {
 
     @Id
-    private String name;
+    private String id;
 
     @Column
     double radiationLevel;

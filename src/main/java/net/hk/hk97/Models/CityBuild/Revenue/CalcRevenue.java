@@ -105,6 +105,7 @@ public class CalcRevenue {
         double bauxUsed = 0;
         double uraniumUsed = 0;
 
+
         int timesDivisible = 0;
 
 
@@ -221,6 +222,7 @@ public class CalcRevenue {
         city.setInfra(infrastructure);
         city.setLand(land);
         city.setAtWar(false);
+        city.setFounded(LocalDate.parse(date));
 
         double foodConsumed = FoodConsumption.getFoodConsumption(city, 0);
         cityRevenue.revenue = income;

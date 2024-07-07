@@ -1,5 +1,6 @@
 package net.hk.hk97.Commands.SlashCommands.Commands;
 
+import com.google.gdata.model.gd.City;
 import net.hk.hk97.Models.CityBuild.Revenue.CalcRevenue;
 import net.hk.hk97.Models.CityBuild.Revenue.CityRevenue;
 import net.hk.hk97.Models.CityBuild.Revenue.CityRevenueBuilds.CityRevenueModel;
@@ -14,12 +15,15 @@ import org.javacord.api.interaction.SlashCommandInteraction;
 import org.json.JSONException;
 
 import java.awt.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CalcCommand {
 
-    public static void calc(SlashCommandInteraction interaction, RadiationRepository radiationRepository) throws JSONException {
+    public static void calc(SlashCommandInteraction interaction, RadiationRepository radiationRepository, ResourceRepository resourceRepository) throws JSONException {
 
 
         EmbedBuilder eb = new EmbedBuilder();
@@ -185,27 +189,79 @@ public class CalcCommand {
 
             }
 
-        } else if (interaction.getOptionByName("revenue").isPresent()) {
-
-            long id = interaction.getOptionByName("revenue").get().getOptionByName("id").get().getLongValue().get();
-
-            List<CityRevenueModel> cities = NationUtil.getCitiesForRevenue(id);
-
-            List<CityRevenue> revenues = new ArrayList<>();
-
-            double globalRadiation = radiationRepository.findRadiationByID("global").getRadiationLevel();
-            double contRadiation = radiationRepository.findRadiationByID(cities.get(0).getContinent()).getRadiationLevel();
-
-
-            for (CityRevenueModel c : cities) {
-                CityRevenue cityRevenue = CalcRevenue.CalcRevenue(c.getCoalPower(), c.getOilPower(), c.getWindPower(), c.getNuclearPower(), c.getCoalMine(), c.getOilWell(), c.getUraMine(), c.getLeadMine(), c.getIronMine(), c.getBauxMine(), c.getFarm(), c.getGasRefinery(), c.getAluRefinery(), c.getMuniFactory(), c.getSteelFactory(), c.getPoliceStation(), c.getHospital(), c.getRecyclingCenter(), c.getSubway(), c.getSupermarket(), c.getBank(), c.getMall(), c.getStadium(), c.getInfrastructure(), c.getLand(), c.isItc(), c.isTelecomSat(), c.isGreenTech(), c.isRecylcyingInitiative(), c.isOpenMarkets(), c.isGSA(), c.getDate(), c.isArmsStockpile(), c.isGasolineReserve(), c.isBauxworks(), c.isIronworks(), c.isIrrigation(), contRadiation, globalRadiation, c.isUraniumEnrichment());
-                revenues.add(cityRevenue);
-            }
-
-            //whats left? get resource value on a per city basis and format revenue response
-
-
         }
+//        else if (interaction.getOptionByName("revenue").isPresent()) {
+//            System.out.println("revnue command entered");
+//            long id = interaction.getOptionByName("revenue").get().getOptionByName("id").get().getLongValue().get();
+//
+//            List<CityRevenueModel> cities = NationUtil.getCitiesForRevenue(id);
+//
+//            List<CityRevenue> revenues = new ArrayList<>();
+//
+//            double globalRadiation = radiationRepository.findRadiationById("global").getRadiationLevel();
+//            double contRadiation = radiationRepository.findRadiationById(cities.get(0).getContinent()).getRadiationLevel();
+//
+//            System.out.println("global radiation level: " + globalRadiation + " cont radiation: " + contRadiation);
+//            long foodPrice = resourceRepository.findResourcesByName("FOOD").getPrice();
+//            long uraPrice = resourceRepository.findResourcesByName("URA").getPrice();
+//            long aluPrice = resourceRepository.findResourcesByName("ALU").getPrice();
+//            long coalPrice = resourceRepository.findResourcesByName("COAL").getPrice();
+//            long bauxPrice = resourceRepository.findResourcesByName("BAUX").getPrice();
+//            long oilPrice = resourceRepository.findResourcesByName("OIL").getPrice();
+//            long gasPrice = resourceRepository.findResourcesByName("GAS").getPrice();
+//            long steelPrice = resourceRepository.findResourcesByName("STEEL").getPrice();
+//            long ironPrice = resourceRepository.findResourcesByName("IRON").getPrice();
+//            long munisPrice = resourceRepository.findResourcesByName("MUNIS").getPrice();
+//            long leadPrice = resourceRepository.findResourcesByName("LEAD").getPrice();
+//
+//
+//            CityRevenue nationTotal = new CityRevenue();
+//            for (CityRevenueModel c : cities) {
+//                CityRevenue cityRevenue = CalcRevenue.CalcRevenue(c.getCoalPower(), c.getOilPower(), c.getWindPower(), c.getNuclearPower(), c.getCoalMine(), c.getOilWell(), c.getUraMine(), c.getLeadMine(), c.getIronMine(), c.getBauxMine(), c.getFarm(), c.getGasRefinery(), c.getAluRefinery(), c.getMuniFactory(), c.getSteelFactory(), c.getPoliceStation(), c.getHospital(), c.getRecyclingCenter(), c.getSubway(), c.getSupermarket(), c.getBank(), c.getMall(), c.getStadium(), c.getInfrastructure(), c.getLand(), c.isItc(), c.isTelecomSat(), c.isGreenTech(), c.isRecylcyingInitiative(), c.isOpenMarkets(), c.isGSA(), c.getDate(), c.isArmsStockpile(), c.isGasolineReserve(), c.isBauxworks(), c.isIronworks(), c.isIrrigation(), contRadiation, globalRadiation, c.isUraniumEnrichment());
+//                cityRevenue.setNetProfitValue(foodPrice, coalPrice,ironPrice, leadPrice,oilPrice,uraPrice,bauxPrice,munisPrice,gasPrice,steelPrice,aluPrice);
+//                revenues.add(cityRevenue);
+//
+//                System.out.println(cityRevenue.getRevenue());
+//
+//                nationTotal.setRevenue(nationTotal.getRevenue() + cityRevenue.getRevenue());
+//                nationTotal.setExpenses(nationTotal.getExpenses() + cityRevenue.getExpenses());
+//                nationTotal.setProfit(nationTotal.getProfit() + cityRevenue.getProfit());
+//                nationTotal.setAluminum(nationTotal.getAluminum() + cityRevenue.getAluminum());
+//                nationTotal.setBauxite(nationTotal.getBauxite() + cityRevenue.getBauxite());
+//                nationTotal.setCoal(nationTotal.getCoal() + cityRevenue.getCoal());
+//                nationTotal.setFood(nationTotal.getFood() + cityRevenue.getFood());
+//                nationTotal.setIron(nationTotal.getIron() + cityRevenue.getIron());
+//                nationTotal.setFoodConsumed(nationTotal.getFoodConsumed() + cityRevenue.getFoodConsumed());
+//                nationTotal.setOilConsumed(nationTotal.getOilConsumed() + cityRevenue.getOilConsumed());
+//                nationTotal.setBauxiteConsumed(nationTotal.getBauxiteConsumed() + cityRevenue.getBauxiteConsumed());
+//                nationTotal.setUraniumConsumed(nationTotal.getUraniumConsumed() + cityRevenue.getUraniumConsumed());
+//                nationTotal.setLeadConsumed(nationTotal.getLeadConsumed() + cityRevenue.getLeadConsumed());
+//                nationTotal.setCoalConsumed(nationTotal.getCoalConsumed() + cityRevenue.getCoalConsumed());
+//                nationTotal.setIronConsumed(nationTotal.getIronConsumed() + cityRevenue.getIronConsumed());
+//                nationTotal.setGasoline(nationTotal.getGasoline() + cityRevenue.getGasoline());
+//                nationTotal.setSteel(nationTotal.getSteel() + cityRevenue.getSteel());
+//                nationTotal.setMunitions(nationTotal.getMunitions() + cityRevenue.getMunitions());
+//                nationTotal.setOil(nationTotal.getOil() + cityRevenue.getOil());
+//                nationTotal.setLead(nationTotal.getLead() + cityRevenue.getLead());
+//                nationTotal.setUranium(nationTotal.getUranium() + cityRevenue.getUranium());
+//                nationTotal.setNetProfit(nationTotal.getNetProfit() + cityRevenue.getNetProfit());
+//            }
+//
+//            //whats left? get resource value on a per city basis and format revenue response
+//            NumberFormat n = NumberFormat.getCurrencyInstance(Locale.US);
+//            DecimalFormat d = new DecimalFormat("#,###");
+//
+//            EmbedBuilder embedBuilder = new EmbedBuilder()
+//                    .setTitle("Nation Revenue for ID: " + id)
+//                    .setAuthor(interaction.getUser())
+//                    .addField("Resources", "Cash: " + n.format(nationTotal.getProfit()) + "\n<:food:915071870636789792> " + d.format(nationTotal.getFood()) + " <:uranium:1024144769871523870> " + d.format(nationTotal.getUranium()) + " <:coal:1024144767858266222> " + d.format(nationTotal.getCoal()) + " <:oil:1024144768487391303> " + d.format(nationTotal.getOil()) + " <:lead:1024144770857177119> " + d.format(nationTotal.getLead()) + " <:iron:1024144771884793918> " + d.format(nationTotal.getIron()) + " <:bauxite:1024144773075976243> " + d.format(nationTotal.getBauxite()) + " <:gasoline:1024144774602702868> " + d.format(nationTotal.getGasoline()) + " <:munitions:1024144775668051968> " + d.format(nationTotal.getMunitions()) + " <:steel:1024144776548847656> " + d.format(nationTotal.getSteel()) + " <:aluminum:1024144777509347348> " + d.format(nationTotal.getAluminum()))
+//                    .addField("Resources Consumed", "<:food:915071870636789792> " + d.format(nationTotal.getFoodConsumed()) + " <:uranium:1024144769871523870> " + d.format(nationTotal.getUraniumConsumed()) + " <:coal:1024144767858266222> " + d.format(nationTotal.getCoalConsumed()) + " <:oil:1024144768487391303> " + d.format(nationTotal.getOilConsumed()) + " <:lead:1024144770857177119> " + d.format(nationTotal.getLeadConsumed()) + " <:iron:1024144771884793918> " + d.format(nationTotal.getIronConsumed()) + " <:bauxite:1024144773075976243> " + d.format(nationTotal.getBauxiteConsumed()))
+//                    .addField("Net Profit:", n.format(nationTotal.getNetProfit()))
+//                    .setFooter("HK-97 Revenue Service beta");
+//
+//            interaction.createFollowupMessageBuilder().addEmbed(embedBuilder).send();
+//
+//        }
 
     }
 }
