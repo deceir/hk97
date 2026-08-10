@@ -399,7 +399,7 @@ public class CommandAdd implements MessageCreateListener {
             messageCreateEvent.getMessage().delete();
 
             new MessageBuilder()
-                    .setContent("__**HK-97 Banking Service**__ \n*Report any and all issues to Itachi or Pablo.*\nSelecting info will show ")
+                    .setContent("__**HK-97 Banking Service**__ \n*Report any and all issues to Tech.*\nSelecting info will show ")
                     .addComponents(
                             ActionRow.of(
                                     Button.danger("info", "Info"),
